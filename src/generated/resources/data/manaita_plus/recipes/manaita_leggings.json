@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "# #",
+    "# #"
+  ],
+  "key": {
+    "#": {
+      "item": "manaita_plus:block_crafting_manaita"
+    }
+  },
+  "result": {
+    "item": "manaita_plus:manaita_leggings",
+    "count": 1
+  }
+}

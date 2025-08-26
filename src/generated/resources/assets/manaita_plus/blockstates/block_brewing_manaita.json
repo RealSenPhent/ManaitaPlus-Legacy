@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "manaita_plus:block/brewing_block_model" }
+  }
+}

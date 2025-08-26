@@ -1,0 +1,58 @@
+{
+  "itemGroup.ManaitaPlusTab":"Manaita Plus",
+
+  "container.crafting_manaita": "Crafting Cutting Board",
+  "container.furnace_manaita": "Furnace Cutting Board",
+  "container.brewing_manaita": "Brewing Cutting Board",
+
+  "block.crafting.name": "Crafting Cutting Board",
+  "block.furnace.name": "Furnace Cutting Board",
+  "block.brewing.name": "Brewing Cutting Board",
+
+  "entity.manaita_plus.manaita_lightning_bolt": "ManaitaPlusLightningBolt",
+  "entity.manaita_plus.manaita_arrow": "ManaitaPlusArrow",
+
+  "item.manaita_sword_god.name": "Cutting Board Sword[God]",
+
+  "item.manaita_sword.name": "Cutting Board Sword",
+  "item.manaita_bow.name": "Cutting Board Bow",
+  "item.helmet.name": "Cutting Board Helmet",
+  "item.chestplate.name": "Cutting Board Chestplate",
+  "item.leggings.name": "Cutting Board Boots",
+  "item.boots.name": "Cutting Board Boots",
+
+  "item.source.name": "Source of Cutting Board",
+
+  "item.manaita_plus.manaita_axe": "Cutting Board Axe",
+  "item.manaita_plus.manaita_pickaxe": "Cutting Board Pickaxe",
+  "item.manaita_plus.manaita_hoe": "Cutting Board Hoe",
+  "item.manaita_plus.manaita_paxel": "Cutting Board Paxel",
+  "item.manaita_plus.manaita_shears": "Cutting Board Shears",
+  "item.manaita_plus.manaita_shovel": "Cutting Board Shovel",
+
+
+  "item.manaita_plus.manaita_wood_hook": "Wooden Cutting Board Hook",
+
+  "info.item.manaita_sword_god.1": "The Power of God -God's Judgment and God's Levy-",
+  "info.source.1": "Source of All",
+  "info.armor": "Infinity Power",
+  "info.attack": "Infinity Power & Infinity Resources",
+  "info.enchantment": "Enchantment",
+  "info.helmet.nightvision": "NightVision",
+  "info.leggings.invisibility": "Invisibility",
+  "info.on":"On",
+  "info.off": "Off",
+
+  "mode.doubling": "Doubling",
+  "mode.manaita_sword": "AttackRange",
+  "mode.manaita_tool": "DestroyRange",
+  "mode.range.name": "Range",
+  "mode.remove.name": "Remove",
+
+  "key.manaita":"Cutting Board",
+  "key.manaita.armor":"Cutting Board Armor",
+
+
+  "enchantments.fortune": "Fortune",
+  "enchantments.silktouch": "Silktouch"
+}

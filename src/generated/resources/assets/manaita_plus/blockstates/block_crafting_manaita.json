@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "manaita_plus:block/crafting_block_model" }
+  }
+}

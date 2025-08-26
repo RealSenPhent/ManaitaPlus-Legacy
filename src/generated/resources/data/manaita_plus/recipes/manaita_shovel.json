@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "&",
+    "%",
+    "%"
+  ],
+  "key": {
+    "&": {
+      "item": "manaita_plus:block_crafting_manaita"
+    },
+    "%": {
+      "item": "manaita_plus:manaita_wood_hook"
+    }
+  },
+  "result": {
+    "item": "manaita_plus:manaita_shovel",
+    "count": 1
+  }
+}

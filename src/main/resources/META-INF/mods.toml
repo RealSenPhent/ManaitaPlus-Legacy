@@ -1,0 +1,12 @@
+modLoader="javafml"
+loaderVersion="${loader_version_range}"
+license="${mod_license}"
+
+[[mods]]
+modId="manaita_plus"
+version="0.3.4-test"
+displayName="ManaitaPlus-PhentSen"
+displayURL="None"
+authors="PhentSen"
+description="A replica mod that makes a manaita_plus from 1.7.10 into 1.20.1, for nothing else, just feelings"
+logoFile="assets/manaita_plus/textures/logo.png"

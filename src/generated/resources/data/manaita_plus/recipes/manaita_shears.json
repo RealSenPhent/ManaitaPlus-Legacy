@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " &",
+    "& "
+  ],
+  "key": {
+    "&": {
+      "item": "manaita_plus:block_crafting_manaita"
+    }
+  },
+  "result": {
+    "item": "manaita_plus:manaita_shears",
+    "count": 1
+  }
+}

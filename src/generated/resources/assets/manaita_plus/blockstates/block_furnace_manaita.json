@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "manaita_plus:block/furnace_block_model" }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "manaita_plus:block/crafting_manaita"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "manaita_plus:manaita_type": 1
+      },
+      "model": "manaita_plus:block/crafting/crafting_manaita_wooden"
+    },
+    {
+      "predicate": {
+        "manaita_plus:manaita_type": 2
+      },
+      "model": "manaita_plus:block/crafting/crafting_manaita_stone"
+    },
+    {
+      "predicate": {
+        "manaita_plus:manaita_type": 3
+      },
+      "model": "manaita_plus:block/crafting/crafting_manaita_iron"
+    },
+    {
+      "predicate": {
+        "manaita_plus:manaita_type": 4
+      },
+      "model": "manaita_plus:block/crafting/crafting_manaita_redstone"
+    },
+    {
+      "predicate": {
+        "manaita_plus:manaita_type": 5
+      },
+      "model": "manaita_plus:block/crafting/crafting_manaita_gold"
+    },
+    {
+      "predicate": {
+        "manaita_plus:manaita_type": 6
+      },
+      "model": "manaita_plus:block/crafting/crafting_manaita_diamond"
+    },
+    {
+      "predicate": {
+        "manaita_plus:manaita_type": 7
+      },
+      "model": "manaita_plus:block/crafting/crafting_manaita_emerald"
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "itemGroup.ManaitaPlusTab":"更好的砧板",
+
+  "container.crafting_manaita": "砧板工作台",
+  "container.furnace_manaita": "砧板熔炉",
+  "container.brewing_manaita": "砧板酿造台",
+
+  "block.crafting.name": "砧板工作台",
+  "block.furnace.name": "砧板熔炉",
+  "block.brewing.name": "砧板酿造台",
+
+  "entity.manaita_plus.manaita_lightning_bolt": "砧板彩雷",
+  "entity.manaita_plus.manaita_arrow": "砧板箭",
+
+  "item.manaita_sword_god.name": "砧板之刃[神]",
+
+  "item.manaita_sword.name": "砧板之刃",
+  "item.manaita_bow.name": "砧板弓",
+  "item.helmet.name": "砧板头盔",
+  "item.chestplate.name": "砧板胸甲",
+  "item.leggings.name": "砧板裤腿",
+  "item.boots.name": "砧板靴子",
+
+  "item.source.name": "砧板之尘",
+
+  "item.manaita_plus.manaita_axe": "砧板斧",
+  "item.manaita_plus.manaita_pickaxe": "砧板稿",
+  "item.manaita_plus.manaita_hoe": "砧板锄",
+  "item.manaita_plus.manaita_paxel": "砧板多功能工具",
+  "item.manaita_plus.manaita_shears": "砧板剪刀",
+  "item.manaita_plus.manaita_shovel": "砧板铲",
+
+
+  "item.manaita_plus.manaita_wood_hook": "砧板钩",
+
+  "info.item.manaita_sword_god.1": "神の力 -神の裁きと神の徴収-",
+  "info.source.1": "无尽能源",
+  "info.armor": "无限保护",
+  "info.attack": "无限の力 & 无限の资",
+  "info.enchantment": "附魔",
+  "info.helmet.nightvision": "夜视",
+  "info.leggings.invisibility": "隐身",
+  "info.on":"开启",
+  "info.off": "关闭",
+
+  "mode.doubling": "翻倍",
+  "mode.manaita_sword": "横扫距离",
+  "mode.manaita_tool": "模式距离",
+  "mode.range.name": "范围模式",
+  "mode.remove.name": "抹除模式",
+
+  "key.manaita":"更改模式",
+  "key.manaita.armor":"更改盔甲模式",
+
+
+  "enchantments.fortune": "时运",
+  "enchantments.silktouch": "精准采集"
+}
