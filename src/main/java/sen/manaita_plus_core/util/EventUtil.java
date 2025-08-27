@@ -103,6 +103,9 @@ public class EventUtil {
         } else if (p_21134_ == MOVEMENT_SPEED && value < 0.1D) {
             living.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.15D);
             return 0.15D;
+        } else if (p_21134_ == Attributes.FLYING_SPEED && value < 0.05D) {
+            living.getAttribute(Attributes.FLYING_SPEED).setBaseValue(0.075D);
+            return 0.15D;
         }
         return value;
     }
