@@ -11,6 +11,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.*;
@@ -240,8 +241,10 @@ public class ManaitaPlusArmor extends ArmorItem {
             if (p_41407_ == 0 && p_41406_ instanceof  Player player) {
                 player.getAbilities().mayfly = true;
                 int speed = getSpeed(p_41404_);
-                player.getAbilities().setWalkingSpeed(speed);
-                player.getAbilities().setFlyingSpeed(speed);
+                float p22101 = (float) (Math.pow(1, speed) / 10F);
+                player.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(p22101);
+                player.getAbilities().setWalkingSpeed(p22101);
+                player.getAbilities().setFlyingSpeed((float) (Math.pow(5, speed) / 100F));
             }
         }
 
@@ -254,11 +257,11 @@ public class ManaitaPlusArmor extends ArmorItem {
         }
 
         public static int getSpeed(ItemStack itemStack) {
-            return itemStack.getOrCreateTag().getInt("Speed");
+            return Math.max(itemStack.getOrCreateTag().getInt("Speed"),1);
         }
 
         public static void setSpeed(ItemStack itemStack) {
-            int speed = Math.max(1,itemStack.getOrCreateTag().getInt("Speed"))  + 1 & 8;
+            int speed = Math.max(1,itemStack.getOrCreateTag().getInt("Speed") + 1) % 9;
             itemStack.getTag().putInt("Speed", speed);
             ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(String.format("[%s] %s: %d", I18n.get("item.boots.name"), I18n.get("mode.speed"), speed))));
         }
