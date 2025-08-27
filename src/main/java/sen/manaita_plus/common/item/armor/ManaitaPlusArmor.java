@@ -258,7 +258,7 @@ public class ManaitaPlusArmor extends ArmorItem {
         }
 
         public static void setSpeed(ItemStack itemStack) {
-            int speed = Math.max(1,itemStack.getOrCreateTag().getInt("Speed"))  + 1 & 0x8;
+            int speed = Math.max(1,itemStack.getOrCreateTag().getInt("Speed"))  + 1 & 8;
             itemStack.getTag().putInt("Speed", speed);
             ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(String.format("[%s] %s: %d", I18n.get("item.boots.name"), I18n.get("mode.speed"), speed))));
         }

@@ -17,6 +17,7 @@ A faithful port of the popular ManaitaPlus mod from Minecraft 1.7.10 to modern M
 **RealSenPhent** - Developer of this port
 - GitHub: [RealSenPhent](https://github.com/RealSenPhent)
 - Repository: [ManaitaPlus-Legacy](https://github.com/RealSenPhent/ManaitaPlus-Legacy)
+- 
 
 ## 📄 License
 
