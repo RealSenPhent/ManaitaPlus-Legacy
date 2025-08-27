@@ -2,7 +2,6 @@ package sen.manaita_plus.common.item.armor;
 
 import com.google.common.collect.Lists;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -20,6 +19,7 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 import sen.manaita_plus.common.item.data.IManaitaPlusKey;
 import sen.manaita_plus.common.util.ManaitaPlusText;
+import sen.manaita_plus.common.util.ManaitaPlusUtils;
 
 import java.util.List;
 
@@ -124,15 +124,13 @@ public class ManaitaPlusArmor extends ArmorItem {
         }
 
         public static boolean getNightVision(ItemStack itemStack) {
-            if (itemStack.getTag() == null)
-                itemStack.setTag(new CompoundTag());
-            return itemStack.getTag().getBoolean("NightVision");
+            return itemStack.getOrCreateTag().getBoolean("NightVision");
         }
 
         public static void toggleNightVision(ItemStack itemStack) {
-            if (itemStack.getTag() == null)
-                itemStack.setTag(new CompoundTag());
-            itemStack.getTag().putBoolean("NightVision", !itemStack.getTag().getBoolean("NightVision"));
+            boolean nightVision = !itemStack.getOrCreateTag().getBoolean("NightVision");
+            itemStack.getTag().putBoolean("NightVision", nightVision);
+            ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(String.format("[%s] %s: %b",  I18n.get("item.helmet.name"), I18n.get("mode.nightvision"), nightVision))));
         }
 
         @Override
@@ -208,15 +206,13 @@ public class ManaitaPlusArmor extends ArmorItem {
         }
 
         public static boolean getInvisibility(ItemStack itemStack) {
-            if (itemStack.getTag() == null)
-                itemStack.setTag(new CompoundTag());
-            return itemStack.getTag().getBoolean("Invisibility");
+            return itemStack.getOrCreateTag().getBoolean("Invisibility");
         }
 
         public static void toggleInvisibility(ItemStack itemStack) {
-            if (itemStack.getTag() == null)
-                itemStack.setTag(new CompoundTag());
-            itemStack.getTag().putBoolean("Invisibility", !itemStack.getTag().getBoolean("Invisibility"));
+            boolean nightVision = !itemStack.getOrCreateTag().getBoolean("Invisibility");
+            itemStack.getTag().putBoolean("Invisibility", nightVision);
+            ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(String.format("[%s] %s: %b",  I18n.get("item.leggings.name"), I18n.get("mode.invisibility"), nightVision))));
         }
 
         @Override
@@ -243,12 +239,28 @@ public class ManaitaPlusArmor extends ArmorItem {
         public void inventoryTick(ItemStack p_41404_, Level p_41405_, Entity p_41406_, int p_41407_, boolean p_41408_) {
             if (p_41407_ == 0 && p_41406_ instanceof  Player player) {
                 player.getAbilities().mayfly = true;
+                int speed = getSpeed(p_41404_);
+                player.getAbilities().setWalkingSpeed(speed);
+                player.getAbilities().setFlyingSpeed(speed);
             }
         }
 
         @Override
         public void onManaitaKeyPress(ItemStack paramItemStack, Player paramEntityPlayer) {
-            if (!paramEntityPlayer.isShiftKeyDown()) paramEntityPlayer.getAbilities().getWalkingSpeed();
+            if (!paramEntityPlayer.isShiftKeyDown()) {
+                setSpeed(paramItemStack);
+            }
+
+        }
+
+        public static int getSpeed(ItemStack itemStack) {
+            return itemStack.getOrCreateTag().getInt("Speed");
+        }
+
+        public static void setSpeed(ItemStack itemStack) {
+            int speed = Math.max(1,itemStack.getOrCreateTag().getInt("Speed"))  + 1 & 0x8;
+            itemStack.getTag().putInt("Speed", speed);
+            ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(String.format("[%s] %s: %d", I18n.get("item.boots.name"), I18n.get("mode.speed"), speed))));
         }
     }
 

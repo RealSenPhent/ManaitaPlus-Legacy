@@ -11,13 +11,14 @@ import sen.manaita_plus_core.transform.ManaitaPlusLaunchPluginService;
 import sen.manaita_plus_core.util.Helper;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ManaitaManaitaPlusTransformationService implements ITransformationService {
     public static final Logger LOGGER = LogManager.getLogger("ManaitaPlusCore");
     static {
         LaunchPluginHandler handler = Helper.getFieldValue(Launcher.INSTANCE, "launchPlugins", LaunchPluginHandler.class);
         Map<String, ILaunchPluginService> plugins = (Map<String, ILaunchPluginService>) Helper.getFieldValue(handler, "plugins", Map.class);
-        Map<String, ILaunchPluginService> newMap = new HashMap<>();
+        Map<String, ILaunchPluginService> newMap = new ConcurrentHashMap<>();
         newMap.put("!!!ManaitaPlus", new ManaitaPlusLaunchPluginService());
         if (plugins != null)
             for (String name : plugins.keySet())

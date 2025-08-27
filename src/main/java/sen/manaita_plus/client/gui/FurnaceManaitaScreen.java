@@ -13,7 +13,15 @@ import sen.manaita_plus.common.gui.ManaitaPlusFurnaceMenu;
 public class FurnaceManaitaScreen extends AbstractFurnaceScreen<ManaitaPlusFurnaceMenu> {
     private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/container/furnace.png");
 
+
     public FurnaceManaitaScreen(ManaitaPlusFurnaceMenu p_98776_, Inventory p_98777_, Component p_98778_) {
         super(p_98776_, new SmeltingRecipeBookComponent(), p_98777_, p_98778_, TEXTURE);
+
+    }
+
+    @Override
+    public void onClose() {
+        super.onClose();
+
     }
 }

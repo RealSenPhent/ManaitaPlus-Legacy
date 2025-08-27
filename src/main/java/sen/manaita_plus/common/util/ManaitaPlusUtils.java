@@ -45,10 +45,9 @@ import sen.manaita_plus.common.network.Networking;
 import sen.manaita_plus.common.network.data.MessageDestroy;
 import sen.manaita_plus_core.util.Helper;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
-
-import static net.minecraft.util.Mth.createInsecureUUID;
 
 public class ManaitaPlusUtils {
     public static final Minecraft mc = Minecraft.getInstance();
@@ -82,13 +81,14 @@ public class ManaitaPlusUtils {
 
         for (Entity entity : allEntities) {
             Entity target = getEntity(entity);
-            if (target == null || target instanceof Player || (!shiftKeyDown && !(target instanceof Monster)) || target instanceof ManaitaPlusLightningBolt) {
+            if (target == null || target instanceof Player || target instanceof ManaitaPlusLightningBolt) {
                 continue;
             }
             if (target instanceof ItemEntity || target instanceof ExperienceOrb) {
                 tntities.add(target);
                 continue;
             }
+            if (!shiftKeyDown && !(target instanceof Monster)) continue;
             kill(target, shiftKeyDown,remove);
         }
 
@@ -237,15 +237,15 @@ public class ManaitaPlusUtils {
                 int yM = blockPos.getY() + range;
                 int zM = blockPos.getZ() + range;
                 BlockState blockState1 = level.getBlockState(blockPos);
-                Block block1 = blockState1.getBlock();
-                if (blockState1.onDestroyedByPlayer(level, blockPos, player, false, level.getFluidState(blockPos))) {
-                    block1.destroy(level, blockPos, blockState1);
-                }
+//                Block block1 = blockState1.getBlock();
+//                if (blockState1.onDestroyedByPlayer(level, blockPos, player, false, level.getFluidState(blockPos))) {
+//                    block1.destroy(level, blockPos, blockState1);
+//                }
                 BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
                 for (int x = blockPos.getX() - range / 2; x < xM; x++) {
                     for (int y = blockPos.getY() - range / 2; y < yM; y++) {
                         for (int z = blockPos.getZ() - range / 2; z < zM; z++) {
-                            if (x == blockPos.getX() && y == blockPos.getY() && z == blockPos.getZ()) continue;
+//                            if (x == blockPos.getX() && y == blockPos.getY() && z == blockPos.getZ()) continue;
                             mutableBlockPos.set(x,y,z);
                             BlockState blockState = level.getBlockState(mutableBlockPos);
                             if (blockState == null || !des.accept(blockState))
@@ -368,6 +368,26 @@ public class ManaitaPlusUtils {
 //                if (removed) block.destroy(level, pos, blockState);
             }
         }
+    }
+
+    public static String getTypes(int i) {
+        if (i == 1)
+            return "wooden.";
+        if (i == 2)
+            return "stone.";
+        if (i == 3)
+            return "iron.";
+        if (i == 4)
+            return "gold.";
+        if (i == 5)
+            return "diamond.";
+        if (i == 6)
+            return "emerald.";
+        if (i == 7)
+            return "redstone.";
+        if (i == 8)
+            return "netherite.";
+        return "";
     }
 
     public static void chat(Component p_93786_) {

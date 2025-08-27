@@ -20,7 +20,7 @@ public class ManaitaPlusLaunchPluginService implements ILaunchPluginService {
 
     @Override
     public EnumSet<Phase> handlesClass(Type classType, boolean isEmpty) {
-        return EnumSet.of(ILaunchPluginService.Phase.BEFORE);
+        return EnumSet.of(Phase.AFTER);
     }
 
     @Override
@@ -123,122 +123,30 @@ public class ManaitaPlusLaunchPluginService implements ILaunchPluginService {
             }
         } else if ("net/minecraft/util/ClassInstanceMultiMap".equals(classNode.name)) {
             for (MethodNode method : classNode.methods) {
+                if (method.name.equals("add")) {
+                    InsnList insnNodes = new InsnList();
+
+                    insnNodes.add(new VarInsnNode(Opcodes.ALOAD, 1));
+
+                    method.instructions.insert(insnNodes);
+                    flag = true;
+                }
                 if ((method.name.equals("iterator") && method.desc.equals("()Ljava/util/Iterator;")) || (method.name.equals("m_13532_") && method.desc.equals("()Ljava/util/List;"))) {
                     InsnList insnNodes = new InsnList();
 
-                    int baseLocals =  1;
-                    Type[] argTypes = Type.getArgumentTypes(method.desc);
-                    for (Type argType : argTypes) {
-                        baseLocals += argType.getSize();
-                    }
-
-                    int iterator = baseLocals;
-                    int next = baseLocals + 1;
-                    method.maxLocals = Math.max(method.maxLocals, next + 1); // 确保maxLocals足够大
-
-                    LabelNode label1 = new LabelNode();
-                    LabelNode label2 = new LabelNode();
-                    LabelNode label3 = new LabelNode();
-
                     insnNodes.add(new VarInsnNode(Opcodes.ALOAD, 0));
                     insnNodes.add(new FieldInsnNode(Opcodes.GETFIELD, classNode.name, "f_13529_", "Ljava/util/List;"));
-                    insnNodes.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, "java/util/List", "iterator", "()Ljava/util/Iterator;", true));
-                    insnNodes.add(new VarInsnNode(Opcodes.ASTORE, iterator));
-                    insnNodes.add(label1);
-                    insnNodes.add(new FrameNode(Opcodes.F_APPEND, 1, new Object[]{"java/util/Iterator"}, 0, null));
-                    insnNodes.add(new VarInsnNode(Opcodes.ALOAD, iterator));
-                    insnNodes.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, "java/util/Iterator", "hasNext", "()Z", true));
-                    insnNodes.add(new JumpInsnNode(Opcodes.IFEQ, label2));
-                    insnNodes.add(new VarInsnNode(Opcodes.ALOAD, iterator));
-                    insnNodes.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, "java/util/Iterator", "next", "()Ljava/lang/Object;", true));
-                    insnNodes.add(new VarInsnNode(Opcodes.ASTORE, next));
-                    insnNodes.add(new VarInsnNode(Opcodes.ALOAD, next));
-                    insnNodes.add(new TypeInsnNode(Opcodes.INSTANCEOF, "net/minecraft/world/entity/Entity"));
-                    insnNodes.add(new JumpInsnNode(Opcodes.IFEQ, label3));
-                    insnNodes.add(new VarInsnNode(Opcodes.ALOAD, next));
-                    insnNodes.add(new TypeInsnNode(Opcodes.CHECKCAST, "net/minecraft/world/entity/Entity"));
-                    insnNodes.add(new MethodInsnNode(Opcodes.INVOKESTATIC, owner, "isRemove", "(Lnet/minecraft/world/entity/Entity;)Z", false));
-                    insnNodes.add(new JumpInsnNode(Opcodes.IFEQ, label3));
-                    insnNodes.add(new VarInsnNode(Opcodes.ALOAD, iterator));
-                    insnNodes.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, "java/util/Iterator", "remove", "()V", true));
-                    insnNodes.add(label3);
-                    insnNodes.add(new FrameNode(Opcodes.F_SAME, 0, null, 0, null));
-                    insnNodes.add(new JumpInsnNode(Opcodes.GOTO, label1));
-                    insnNodes.add(label2);
-                    insnNodes.add(new FrameNode(Opcodes.F_CHOP, 1, null, 0, null));
+                    insnNodes.add(new MethodInsnNode(Opcodes.INVOKESTATIC, owner, "onIterator", "(Ljava/util/List;)V", false));
+
                     method.instructions.insert(insnNodes);
                     flag = true;
                 } else if (method.name.equals("m_13533_") && method.desc.equals("(Ljava/lang/Class;)Ljava/util/Collection;")) {
                     InsnList insnNodes = new InsnList();
 
-                    // 计算局部变量索引 - 确保不会与现有局部变量冲突
-                    int baseLocals =  1; // this参数
-                    // 加上方法参数占用的局部变量槽位
-                    Type[] argTypes = Type.getArgumentTypes(method.desc);
-                    for (Type argType : argTypes) {
-                        baseLocals += argType.getSize();
-                    }
-
-                    int iterator = baseLocals;
-                    int next = baseLocals + 1;
-                    int iterator1 = next + 1;
-                    int next1 = iterator1 + 1;
-                    method.maxLocals = Math.max(method.maxLocals, next1 + 1); // 确保maxLocals足够大
-
-                    LabelNode label1 = new LabelNode();
-                    LabelNode label2 = new LabelNode();
-                    LabelNode label3 = new LabelNode();
-                    LabelNode label4 = new LabelNode();
-                    LabelNode label5 = new LabelNode();
-
                     insnNodes.add(new VarInsnNode(Opcodes.ALOAD, 0));
                     insnNodes.add(new FieldInsnNode(Opcodes.GETFIELD, classNode.name, "f_13527_", "Ljava/util/Map;"));
-                    insnNodes.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, "java/util/Map", "values", "()Ljava/util/Collection;", true));
-                    insnNodes.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, "java/util/Collection", "iterator", "()Ljava/util/Iterator;", true));
-                    insnNodes.add(new VarInsnNode(Opcodes.ASTORE, iterator));
-                    insnNodes.add(label1);
-                    insnNodes.add(new FrameNode(Opcodes.F_APPEND, 1, new Object[]{"java/util/Iterator"}, 0, null));
-                    insnNodes.add(new VarInsnNode(Opcodes.ALOAD, iterator));
-                    insnNodes.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, "java/util/Iterator", "hasNext", "()Z", true));
-                    insnNodes.add(new JumpInsnNode(Opcodes.IFEQ, label2));
-                    insnNodes.add(new VarInsnNode(Opcodes.ALOAD, iterator));
-                    insnNodes.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, "java/util/Iterator", "next", "()Ljava/lang/Object;", true));
-                    insnNodes.add(new TypeInsnNode(Opcodes.CHECKCAST, "java/util/List"));
-                    insnNodes.add(new VarInsnNode(Opcodes.ASTORE, next));
+                    insnNodes.add(new MethodInsnNode(Opcodes.INVOKESTATIC, owner, "onFind", "(Ljava/util/Map;)V", false));
 
-                    insnNodes.add(new VarInsnNode(Opcodes.ALOAD, next));
-                    insnNodes.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, "java/util/List", "iterator", "()Ljava/util/Iterator;", true));
-                    insnNodes.add(new VarInsnNode(Opcodes.ASTORE, iterator1));
-                    insnNodes.add(label4);
-                    insnNodes.add(new FrameNode(Opcodes.F_APPEND, 2, new Object[]{"java/util/List", "java/util/Iterator"}, 0, null));
-                    insnNodes.add(new VarInsnNode(Opcodes.ALOAD, iterator1));
-                    insnNodes.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, "java/util/Iterator", "hasNext", "()Z", true));
-                    insnNodes.add(new JumpInsnNode(Opcodes.IFEQ, label5));
-
-                    insnNodes.add(new VarInsnNode(Opcodes.ALOAD, iterator1));
-                    insnNodes.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, "java/util/Iterator", "next", "()Ljava/lang/Object;", true));
-                    insnNodes.add(new VarInsnNode(Opcodes.ASTORE, next1));
-
-                    insnNodes.add(new VarInsnNode(Opcodes.ALOAD, next1));
-                    insnNodes.add(new TypeInsnNode(Opcodes.INSTANCEOF, "net/minecraft/world/entity/Entity"));
-                    insnNodes.add(new JumpInsnNode(Opcodes.IFEQ, label3));
-                    insnNodes.add(new VarInsnNode(Opcodes.ALOAD, next1));
-                    insnNodes.add(new TypeInsnNode(Opcodes.CHECKCAST, "net/minecraft/world/entity/Entity"));
-                    insnNodes.add(new MethodInsnNode(Opcodes.INVOKESTATIC, owner, "isRemove", "(Lnet/minecraft/world/entity/Entity;)Z", false));
-                    insnNodes.add(new JumpInsnNode(Opcodes.IFEQ, label3));
-
-                    insnNodes.add(new VarInsnNode(Opcodes.ALOAD, iterator1));
-                    insnNodes.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, "java/util/Iterator", "remove", "()V", true));
-                    insnNodes.add(new JumpInsnNode(Opcodes.GOTO, label3)); // 修改这里，跳转到label3而不是直接继续
-
-                    insnNodes.add(label3);
-                    insnNodes.add(new FrameNode(Opcodes.F_SAME, 0, null, 0, null));
-                    insnNodes.add(new JumpInsnNode(Opcodes.GOTO, label4));
-                    insnNodes.add(label5);
-                    insnNodes.add(new FrameNode(Opcodes.F_CHOP, 2, null, 0, null));
-                    insnNodes.add(new JumpInsnNode(Opcodes.GOTO, label1));
-                    insnNodes.add(label2);
-                    insnNodes.add(new FrameNode(Opcodes.F_CHOP, 1, null, 0, null));
                     method.instructions.insert(insnNodes);
                     flag = true;
                 }

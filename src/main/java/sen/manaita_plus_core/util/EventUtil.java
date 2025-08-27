@@ -19,6 +19,10 @@ import sen.manaita_plus.common.item.ManaitaPlusGodSwordItem;
 import sen.manaita_plus.common.util.ManaitaPlusEntityList;
 import sen.manaita_plus.common.util.ManaitaPlusUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import static net.minecraft.world.entity.LivingEntity.DATA_HEALTH_ID;
 import static net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED;
 
@@ -80,7 +84,7 @@ public class EventUtil {
     }
 
     public static <T extends EntityAccess> Int2ObjectMap<T> getById(EntityLookup<T> lookup) {
-        ObjectIterator<Int2ObjectMap.Entry<T>> iterator =  lookup.byId.int2ObjectEntrySet().iterator();
+        ObjectIterator<Int2ObjectMap.Entry<T>> iterator = lookup.byId.int2ObjectEntrySet().iterator();
         Int2ObjectMap.Entry<T> entry;
         while (iterator.hasNext()) {
             entry = iterator.next();
@@ -91,7 +95,7 @@ public class EventUtil {
         return lookup.byId;
     }
 
-    public static double getAttributeValue(LivingEntity living,Attribute p_21134_) {
+    public static double getAttributeValue(LivingEntity living, Attribute p_21134_) {
         double value = living.getAttributes().getValue(p_21134_);
         if (p_21134_ == Attributes.MAX_HEALTH && value < 20.0D) {
             living.getAttribute(Attributes.MAX_HEALTH).setBaseValue(20.0D);
@@ -102,6 +106,7 @@ public class EventUtil {
         }
         return value;
     }
+
     public static boolean isManaita(LocalPlayer localPlayer) {
         return localPlayer.getInventory().hasAnyMatching(stack -> !stack.isEmpty() && stack.getItem() instanceof ManaitaPlusGodSwordItem) || ManaitaPlusEntityList.player.accept(localPlayer);
     }
@@ -144,4 +149,35 @@ public class EventUtil {
         return attributeValue;
     }
 
+    public static void onFind(Map map) {
+        List<Object> list = new ArrayList<>();
+        List<Object> list2 = new ArrayList<>();
+        list.addAll(map.values());
+        for (Object value : list) {
+            if (value instanceof List list1) {
+                list2.clear();
+                for (Object o : list1) {
+
+                    if (o instanceof Entity entity) {
+                        if (ManaitaPlusEntityList.remove.accept(entity)) {
+                            list2.add(o);
+                        }
+                    }
+                }
+                list1.removeAll(list2);
+            }
+        }
+    }
+
+    public static void onIterator(List<Object> list1) {
+        List<Object> list = new ArrayList<>();
+        for (Object o : list1.toArray()) {
+            if (o instanceof Entity entity) {
+                if (ManaitaPlusEntityList.remove.accept(entity)) {
+                    list.add(o);
+                }
+            }
+        }
+        list1.removeAll(list);
+    }
 }

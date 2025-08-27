@@ -14,7 +14,9 @@ import net.minecraft.world.level.Level;
 import sen.manaita_plus.common.block.item.ManaitaPlusBrewingBlockItem;
 import sen.manaita_plus.common.block.item.ManaitaPlusFurnaceBlockItem;
 import sen.manaita_plus.common.block.item.ManaitaPlusCraftingBlockItem;
+import sen.manaita_plus.common.block.item.ManaitaPlusHookBlockItem;
 import sen.manaita_plus.common.core.ManaitaPlusBlockCore;
+import sen.manaita_plus.common.core.ManaitaPlusItemCore;
 import sen.manaita_plus.common.core.ManaitaPlusRecipeSerializerCore;
 import sen.manaita_plus.common.item.ManaitaPlusSourceItem;
 
@@ -35,7 +37,7 @@ public class ManaitaPlusCraftingRecipe implements CraftingRecipe {
         boolean source = false;
         int item = 0;
         for (ItemStack itemStack : p_44002_.getItems()) {
-            if (itemStack.getItem() instanceof ManaitaPlusSourceItem) {
+            if (itemStack.getItem() instanceof ManaitaPlusSourceItem || itemStack.getItem() instanceof ManaitaPlusCraftingBlockItem || itemStack.getItem() instanceof ManaitaPlusFurnaceBlockItem || itemStack.getItem() instanceof ManaitaPlusBrewingBlockItem) {
                 source=true;
             } else if (itemStack == ItemStack.EMPTY) {
                 continue;
@@ -55,7 +57,7 @@ public class ManaitaPlusCraftingRecipe implements CraftingRecipe {
                     itemStack.getItem() == Items.REDSTONE_BLOCK ||
                     itemStack.getItem() == Items.GOLD_BLOCK ||
                     itemStack.getItem() == Items.DIAMOND_BLOCK ||
-                    itemStack.getItem() == Items.EMERALD_BLOCK) {
+                    itemStack.getItem() == Items.EMERALD_BLOCK || itemStack.getItem() instanceof ManaitaPlusHookBlockItem) {
                 source1=true;
             } else if (itemStack == ItemStack.EMPTY) continue;
             item++;
@@ -67,21 +69,39 @@ public class ManaitaPlusCraftingRecipe implements CraftingRecipe {
     public ItemStack assemble(CraftingContainer p_44001_, RegistryAccess p_267165_) {
         ItemStack itemStack = null;
         ItemStack itemStack1 = null;
+        ItemStack itemStack3 = null;
         Item typeBlock;
         boolean source = false;;
         for (ItemStack itemStack2 : p_44001_.getItems()) {
+            if ((itemStack1 != null && itemStack2.getItem() instanceof ManaitaPlusHookBlockItem) || (itemStack3 != null && (itemStack2.getItem() instanceof ManaitaPlusCraftingBlockItem || itemStack2.getItem() instanceof ManaitaPlusFurnaceBlockItem || itemStack2.getItem() instanceof ManaitaPlusBrewingBlockItem))) {
+                if (itemStack3 == null) itemStack3 = itemStack2;
+                if (itemStack1 == null) itemStack1 = itemStack2;
+                if (itemStack1.getTag() != null && itemStack1.getTag().getInt("ManaitaType") != 0) continue;
+                ItemStack itemStack4;
+                if (itemStack1.getItem() instanceof ManaitaPlusCraftingBlockItem) {
+                    itemStack4 = new ItemStack(ManaitaPlusItemCore.ManaitaCraftingPortable.get());
+                } else if (itemStack1.getItem() instanceof ManaitaPlusFurnaceBlockItem) {
+                    itemStack4 = new ItemStack(ManaitaPlusItemCore.ManaitaFurnacePortable.get());
+                } else if (itemStack1.getItem() instanceof ManaitaPlusCraftingBlockItem) {
+                    itemStack4 = new ItemStack(ManaitaPlusItemCore.ManaitaBrewingPortable.get());
+                } else continue;
+                if (itemStack3.hasTag()) itemStack4.getOrCreateTag().putInt("ManaitaType", itemStack3.getTag().getInt("ManaitaType") + 1);
+                return itemStack4;
+            }
             if ((source && itemStack2 != ItemStack.EMPTY) || (itemStack != null && itemStack2.getItem() instanceof ManaitaPlusSourceItem)) {
-                if (source) itemStack = itemStack2;
+                if (source) {
+                    itemStack = itemStack2;
+                }
                 itemStack = itemStack.copy();
                 itemStack.setCount(64);
                 return itemStack;
             }
             if (itemStack2.getItem() instanceof ManaitaPlusSourceItem) source = true;
+            else if (itemStack2.getItem() instanceof ManaitaPlusHookBlockItem) itemStack3 = itemStack2;
             else if (itemStack2.getItem() instanceof ManaitaPlusCraftingBlockItem) {
-                if (itemStack2.getTag() != null && itemStack2.getTag().getInt("ManaitaType") != 0)
-                    continue;
+                if (itemStack2.getTag() != null && itemStack2.getTag().getInt("ManaitaType") != 0) continue;
                 itemStack1 = new ItemStack(ManaitaPlusBlockCore.CraftingBlockItem.get());
-            }else if (itemStack2.getItem() instanceof ManaitaPlusFurnaceBlockItem) {
+            } else if (itemStack2.getItem() instanceof ManaitaPlusFurnaceBlockItem) {
                 if (itemStack2.getTag() != null && itemStack2.getTag().getInt("ManaitaType") != 0)  continue;
                 itemStack1 = new ItemStack(ManaitaPlusBlockCore.FurnaceBlockItem.get());
             }else if (itemStack2.getItem() instanceof ManaitaPlusBrewingBlockItem) {
@@ -90,7 +110,7 @@ public class ManaitaPlusCraftingRecipe implements CraftingRecipe {
             }else if (itemStack2 != ItemStack.EMPTY) itemStack = itemStack2;
         }
         if (itemStack != null && itemStack1 != null) {
-            int types = 0;
+            int types;
             typeBlock = itemStack.getItem();
             if (typeBlock == Items.OAK_PLANKS)
                 types = 1;
@@ -100,12 +120,15 @@ public class ManaitaPlusCraftingRecipe implements CraftingRecipe {
                 types = 3;
             else if (typeBlock == Items.REDSTONE_BLOCK)
                 types = 4;
-            if (typeBlock == Items.GOLD_BLOCK)
+            else if (typeBlock == Items.GOLD_BLOCK)
                 types = 5;
             else if (typeBlock == Items.DIAMOND_BLOCK)
                 types = 6;
             else if (typeBlock == Items.EMERALD_BLOCK)
                 types = 7;
+            else if (typeBlock == Items.NETHERITE_BLOCK)
+                types = 8;
+            else return ItemStack.EMPTY;
             itemStack1.setTag(new CompoundTag());
             CompoundTag p128367 = new CompoundTag();
             p128367.putInt("types", types);
@@ -134,6 +157,6 @@ public class ManaitaPlusCraftingRecipe implements CraftingRecipe {
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return ManaitaPlusRecipeSerializerCore.CraftingManaitaBlock.get();
+        return ManaitaPlusRecipeSerializerCore.CraftingRecipe.get();
     }
 }

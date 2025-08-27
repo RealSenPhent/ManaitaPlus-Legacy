@@ -45,6 +45,12 @@
         "manaita_plus:manaita_type": 7
       },
       "model": "manaita_plus:block/furnace/furnace_manaita_emerald"
+    },
+    {
+      "predicate": {
+        "manaita_plus:manaita_type": 8
+      },
+      "model": "manaita_plus:block/furnace/furnace_manaita_netherite"
     }
   ]
 }

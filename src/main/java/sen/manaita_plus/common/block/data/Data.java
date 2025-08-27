@@ -3,14 +3,12 @@ package sen.manaita_plus.common.block.data;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class Data {
-    public static final IntegerProperty TYPES = IntegerProperty.create("types", 0, 7);
+    public static final IntegerProperty TYPES = IntegerProperty.create("types", 0, 8);
     public static final DirectionProperty WALL = DirectionProperty.create("wall", Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.UP, Direction.DOWN);
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final VoxelShape shapeNORTH = Block.box(3, 1, 0, 13, 15, 0.5F);

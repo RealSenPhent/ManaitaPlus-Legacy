@@ -12,8 +12,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.network.NetworkEvent;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import sen.manaita_plus.common.item.data.IManaitaPlusDestroy;
 import sen.manaita_plus.common.util.ManaitaPlusUtils;
 
@@ -58,7 +56,7 @@ public class MessageDestroy {
                             if (blockState == null || !des.accept(blockState))
                                 continue;
                             Block block = blockState.getBlock();
-                            block.playerWillDestroy(level, mutableBlockPos, blockState, mc.player);
+//                            block.playerWillDestroy(level, mutableBlockPos, blockState, mc.player);
 
                             ManaitaPlusUtils.setBlock(level, mutableBlockPos, level.getFluidState(mutableBlockPos).createLegacyBlock());
 

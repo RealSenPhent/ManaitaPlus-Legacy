@@ -55,11 +55,18 @@ public class ManaitaPlus {
             .icon(() -> ManaitaPlusBlockCore.CraftingBlockItem.get().getDefaultInstance())
             .title(Component.translatable("itemGroup.ManaitaPlusTab"))
             .displayItems((parameters, output) -> {
-                acceptA(ManaitaPlusBlockCore.CraftingBlockItem.get(), output);
-                acceptA(ManaitaPlusBlockCore.FurnaceBlockItem.get(), output);
-                acceptA(ManaitaPlusBlockCore.BrewingBlockItem.get(), output);
+                acceptA(ManaitaPlusBlockCore.CraftingBlockItem.get(), output,8);
+                acceptA(ManaitaPlusBlockCore.FurnaceBlockItem.get(), output,8);
+                acceptA(ManaitaPlusBlockCore.BrewingBlockItem.get(), output,8);
 
-                output.accept(ManaitaSwordGod.get()); 
+                output.accept(ManaitaWoodenHook.get());
+                acceptA(ManaitaPlusBlockCore.HookBlockItem.get(), output,7);
+
+                acceptA(ManaitaCraftingPortable.get(), output,8);
+                acceptA(ManaitaFurnacePortable.get(), output,8);
+                acceptA(ManaitaBrewingPortable.get(), output,8);
+
+                output.accept(ManaitaSwordGod.get());
                 output.accept(ManaitaSword.get());
                 output.accept(ManaitaAxe.get());
                 output.accept(ManaitaHoe.get());
@@ -73,123 +80,18 @@ public class ManaitaPlus {
                 output.accept(ManaitaLeggings.get());
                 output.accept(ManaitaBoots.get());
                 output.accept(ManaitaSource.get());
-                output.accept(ManaitaWoodenHook.get());
             }).build());
 
-    public static void acceptA(Item item, CreativeModeTab.Output output) {
-        output.accept(item);
-
-        ItemStack itemStack = new ItemStack(item);
-        itemStack.setTag(new CompoundTag());
-        CompoundTag p128367 = new CompoundTag();
-        p128367.putInt("types", 1);
-        itemStack.getTag().put("BlockStateTag", p128367);
-        itemStack.getTag().putInt("ManaitaType",1);
-        output.accept(itemStack);
-
-        itemStack = new ItemStack(item);
-        itemStack.setTag(new CompoundTag());
-        p128367 = new CompoundTag();
-        p128367.putInt("types", 2);
-        itemStack.getTag().put("BlockStateTag", p128367);
-        itemStack.getTag().putInt("ManaitaType",2);
-        output.accept(itemStack);
-
-        itemStack = new ItemStack(item);
-        itemStack.setTag(new CompoundTag());
-        p128367 = new CompoundTag();
-        p128367.putInt("types", 3);
-        itemStack.getTag().put("BlockStateTag", p128367);
-        itemStack.getTag().putInt("ManaitaType",3);
-        output.accept(itemStack);
-
-        itemStack = new ItemStack(item);
-        itemStack.setTag(new CompoundTag());
-        p128367 = new CompoundTag();
-        p128367.putInt("types", 4);
-        itemStack.getTag().put("BlockStateTag", p128367);
-        itemStack.getTag().putInt("ManaitaType",4);
-        output.accept(itemStack);
-
-        itemStack = new ItemStack(item);
-        itemStack.setTag(new CompoundTag());
-        p128367 = new CompoundTag();
-        p128367.putInt("types", 5);
-        itemStack.getTag().put("BlockStateTag", p128367);
-        itemStack.getTag().putInt("ManaitaType",5);
-        output.accept(itemStack);
-
-        itemStack = new ItemStack(item);
-        itemStack.setTag(new CompoundTag());
-        p128367 = new CompoundTag();
-        p128367.putInt("types", 6);
-        itemStack.getTag().put("BlockStateTag", p128367);
-        itemStack.getTag().putInt("ManaitaType",6);
-        output.accept(itemStack);
-
-        itemStack = new ItemStack(item);
-        itemStack.setTag(new CompoundTag());
-        p128367 = new CompoundTag();
-        p128367.putInt("types", 7);
-        itemStack.getTag().put("BlockStateTag", p128367);
-        itemStack.getTag().putInt("ManaitaType",7);
-        output.accept(itemStack);
-
-        itemStack = new ItemStack(item);
-        itemStack.setTag(new CompoundTag());
-        p128367 = new CompoundTag();
-        p128367.putInt("types", 1);
-        itemStack.getTag().put("BlockStateTag", p128367);
-        itemStack.getTag().putInt("ManaitaType",1);
-        output.accept(itemStack);
-
-        itemStack = new ItemStack(item);
-        itemStack.setTag(new CompoundTag());
-        p128367 = new CompoundTag();
-        p128367.putInt("types", 2);
-        itemStack.getTag().put("BlockStateTag", p128367);
-        itemStack.getTag().putInt("ManaitaType",2);
-        output.accept(itemStack);
-
-        itemStack = new ItemStack(item);
-        itemStack.setTag(new CompoundTag());
-        p128367 = new CompoundTag();
-        p128367.putInt("types", 3);
-        itemStack.getTag().put("BlockStateTag", p128367);
-        itemStack.getTag().putInt("ManaitaType",3);
-        output.accept(itemStack);
-
-        itemStack = new ItemStack(item);
-        itemStack.setTag(new CompoundTag());
-        p128367 = new CompoundTag();
-        p128367.putInt("types", 4);
-        itemStack.getTag().put("BlockStateTag", p128367);
-        itemStack.getTag().putInt("ManaitaType",4);
-        output.accept(itemStack);
-
-        itemStack = new ItemStack(item);
-        itemStack.setTag(new CompoundTag());
-        p128367 = new CompoundTag();
-        p128367.putInt("types", 5);
-        itemStack.getTag().put("BlockStateTag", p128367);
-        itemStack.getTag().putInt("ManaitaType",5);
-        output.accept(itemStack);
-
-        itemStack = new ItemStack(item);
-        itemStack.setTag(new CompoundTag());
-        p128367 = new CompoundTag();
-        p128367.putInt("types", 6);
-        itemStack.getTag().put("BlockStateTag", p128367);
-        itemStack.getTag().putInt("ManaitaType",6);
-        output.accept(itemStack);
-
-        itemStack = new ItemStack(item);
-        itemStack.setTag(new CompoundTag());
-        p128367 = new CompoundTag();
-        p128367.putInt("types", 7);
-        itemStack.getTag().put("BlockStateTag", p128367);
-        itemStack.getTag().putInt("ManaitaType",7);
-        output.accept(itemStack);
+    public static void acceptA(Item item, CreativeModeTab.Output output,int manaitaType) {
+        for (int i = 0; i <= manaitaType; i++) {
+            ItemStack itemStack = new ItemStack(item);
+            itemStack.setTag(new CompoundTag());
+            CompoundTag p128367 = new CompoundTag();
+            p128367.putInt("types", i);
+            itemStack.getTag().put("BlockStateTag", p128367);
+            itemStack.getTag().putInt("ManaitaType",i);
+            output.accept(itemStack);
+        }
     }
 
     public ManaitaPlus() {
@@ -235,7 +137,21 @@ public class ManaitaPlus {
             ItemProperties.register(ManaitaPlusBlockCore.BrewingBlockItem.get(),
                     new ResourceLocation(ManaitaPlus.MODID, "manaita_type"),
                     (stack, level, entity, seed) -> stack.getOrCreateTag().getInt("ManaitaType"));
-        });
+
+            ItemProperties.register(ManaitaPlusBlockCore.HookBlockItem.get(),
+                    new ResourceLocation(ManaitaPlus.MODID, "manaita_type"),
+                    (stack, level, entity, seed) -> stack.getOrCreateTag().getInt("ManaitaType"));
+
+            ItemProperties.register(ManaitaCraftingPortable.get(),
+                    new ResourceLocation(ManaitaPlus.MODID, "manaita_type"),
+                    (stack, level, entity, seed) -> stack.getOrCreateTag().getInt("ManaitaType"));
+            ItemProperties.register(ManaitaFurnacePortable.get(),
+                    new ResourceLocation(ManaitaPlus.MODID, "manaita_type"),
+                    (stack, level, entity, seed) -> stack.getOrCreateTag().getInt("ManaitaType"));
+            ItemProperties.register(ManaitaBrewingPortable.get(),
+                    new ResourceLocation(ManaitaPlus.MODID, "manaita_type"),
+                    (stack, level, entity, seed) -> stack.getOrCreateTag().getInt("ManaitaType"));
+          });
     }
 
 

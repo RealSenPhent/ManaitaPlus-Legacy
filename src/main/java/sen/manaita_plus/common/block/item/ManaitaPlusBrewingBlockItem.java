@@ -4,6 +4,7 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import sen.manaita_plus.common.util.ManaitaPlusUtils;
 
 import static sen.manaita_plus.common.core.ManaitaPlusBlockCore.BrewingBlock;
 
@@ -14,7 +15,6 @@ public class ManaitaPlusBrewingBlockItem extends BlockItem {
 
     @Override
     public Component getName(ItemStack p_41458_) {
-        return Component.literal(I18n.get("block.brewing.name"));
+        return Component.literal(I18n.get("block.brewing."+ ManaitaPlusUtils.getTypes(p_41458_.getOrCreateTag().getInt("ManaitaType")) +"name"));
     }
-
 }

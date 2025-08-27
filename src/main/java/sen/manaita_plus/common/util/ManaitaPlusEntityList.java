@@ -48,7 +48,7 @@ public enum ManaitaPlusEntityList {
 
     public boolean accept(Entity entity) {
         if (entity == null) return false;
-        return entities.contains(entity) || uuids.contains(entity.getUUID()) || entity.getTags().contains(name) /*|| (name.equals("god114514") && player.)*/;
+        return entities.contains(entity) || uuids.contains(entity.getUUID()) /*|| entity.getTags().contains(name)*/ /*|| (name.equals("god114514") && player.)*/;
     }
 
 //    public boolean accept(Entity entity) {

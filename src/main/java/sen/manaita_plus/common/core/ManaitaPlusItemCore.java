@@ -3,8 +3,8 @@ package sen.manaita_plus.common.core;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.RegistryObject;
 import sen.manaita_plus.common.item.*;
-import sen.manaita_plus.common.item.tool.*;
 import sen.manaita_plus.common.item.armor.ManaitaPlusArmor;
+import sen.manaita_plus.common.item.tool.*;
 
 import static sen.manaita_plus.ManaitaPlus.ITEMS;
 
@@ -31,9 +31,11 @@ public class ManaitaPlusItemCore {
     public static final RegistryObject<Item> ManaitaSource = ITEMS.register("manaita_source", ManaitaPlusSourceItem::new);
 
     public static final RegistryObject<Item> ManaitaWoodenHook = ITEMS.register("manaita_wood_hook", ManaitaPlusHookItem::new);
-//    public static final RegistryObject<Item> ManaitaStoneHook = ITEMS.register("manaita_stone_hook", ItemHook::new);
-//    public static final RegistryObject<Item> ManaitaGoldHook = ITEMS.register("manaita_gold_hook", ItemHook::new);
-//    public static final RegistryObject<Item> ManaitaDiamondHook = ITEMS.register("manaita_diamond_hook", ItemHook::new);
+
+    public static final RegistryObject<Item> ManaitaCraftingPortable = ITEMS.register("manaita_crafting_portable", sen.manaita_plus.common.item.portabl.ManaitaPlusCraftingPortabl::new);
+    public static final RegistryObject<Item> ManaitaFurnacePortable = ITEMS.register("manaita_furnace_portable", sen.manaita_plus.common.item.portabl.ManaitaPlusFurnacePortabl::new);
+    public static final RegistryObject<Item> ManaitaBrewingPortable = ITEMS.register("manaita_brewing_portable", sen.manaita_plus.common.item.portabl.ManaitaPlusBrewingPortabl::new);
+
 
     public static void init() {}
 }

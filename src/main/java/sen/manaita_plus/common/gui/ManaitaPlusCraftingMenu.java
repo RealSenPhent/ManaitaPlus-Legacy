@@ -23,9 +23,15 @@ public class ManaitaPlusCraftingMenu extends RecipeBookMenu<CraftingContainer> {
     private final ResultContainer resultSlots = new ResultContainer();
     private final ContainerLevelAccess access;
     private final Player player;
+    private boolean stillValid = false;
 
     public ManaitaPlusCraftingMenu(int p_39353_, Inventory p_39354_, FriendlyByteBuf extraData) {
         this(p_39353_, p_39354_, ContainerLevelAccess.NULL);
+    }
+
+    public ManaitaPlusCraftingMenu(int p_39353_, Inventory p_39354_,Level level) {
+        this(p_39353_, p_39354_,ContainerLevelAccess.create(level, null));
+        stillValid = true;
     }
 
     public ManaitaPlusCraftingMenu(int p_39356_, Inventory p_39357_, ContainerLevelAccess p_39358_) {
@@ -74,9 +80,7 @@ public class ManaitaPlusCraftingMenu extends RecipeBookMenu<CraftingContainer> {
     }
 
     public void slotsChanged(Container p_39366_) {
-        this.access.execute((p_39386_, p_39387_) -> {
-            slotChangedCraftingGrid(this, p_39386_, this.player, this.craftSlots, this.resultSlots);
-        });
+        this.access.execute((p_39386_, p_39387_) -> slotChangedCraftingGrid(this, p_39386_, this.player, this.craftSlots, this.resultSlots));
     }
 
     public void fillCraftSlotsStackedContents(StackedContents p_39374_) {
@@ -148,6 +152,7 @@ public class ManaitaPlusCraftingMenu extends RecipeBookMenu<CraftingContainer> {
     }
 
     public boolean stillValid(Player p_39368_) {
+        if (stillValid) return true;
         return stillValid(this.access, p_39368_, ManaitaPlusBlockCore.CraftingBlock.get());
     }
 

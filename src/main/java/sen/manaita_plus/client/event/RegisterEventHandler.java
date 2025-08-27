@@ -9,6 +9,7 @@ import sen.manaita_plus.ManaitaPlus;
 import sen.manaita_plus.client.render.block.RenderBrewingManaitaBlockEntity;
 import sen.manaita_plus.client.render.block.RenderFurnaceManaitaBlockEntity;
 import sen.manaita_plus.client.render.block.RenderCraftingManaitaBlockEntity;
+import sen.manaita_plus.client.render.block.RenderHookManaitaBlockEntity;
 import sen.manaita_plus.client.render.entity.ManaitaPlusLightningBoltRenderer;
 import sen.manaita_plus.client.render.entity.ManaitaPlusLightningPlusBoltRenderer;
 import sen.manaita_plus.client.render.entity.RenderManaitaArrow;
@@ -26,7 +27,8 @@ public class RegisterEventHandler {
 
         BlockEntityRenderers.register(ManaitaPlusBlockEntityCore.FURNACE_BLOCK_ENTITY.get(), RenderFurnaceManaitaBlockEntity::new);
         BlockEntityRenderers.register(ManaitaPlusBlockEntityCore.BREWING_BLOCK_ENTITY.get(), RenderBrewingManaitaBlockEntity::new);
-        BlockEntityRenderers.register(ManaitaPlusBlockEntityCore.BLOCK_ENTITY.get(), RenderCraftingManaitaBlockEntity::new);
+        BlockEntityRenderers.register(ManaitaPlusBlockEntityCore.CRAFTING_BLOCK_ENTITY.get(), RenderCraftingManaitaBlockEntity::new);
+        BlockEntityRenderers.register(ManaitaPlusBlockEntityCore.HOOK_BLOCK_ENTITY.get(), RenderHookManaitaBlockEntity::new);
     }
 }
 

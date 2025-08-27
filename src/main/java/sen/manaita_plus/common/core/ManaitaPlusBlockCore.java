@@ -6,9 +6,11 @@ import net.minecraftforge.registries.RegistryObject;
 import sen.manaita_plus.common.block.ManaitaPlusBrewingStandBlock;
 import sen.manaita_plus.common.block.ManaitaPlusFurnaceBlock;
 import sen.manaita_plus.common.block.ManaitaPlusCraftingBlock;
+import sen.manaita_plus.common.block.ManaitaPlusHookBlock;
 import sen.manaita_plus.common.block.item.ManaitaPlusBrewingBlockItem;
 import sen.manaita_plus.common.block.item.ManaitaPlusFurnaceBlockItem;
 import sen.manaita_plus.common.block.item.ManaitaPlusCraftingBlockItem;
+import sen.manaita_plus.common.block.item.ManaitaPlusHookBlockItem;
 
 import static sen.manaita_plus.ManaitaPlus.BLOCKS;
 import static sen.manaita_plus.ManaitaPlus.ITEMS;
@@ -23,5 +25,7 @@ public class ManaitaPlusBlockCore {
     public static final RegistryObject<Block> BrewingBlock = BLOCKS.register("block_brewing_manaita", ManaitaPlusBrewingStandBlock::new);
     public static final RegistryObject<Item> BrewingBlockItem = ITEMS.register("block_brewing_manaita", ManaitaPlusBrewingBlockItem::new);
 
+    public static final RegistryObject<Block> HookBlock = BLOCKS.register("block_hook_manaita", ManaitaPlusHookBlock::new);
+    public static final RegistryObject<Item> HookBlockItem = ITEMS.register("block_hook_manaita", ManaitaPlusHookBlockItem::new);
     public static void init() {}
 }
