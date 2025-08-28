@@ -28,6 +28,7 @@ public class BrewingStandScreen extends AbstractContainerScreen<ManaitaPlusBrewi
         this.renderBackground(p_283297_);
         super.render(p_283297_, p_283600_, p_282033_, p_283410_);
         this.renderTooltip(p_283297_, p_283600_, p_282033_);
+        p_283297_.drawCenteredString(this.font, "64x",108, 34, 4210752);
     }
 
     protected void renderBg(GuiGraphics p_282963_, float p_282080_, int p_283365_, int p_283150_) {

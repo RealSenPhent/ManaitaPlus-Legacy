@@ -7,35 +7,29 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.block.*;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import sen.manaita_plus.common.block.data.Data;
-import sen.manaita_plus.common.block.entity.ManaitaPlusCraftingBlockEntity;
 
 import java.util.List;
 
-public class ManaitaPlusHookBlock extends BaseEntityBlock {
+public class ManaitaPlusHookBlock extends Block {
     public ManaitaPlusHookBlock() {
         super(Properties.of().forceSolidOff());
-        this.registerDefaultState(this.stateDefinition.any().setValue(Data.FACING, Direction.NORTH).setValue(Data.WALL,Direction.DOWN).setValue(Data.TYPES,0));
+        this.registerDefaultState(this.stateDefinition.any().setValue(Data.FACING, Direction.NORTH).setValue(Data.TYPES,0));
     }
-
-
-//    @Override
-//    public MutableComponent getName() {
-//        return Component.translatable("tile.fixed_hook." + ManaitaPlusUtils.getTypes(p_60555_.getValue(Data.TYPES)) + "name");
-//    }
 
     @Override
     public VoxelShape getShape(BlockState p_60555_, BlockGetter p_60556_, BlockPos p_60557_, CollisionContext p_60558_) {
-        Direction wall = p_60555_.getValue(Data.WALL);
         Direction direction = p_60555_.getValue(Data.FACING);
-        return wall == Direction.EAST ? Data.shapeEAST : wall == Direction.SOUTH ? Data.shapeSOUTH : wall == Direction.NORTH ? Data.shapeNORTH : wall == Direction.WEST ? Data.shapeWEST :  direction == Direction.NORTH || direction == Direction.SOUTH ? wall == Direction.UP ? Data.shapeUNS : Data.shapeDNS : wall == Direction.UP ? Data.shapeUWE :  Data.shapeDWE;
+        return direction == Direction.EAST ? Data.shapeE : direction == Direction.SOUTH ? Data.shapeS : direction == Direction.NORTH ? Data.shapeN : Data.shapeW;
     }
 
     @Override
@@ -52,12 +46,11 @@ public class ManaitaPlusHookBlock extends BaseEntityBlock {
 
 
     public BlockState getStateForPlacement(BlockPlaceContext p_48689_) {
-        return this.defaultBlockState().setValue(Data.WALL,p_48689_.getClickedFace().getOpposite()).setValue(Data.FACING, p_48689_.getHorizontalDirection().getOpposite());
+        return this.defaultBlockState().setValue(Data.FACING, p_48689_.getHorizontalDirection().getOpposite());
     }
 
-
     public RenderShape getRenderShape(BlockState p_48727_) {
-        return RenderShape.INVISIBLE;
+        return RenderShape.MODEL;
     }
 
     public BlockState rotate(BlockState p_48722_, Rotation p_48723_) {
@@ -69,10 +62,6 @@ public class ManaitaPlusHookBlock extends BaseEntityBlock {
     }
 
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_48725_) {
-        p_48725_.add(Data.FACING,Data.TYPES,Data.WALL);
-    }
-
-    public BlockEntity newBlockEntity(BlockPos p_153277_, BlockState p_153278_) {
-        return new ManaitaPlusCraftingBlockEntity(p_153277_, p_153278_);
+        p_48725_.add(Data.FACING,Data.TYPES);
     }
 }

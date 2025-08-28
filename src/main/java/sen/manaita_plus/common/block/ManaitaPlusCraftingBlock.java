@@ -35,7 +35,7 @@ public class ManaitaPlusCraftingBlock extends BaseEntityBlock {
 
     public ManaitaPlusCraftingBlock() {
         super(BlockBehaviour.Properties.of().forceSolidOff());
-        this.registerDefaultState(this.stateDefinition.any().setValue(Data.FACING, Direction.NORTH).setValue(Data.WALL,Direction.DOWN).setValue(Data.TYPES,0));
+        this.registerDefaultState(this.stateDefinition.any().setValue(Data.HOOK, 8).setValue(Data.FACING, Direction.NORTH).setValue(Data.WALL,Direction.DOWN).setValue(Data.TYPES,0));
     }
 
 
@@ -92,7 +92,7 @@ public class ManaitaPlusCraftingBlock extends BaseEntityBlock {
     }
 
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_48725_) {
-        p_48725_.add(Data.FACING,Data.TYPES,Data.WALL);
+        p_48725_.add(Data.FACING,Data.TYPES,Data.WALL, Data.HOOK);
     }
 
     public BlockEntity newBlockEntity(BlockPos p_153277_, BlockState p_153278_) {

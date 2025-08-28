@@ -58,6 +58,7 @@ public class CraftingManaitaScreen extends AbstractContainerScreen<ManaitaPlusCr
 
         this.renderTooltip(p_282508_, p_98480_, p_98481_);
         this.recipeBookComponent.renderTooltip(p_282508_, this.leftPos, this.topPos, p_98480_, p_98481_);
+        p_282508_.drawCenteredString(this.font, "64x",120, 20, 4210752);
     }
 
     protected void renderBg(GuiGraphics p_283540_, float p_282132_, int p_283078_, int p_283647_) {

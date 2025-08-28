@@ -94,7 +94,7 @@ public class ManaitaPlusArmor extends ArmorItem {
         @Override
         public void appendHoverText(ItemStack p_41421_, @Nullable Level p_41422_, List<Component> p_41423_, TooltipFlag p_41424_) {
             super.appendHoverText(p_41421_, p_41422_, p_41423_, p_41424_);
-            p_41423_.add(Component.literal(ManaitaPlusText.manaita_mode.formatting(I18n.get("info.helmet.nightvision") + ": " +  (getNightVision(p_41421_) ? I18n.get("info.on") : I18n.get("info.off") ))));
+            p_41423_.add(Component.literal(ManaitaPlusText.manaita_mode.formatting(I18n.get("mode.nightvision") + ": " +  (getNightVision(p_41421_) ? I18n.get("info.on") : I18n.get("info.off") ))));
         }
 
         @Override
@@ -203,7 +203,7 @@ public class ManaitaPlusArmor extends ArmorItem {
         @Override
         public void appendHoverText(ItemStack p_41421_, @Nullable Level p_41422_, List<Component> p_41423_, TooltipFlag p_41424_) {
             super.appendHoverText(p_41421_, p_41422_, p_41423_, p_41424_);
-            p_41423_.add(Component.literal(ManaitaPlusText.manaita_mode.formatting(I18n.get("info.leggings.invisibility") + ": " + (getInvisibility(p_41421_) ? I18n.get("info.on") : I18n.get("info.off") ))));
+            p_41423_.add(Component.literal(ManaitaPlusText.manaita_mode.formatting(I18n.get("mode.invisibility") + ": " + (getInvisibility(p_41421_) ? I18n.get("info.on") : I18n.get("info.off") ))));
         }
 
         public static boolean getInvisibility(ItemStack itemStack) {
@@ -241,10 +241,10 @@ public class ManaitaPlusArmor extends ArmorItem {
             if (p_41407_ == 0 && p_41406_ instanceof  Player player) {
                 player.getAbilities().mayfly = true;
                 int speed = getSpeed(p_41404_);
-                float p22101 = (float) (Math.pow(1, speed) / 10F);
+                float p22101 = 0.1F * speed;
                 player.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(p22101);
                 player.getAbilities().setWalkingSpeed(p22101);
-                player.getAbilities().setFlyingSpeed((float) (Math.pow(5, speed) / 100F));
+                player.getAbilities().setFlyingSpeed(p22101 / 2);
             }
         }
 

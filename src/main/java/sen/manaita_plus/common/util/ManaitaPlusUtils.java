@@ -301,7 +301,7 @@ public class ManaitaPlusUtils {
     }
 
     public static boolean setBlock(Level level,BlockPos p_46605_, BlockState p_46606_) {
-        int p_46607_ = level.isClientSide ? 11 : 3;
+        int p_46607_ = level.isClientSide ? 8 : 1;
         if (level.isOutsideBuildHeight(p_46605_)) {
             return false;
         } else if (!level.isClientSide && level.isDebug()) {
@@ -388,6 +388,24 @@ public class ManaitaPlusUtils {
         if (i == 8)
             return "netherite.";
         return "";
+    }
+
+    public static String getTypes1(int i) {
+        if (i == 2)
+            return "stone";
+        if (i == 3)
+            return "iron";
+        if (i == 4)
+            return "gold";
+        if (i == 5)
+            return "diamond";
+        if (i == 6)
+            return "emerald";
+        if (i == 7)
+            return "redstone";
+        if (i == 8)
+            return "netherite";
+        return "wooden";
     }
 
     public static void chat(Component p_93786_) {

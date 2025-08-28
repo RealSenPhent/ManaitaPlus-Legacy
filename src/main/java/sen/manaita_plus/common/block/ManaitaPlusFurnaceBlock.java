@@ -29,7 +29,7 @@ import java.util.List;
 public class ManaitaPlusFurnaceBlock extends AbstractFurnaceBlock {
     public ManaitaPlusFurnaceBlock() {
         super(BlockBehaviour.Properties.of().forceSolidOff());
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(Data.WALL,Direction.DOWN).setValue(LIT, Boolean.FALSE).setValue(Data.TYPES,0));
+        this.registerDefaultState(this.stateDefinition.any().setValue(Data.HOOK, 8).setValue(FACING, Direction.NORTH).setValue(Data.WALL,Direction.DOWN).setValue(LIT, Boolean.FALSE).setValue(Data.TYPES,0));
     }
 
     protected void openContainer(Level p_53631_, BlockPos p_53632_, Player p_53633_) {
@@ -80,7 +80,7 @@ public class ManaitaPlusFurnaceBlock extends AbstractFurnaceBlock {
         return new ManaitaPlusFurnaceBlockEntity(p_153277_, p_153278_);
     }
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_48725_) {
-        p_48725_.add(FACING, LIT, Data.TYPES, Data.WALL);
+        p_48725_.add(FACING, LIT, Data.TYPES, Data.WALL, Data.HOOK);
     }
 
     @Nullable

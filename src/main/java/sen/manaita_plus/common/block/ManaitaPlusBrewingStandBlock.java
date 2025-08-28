@@ -33,12 +33,9 @@ import java.util.List;
 public class ManaitaPlusBrewingStandBlock extends BaseEntityBlock {
     public static final BooleanProperty[] HAS_BOTTLE = new BooleanProperty[]{BlockStateProperties.HAS_BOTTLE_0, BlockStateProperties.HAS_BOTTLE_1, BlockStateProperties.HAS_BOTTLE_2};
 
-    private static final VoxelShape shapeWE = Block.box(3, 0, 1, 13, 0.5F, 15);
-    private static final VoxelShape shapeNS = Block.box(1, 0, 3, 15, 0.5F, 13);
-
     public ManaitaPlusBrewingStandBlock() {
         super(Properties.of().forceSolidOff());
-        this.registerDefaultState(this.stateDefinition.any().setValue(Data.FACING, Direction.NORTH).setValue(Data.WALL,Direction.DOWN).setValue(Data.TYPES,0).setValue(HAS_BOTTLE[0], Boolean.valueOf(false)).setValue(HAS_BOTTLE[1], Boolean.valueOf(false)).setValue(HAS_BOTTLE[2], Boolean.valueOf(false)));
+        this.registerDefaultState(this.stateDefinition.any().setValue(Data.HOOK, 8).setValue(Data.FACING, Direction.NORTH).setValue(Data.WALL,Direction.DOWN).setValue(Data.TYPES,0).setValue(HAS_BOTTLE[0], Boolean.valueOf(false)).setValue(HAS_BOTTLE[1], Boolean.valueOf(false)).setValue(HAS_BOTTLE[2], Boolean.valueOf(false)));
     }
 
 
@@ -93,7 +90,7 @@ public class ManaitaPlusBrewingStandBlock extends BaseEntityBlock {
     }
 
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_48725_) {
-        p_48725_.add(Data.FACING,Data.TYPES,HAS_BOTTLE[0], HAS_BOTTLE[1], HAS_BOTTLE[2], Data.WALL);
+        p_48725_.add(Data.FACING,Data.TYPES,HAS_BOTTLE[0], HAS_BOTTLE[1], HAS_BOTTLE[2], Data.WALL, Data.HOOK);
     }
 
     public BlockEntity newBlockEntity(BlockPos p_153277_, BlockState p_153278_) {

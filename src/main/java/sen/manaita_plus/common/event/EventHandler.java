@@ -4,6 +4,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -122,8 +123,8 @@ public class EventHandler {
 
     @SubscribeEvent
     public static void addCustomTrades(VillagerTradesEvent event) {
-        if (event.getType().toString().equals("minecraft:weaponsmith")) {
-            List<VillagerTrades.ItemListing> tradesTier = event.getTrades().get(5);
+        if (event.getType() == VillagerProfession.WEAPONSMITH) {
+            List<VillagerTrades.ItemListing> tradesTier = event.getTrades().get(1);
 
             tradesTier.add(new ManaitaPlusBowVillagerTrade(
                     new ItemStack(ManaitaPlusBlockCore.CraftingBlockItem.get(), 64),
@@ -139,6 +140,7 @@ public class EventHandler {
                     1, 10, 1));
         }
     }
+
 
 
 //

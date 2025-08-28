@@ -61,7 +61,7 @@ public class ManaitaPlusGodSwordItem extends SwordItem implements IManaitaPlusKe
 
     @Override
     public boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
-        if (entity instanceof Player player && player.isShiftKeyDown()) {
+        if (entity instanceof Player player) {
             ManaitaPlusUtils.godKill(player,isRemove(stack));
         }
         return super.onEntitySwing(stack, entity);

@@ -9,8 +9,15 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class Data {
     public static final IntegerProperty TYPES = IntegerProperty.create("types", 0, 8);
+    public static final IntegerProperty HOOK = IntegerProperty.create("hook", 0, 8);
     public static final DirectionProperty WALL = DirectionProperty.create("wall", Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.UP, Direction.DOWN);
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+
+    public static final VoxelShape shapeS = Block.box(7, 12, 0,9, 14, 2);
+    public static final VoxelShape shapeN = Block.box(7, 12, 14,9, 14, 16);
+    public static final VoxelShape shapeE = Block.box(0, 12, 7,2, 14, 9);
+    public static final VoxelShape shapeW = Block.box(14, 12, 7,16, 14, 9);
+
     public static final VoxelShape shapeNORTH = Block.box(3, 1, 0, 13, 15, 0.5F);
     public static final VoxelShape shapeSOUTH = Block.box(3, 1, 15.5F, 13, 15, 16F);
     public static final VoxelShape shapeEAST = Block.box(15.5F, 1, 3, 16F, 15, 13);

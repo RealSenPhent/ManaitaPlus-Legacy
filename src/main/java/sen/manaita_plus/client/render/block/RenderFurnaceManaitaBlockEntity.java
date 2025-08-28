@@ -3,6 +3,7 @@ package sen.manaita_plus.client.render.block;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
@@ -26,12 +27,15 @@ import sen.manaita_plus.common.core.ManaitaPlusBlockCore;
 public class RenderFurnaceManaitaBlockEntity  implements BlockEntityRenderer<ManaitaPlusFurnaceBlockEntity> {
     private final EntityRenderDispatcher entityRenderer;
     private final ItemStack stack;
+    private final BlockState block;
 
     public RenderFurnaceManaitaBlockEntity(BlockEntityRendererProvider.Context p_173673_) {
         this.entityRenderer = p_173673_.getEntityRenderer();
         stack = new ItemStack(ManaitaPlusBlockCore.FurnaceBlockItem.get());
+        block = ManaitaPlusBlockCore.HookBlock.get().defaultBlockState();
+        CompoundTag p41752 = new CompoundTag();
+        stack.setTag(p41752);
     }
-
 
 
     @Override
@@ -107,16 +111,17 @@ public class RenderFurnaceManaitaBlockEntity  implements BlockEntityRenderer<Man
 
         Block block = blockEntity.getBlockState().getBlock();
         if (block instanceof ManaitaPlusFurnaceBlock) {
-            CompoundTag p41752 = new CompoundTag();
-            p41752.putInt("ManaitaType",blockEntity.getBlockState().getValue(Data.TYPES));
-            stack.setTag(p41752);
+            stack.getTag().putInt("ManaitaType",blockEntity.getBlockState().getValue(Data.TYPES));
             BakedModel bakedModel = itemRenderer.getModel(stack,blockEntity.getLevel(),null,0);
             itemRenderer.render(stack, ItemDisplayContext.FIXED,true,poseStack,bufferSource,packedLight,packedOverlay,bakedModel);
         }
-
         poseStack.popPose();
+        if (blockEntity.getBlockState().getValue(Data.HOOK) != 8) {
+            BlockRenderDispatcher blockRenderer = Minecraft.getInstance().getBlockRenderer();
+            BlockState hookBlock = this.block.setValue(Data.FACING, blockEntity.getBlockState().getValue(Data.FACING)).setValue(Data.TYPES, blockEntity.getBlockState().getValue(Data.HOOK));
+            blockRenderer.renderSingleBlock(hookBlock, poseStack, bufferSource, packedLight, packedOverlay, net.minecraftforge.client.model.data.ModelData.EMPTY, null);
+        }
     }
-
 
     @Override
     public boolean shouldRenderOffScreen(ManaitaPlusFurnaceBlockEntity p_112306_) {

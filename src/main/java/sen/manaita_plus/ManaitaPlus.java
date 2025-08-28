@@ -28,10 +28,10 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
-import sen.manaita_plus.common.core.*;
 import sen.manaita_plus.client.gui.BrewingStandScreen;
 import sen.manaita_plus.client.gui.CraftingManaitaScreen;
 import sen.manaita_plus.client.gui.FurnaceManaitaScreen;
+import sen.manaita_plus.common.core.*;
 import sen.manaita_plus.common.network.Networking;
 
 import static sen.manaita_plus.common.core.ManaitaPlusItemCore.*;
@@ -86,17 +86,16 @@ public class ManaitaPlus {
         for (int i = 0; i <= manaitaType; i++) {
             ItemStack itemStack = new ItemStack(item);
             itemStack.setTag(new CompoundTag());
-            CompoundTag p128367 = new CompoundTag();
-            p128367.putInt("types", i);
-            itemStack.getTag().put("BlockStateTag", p128367);
             itemStack.getTag().putInt("ManaitaType",i);
             output.accept(itemStack);
         }
     }
 
+
     public ManaitaPlus() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         modEventBus.addListener(this::commonSetup);
+
 
         ManaitaPlusItemCore.init();
         ManaitaPlusBlockCore.init();
