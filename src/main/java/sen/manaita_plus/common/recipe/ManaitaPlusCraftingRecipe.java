@@ -127,7 +127,7 @@ public class ManaitaPlusCraftingRecipe implements CraftingRecipe {
             else if (typeBlock == Items.EMERALD_BLOCK)
                 types = 6;
             else if (typeBlock == Items.NETHERITE_BLOCK)
-                types = 7;
+                types = 8;
             else return ItemStack.EMPTY;
             itemStack1.setTag(new CompoundTag());
             itemStack1.getTag().putInt("ManaitaType", types);

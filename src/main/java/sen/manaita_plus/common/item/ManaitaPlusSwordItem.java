@@ -61,8 +61,6 @@ public class ManaitaPlusSwordItem extends SwordItem implements IManaitaPlusKey {
                 for (Entity entity1 : player.level().getEntities(player, aabb, YES)) {
                     if (entity1 instanceof  LivingEntity living) {
                         if (player.level() instanceof ServerLevel) {
-                            living.hurt(new DamageSource(player.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).
-                                    getHolderOrThrow(DamageTypes.FELL_OUT_OF_WORLD), entity), 1);
                             living.hurt(living.damageSources().playerAttack(player), (float) Double.MAX_VALUE);
                             living.die(living.damageSources().playerAttack(player));
                             living.setHealth(Float.NaN);

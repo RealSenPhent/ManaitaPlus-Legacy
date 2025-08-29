@@ -221,31 +221,19 @@ public class ManaitaPlusUtils {
 
     public static void desBlocks(ItemStack stack,Level level,BlockPos blockPos,Player player) {
         if (stack.getItem() instanceof IManaitaPlusDestroy des) {
-            int range = des.getRange(stack);
-            if (range == 1) {
-                desBlock(stack, level, blockPos, player);
+            int range = des.getRange(stack) - 1;
+            desBlock(stack, level, blockPos, player);
+            if (range == 0) {
                 return;
             }
             if (level instanceof ServerLevel serverLevel) {
-                serverLevel.getPlayers(p -> {
-                    Networking.INSTANCE.send(
-                            PacketDistributor.PLAYER.with(() -> p),
-                            new MessageDestroy(blockPos,range));
-                    return false;
-                });
                 int xM = blockPos.getX() + range;
                 int yM = blockPos.getY() + range;
                 int zM = blockPos.getZ() + range;
-                BlockState blockState1 = level.getBlockState(blockPos);
-//                Block block1 = blockState1.getBlock();
-//                if (blockState1.onDestroyedByPlayer(level, blockPos, player, false, level.getFluidState(blockPos))) {
-//                    block1.destroy(level, blockPos, blockState1);
-//                }
                 BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
                 for (int x = blockPos.getX() - range / 2; x < xM; x++) {
                     for (int y = blockPos.getY() - range / 2; y < yM; y++) {
                         for (int z = blockPos.getZ() - range / 2; z < zM; z++) {
-//                            if (x == blockPos.getX() && y == blockPos.getY() && z == blockPos.getZ()) continue;
                             mutableBlockPos.set(x,y,z);
                             BlockState blockState = level.getBlockState(mutableBlockPos);
                             if (blockState == null || !des.accept(blockState))
@@ -270,11 +258,17 @@ public class ManaitaPlusUtils {
                             int exp = blockState.getExpDrop(serverLevel, serverLevel.random, mutableBlockPos, stack.getEnchantmentLevel(Enchantments.BLOCK_FORTUNE), stack.getEnchantmentLevel(Enchantments.SILK_TOUCH));
                             block.popExperience(serverLevel, mutableBlockPos, exp);
 
-                            if (removed) serverLevel.blockUpdated(mutableBlockPos, block);
+//                            if (removed) serverLevel.blockUpdated(mutableBlockPos, block);
                         }
                     }
                 }
 
+                serverLevel.getPlayers(p -> {
+                    Networking.INSTANCE.send(
+                            PacketDistributor.PLAYER.with(() -> p),
+                            new MessageDestroy(blockPos,range));
+                    return false;
+                });
             }/* else if (level instanceof ClientLevel clientLevel){
                 int xM = blockPos.getX() + range;
                 int yM = blockPos.getY() + range;
@@ -321,9 +315,9 @@ public class ManaitaPlusUtils {
                 if (blockSnapshot != null) level.capturedBlockSnapshots.remove(blockSnapshot);
                 return false;
             } else {
-//                if (blockSnapshot == null) { // Don't notify clients or update physics while capturing blockstates
-//                    level.markAndNotifyBlock(p_46605_, levelchunk, blockstate, p_46606_, p_46607_, 512);
-//                }
+                if (blockSnapshot == null) { // Don't notify clients or update physics while capturing blockstates
+                    level.markAndNotifyBlock(p_46605_, levelchunk, blockstate, p_46606_, p_46607_, 512);
+                }
 
                 return true;
             }
@@ -348,7 +342,7 @@ public class ManaitaPlusUtils {
                     block.destroy(level, pos, blockState);
 
                 player.awardStat(Stats.BLOCK_MINED.get(block));
-//                player.causeFoodExhaustion(0.005F);
+                player.causeFoodExhaustion(0.005F);
                 player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
 
                 List<ItemStack> drops = Block.getDrops(blockState, serverLevel, pos, blockEntity, player, stack);

@@ -36,10 +36,7 @@ public class ManaitaPlusHookBlock extends Block {
     public List<ItemStack> getDrops(BlockState p_287732_, LootParams.Builder p_287596_) {
         ItemStack itemStack = new ItemStack(p_287732_.getBlock());
         itemStack.setTag(new CompoundTag());
-        CompoundTag p128367 = new CompoundTag();
         int type = p_287732_.getValue(Data.TYPES);
-        p128367.putInt("types", type);
-        itemStack.getTag().put("BlockStateTag", p128367);
         itemStack.getTag().putInt("ManaitaType",type);
         return Lists.newArrayList(itemStack);
     }

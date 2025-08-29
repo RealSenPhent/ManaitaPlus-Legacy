@@ -73,6 +73,7 @@ public class ManaitaPlusFurnacePortabl extends Item {
         private final RecipeManager.CachedCheck<Container, ? extends AbstractCookingRecipe> quickCheck;
         private final Player player;
         private final ItemStack stack;
+        protected NonNullList<ItemStack> items = NonNullList.withSize(3, ItemStack.EMPTY);
 
         public ManaitaPlusFurnaceBlockEntity(Player player,ItemStack stack) {
             super(ManaitaPlusBlockEntityCore.FURNACE_BLOCK_ENTITY.get(),player.blockPosition(),null, RecipeType.SMELTING);
@@ -97,7 +98,6 @@ public class ManaitaPlusFurnacePortabl extends Item {
 
         public void load(CompoundTag p_155025_) {
             super.load(p_155025_);
-            this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
             ContainerHelper.loadAllItems(p_155025_, this.items);
             CompoundTag compoundtag = p_155025_.getCompound("RecipesUsed");
 
@@ -147,8 +147,6 @@ public class ManaitaPlusFurnacePortabl extends Item {
                 }
 
                 itemstack.shrink(1);
-//                save
-                saveAdditional(stack.getOrCreateTag());
                 return true;
             } else {
                 return false;

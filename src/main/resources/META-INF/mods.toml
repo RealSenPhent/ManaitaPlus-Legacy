@@ -4,7 +4,7 @@ license="${mod_license}"
 
 [[mods]]
 modId="manaita_plus"
-version="0.5.1-test"
+version="0.5.5-test"
 displayName="ManaitaPlus-PhentSen"
 displayURL="None"
 authors="PhentSen"

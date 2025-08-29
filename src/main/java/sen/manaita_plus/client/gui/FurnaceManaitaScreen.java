@@ -19,10 +19,11 @@ public class FurnaceManaitaScreen extends AbstractFurnaceScreen<ManaitaPlusFurna
         super(p_98776_, new SmeltingRecipeBookComponent(), p_98777_, p_98778_, TEXTURE);
     }
 
-    @Override
-    public void render(GuiGraphics p_282573_, int p_97859_, int p_97860_, float p_97861_) {
-        super.render(p_282573_, p_97859_, p_97860_, p_97861_);
-        p_282573_.drawCenteredString(this.font, "64x",112, 20, 4210752);
+
+    protected void renderLabels(GuiGraphics p_281635_, int p_282681_, int p_283686_) {
+        p_281635_.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, 4210752, false);
+        p_281635_.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 4210752, false);
+        p_281635_.drawString(this.font, "64x",118, 22, 4210752);
     }
 
     @Override

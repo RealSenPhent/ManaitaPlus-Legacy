@@ -25,6 +25,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import sen.manaita_plus.common.block.data.Data;
 import sen.manaita_plus.common.block.entity.ManaitaPlusBrewingStandBlockEntity;
+import sen.manaita_plus.common.core.ManaitaPlusBlockCore;
 import sen.manaita_plus.common.core.ManaitaPlusBlockEntityCore;
 
 import javax.annotation.Nullable;
@@ -48,14 +49,18 @@ public class ManaitaPlusBrewingStandBlock extends BaseEntityBlock {
 
     @Override
     public List<ItemStack> getDrops(BlockState p_287732_, LootParams.Builder p_287596_) {
+        List<ItemStack> list = Lists.newArrayList();
         ItemStack itemStack = new ItemStack(p_287732_.getBlock());
         itemStack.setTag(new CompoundTag());
-        CompoundTag p128367 = new CompoundTag();
-        int type = p_287732_.getValue(Data.TYPES);
-        p128367.putInt("types", type);
-        itemStack.getTag().put("BlockStateTag", p128367);
-        itemStack.getTag().putInt("ManaitaType",type);
-        return Lists.newArrayList(itemStack);
+        itemStack.getTag().putInt("ManaitaType",p_287732_.getValue(Data.TYPES));
+        list.add(itemStack);
+        int hook = p_287732_.getValue(Data.HOOK);
+        if (hook != 8) {
+            itemStack = new ItemStack(ManaitaPlusBlockCore.HookBlockItem.get());
+            itemStack.setTag(new CompoundTag());
+            itemStack.getTag().putInt("ManaitaType",hook);
+        }
+        return list;
     }
 
     public InteractionResult use(BlockState p_50930_, Level p_50931_, BlockPos p_50932_, Player p_50933_, InteractionHand p_50934_, BlockHitResult p_50935_) {
