@@ -7,11 +7,11 @@
   ],
   "key": {
     "#": {
-      "item": "manaita_plus:block_crafting_manaita"
+      "item": "manaita_plus_legacy:block_crafting_manaita"
     }
   },
   "result": {
-    "item": "manaita_plus:manaita_leggings",
+    "item": "manaita_plus_legacy:manaita_leggings",
     "count": 1
   }
 }

@@ -19,7 +19,7 @@
               "function": "minecraft:set_count"
             }
           ],
-          "name": "manaita_plus:manaita_bow"
+          "name": "manaita_plus_legacy:manaita_bow"
         }
       ],
       "rolls": 1.0

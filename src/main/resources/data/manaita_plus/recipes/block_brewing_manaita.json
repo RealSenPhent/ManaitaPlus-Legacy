@@ -15,7 +15,7 @@
     }
   },
   "result": {
-    "item": "manaita_plus:block_brewing_manaita",
+    "item": "manaita_plus_legacy:block_brewing_manaita",
     "count": 1
   }
 }

@@ -4,7 +4,7 @@
   "experience": 114,
   "cookingtime": 200,
   "ingredient": {
-    "item": "manaita_plus:block_crafting_manaita"
+    "item": "manaita_plus_legacy:block_crafting_manaita"
   },
-  "result": "manaita_plus:manaita_source"
+  "result": "manaita_plus_legacy:manaita_source"
 }

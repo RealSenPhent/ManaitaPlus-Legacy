@@ -7,23 +7,23 @@
   ],
   "key": {
     "a": {
-      "item": "manaita_plus:manaita_shovel"
+      "item": "manaita_plus_legacy:manaita_shovel"
     },
     "b": {
-      "item": "manaita_plus:manaita_pickaxe"
+      "item": "manaita_plus_legacy:manaita_pickaxe"
     },
     "c": {
-      "item": "manaita_plus:manaita_axe"
+      "item": "manaita_plus_legacy:manaita_axe"
     },
     "d": {
-      "item": "manaita_plus:manaita_wood_hook"
+      "item": "manaita_plus_legacy:manaita_wood_hook"
     },
     "e": {
-      "item": "manaita_plus:manaita_sword"
+      "item": "manaita_plus_legacy:manaita_sword"
     }
   },
   "result": {
-    "item": "manaita_plus:manaita_paxel",
+    "item": "manaita_plus_legacy:manaita_paxel",
     "count": 1
   }
 }
