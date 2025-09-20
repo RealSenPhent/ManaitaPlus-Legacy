@@ -1,4 +1,4 @@
-package sen.manaita_plus_legacy.common.network.data;
+package sen.manaita_plus_legacy.common.network.server;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;

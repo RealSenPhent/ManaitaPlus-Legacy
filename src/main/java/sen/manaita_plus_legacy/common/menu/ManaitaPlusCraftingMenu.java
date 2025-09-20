@@ -1,4 +1,4 @@
-package sen.manaita_plus_legacy.common.gui;
+package sen.manaita_plus_legacy.common.menu;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;

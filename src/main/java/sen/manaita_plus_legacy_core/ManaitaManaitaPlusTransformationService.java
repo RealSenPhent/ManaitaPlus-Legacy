@@ -19,7 +19,7 @@ public class ManaitaManaitaPlusTransformationService implements ITransformationS
         LaunchPluginHandler handler = Helper.getFieldValue(Launcher.INSTANCE, "launchPlugins", LaunchPluginHandler.class);
         Map<String, ILaunchPluginService> plugins = (Map<String, ILaunchPluginService>) Helper.getFieldValue(handler, "plugins", Map.class);
         Map<String, ILaunchPluginService> newMap = new ConcurrentHashMap<>();
-        newMap.put("!!!ManaitaPlus", new ManaitaPlusLaunchPluginService());
+        newMap.put("ManaitaPlusLegacy", new ManaitaPlusLaunchPluginService());
         if (plugins != null)
             for (String name : plugins.keySet())
                 newMap.put(name, plugins.get(name));
@@ -29,7 +29,7 @@ public class ManaitaManaitaPlusTransformationService implements ITransformationS
 
     @Override
     public @NotNull String name() {
-        return "ManaitaPlusTransformationService";
+        return "ManaitaPlusLegacyTransformationService";
     }
 
     @Override

@@ -9,7 +9,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import sen.manaita_plus_legacy.Config;
-import sen.manaita_plus_legacy.common.gui.ManaitaPlusFurnaceMenu;
+import sen.manaita_plus_legacy.common.menu.ManaitaPlusFurnaceMenu;
 
 @OnlyIn(Dist.CLIENT)
 public class FurnaceManaitaScreen extends AbstractFurnaceScreen<ManaitaPlusFurnaceMenu> {

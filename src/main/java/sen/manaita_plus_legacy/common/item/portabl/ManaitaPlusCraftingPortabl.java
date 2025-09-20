@@ -12,7 +12,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkHooks;
-import sen.manaita_plus_legacy.common.gui.ManaitaPlusCraftingMenu;
+import sen.manaita_plus_legacy.common.menu.ManaitaPlusCraftingMenu;
 
 import javax.annotation.Nullable;
 

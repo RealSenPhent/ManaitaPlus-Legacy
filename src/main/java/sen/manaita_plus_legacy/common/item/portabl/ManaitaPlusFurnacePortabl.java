@@ -30,7 +30,7 @@ import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkHooks;
 import sen.manaita_plus_legacy.common.core.ManaitaPlusBlockEntityCore;
-import sen.manaita_plus_legacy.common.gui.ManaitaPlusFurnaceMenu;
+import sen.manaita_plus_legacy.common.menu.ManaitaPlusFurnaceMenu;
 
 import javax.annotation.Nullable;
 import java.util.List;

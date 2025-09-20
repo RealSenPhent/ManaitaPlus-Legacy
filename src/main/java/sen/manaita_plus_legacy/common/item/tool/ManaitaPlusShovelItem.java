@@ -90,7 +90,7 @@ public class ManaitaPlusShovelItem extends DiggerItem implements IManaitaPlusKey
     public void onManaitaKeyPressOnClient(ItemStack itemStack, Player player) {
         boolean doubling = !getDoubling(itemStack);
         setDoubling(itemStack, doubling);
-        ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(String.format("[%s] %s: %s", I18n.get("item.manaita_plus.manaita_shovel"),I18n.get("mode.doubling"), (doubling ? I18n.get("info.on") : I18n.get("info.off"))))));
+        ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(String.format("[%s] %s: %s", I18n.get("item.manaita_plus_legacy.manaita_shovel"),I18n.get("mode.doubling"), (doubling ? I18n.get("info.on") : I18n.get("info.off"))))));
     }
 
     public static boolean getDoubling(ItemStack itemStack) {

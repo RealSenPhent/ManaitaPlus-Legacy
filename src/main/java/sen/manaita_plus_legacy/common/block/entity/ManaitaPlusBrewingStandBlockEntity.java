@@ -22,7 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import sen.manaita_plus_legacy.Config;
 import sen.manaita_plus_legacy.common.block.ManaitaPlusBrewingStandBlock;
 import sen.manaita_plus_legacy.common.core.ManaitaPlusBlockEntityCore;
-import sen.manaita_plus_legacy.common.gui.ManaitaPlusBrewingStandMenu;
+import sen.manaita_plus_legacy.common.menu.ManaitaPlusBrewingStandMenu;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;

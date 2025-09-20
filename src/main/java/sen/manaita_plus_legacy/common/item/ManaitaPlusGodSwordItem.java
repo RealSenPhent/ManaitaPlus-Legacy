@@ -72,7 +72,7 @@ public class ManaitaPlusGodSwordItem extends SwordItem implements IManaitaPlusKe
     @Override
     public boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
         if (entity instanceof Player player) {
-            ManaitaPlusUtils.godKill(player,isRemove(stack));
+            ManaitaPlusUtils.godKill(player,isRemove(stack),player.isShiftKeyDown());
         }
         return super.onEntitySwing(stack, entity);
     }
@@ -104,7 +104,7 @@ public class ManaitaPlusGodSwordItem extends SwordItem implements IManaitaPlusKe
                 }
             }
         }
-        ManaitaPlusUtils.godKill(player,isRemove(itemstack));
+        ManaitaPlusUtils.godKill(player,isRemove(itemstack),player.isShiftKeyDown());
         return InteractionResultHolder.pass(itemstack);
     }
 

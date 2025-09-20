@@ -10,18 +10,17 @@ import sen.manaita_plus_legacy.client.render.block.RenderBrewingManaitaBlockEnti
 import sen.manaita_plus_legacy.client.render.block.RenderCraftingManaitaBlockEntity;
 import sen.manaita_plus_legacy.client.render.block.RenderFurnaceManaitaBlockEntity;
 import sen.manaita_plus_legacy.client.render.entity.ManaitaPlusLightningBoltRenderer;
-import sen.manaita_plus_legacy.client.render.entity.ManaitaPlusLightningPlusBoltRenderer;
 import sen.manaita_plus_legacy.client.render.entity.RenderManaitaArrow;
 import sen.manaita_plus_legacy.common.core.ManaitaPlusBlockEntityCore;
 
-import static sen.manaita_plus_legacy.common.core.ManaitaPlusEntityCore.*;
+import static sen.manaita_plus_legacy.common.core.ManaitaPlusEntityCore.ManaitaArrow;
+import static sen.manaita_plus_legacy.common.core.ManaitaPlusEntityCore.ManaitaLightningBolt;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = ManaitaPlus.MODID, value = Dist.CLIENT)
 public class RegisterEventHandler {
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ManaitaLightningBolt.get(), ManaitaPlusLightningBoltRenderer::new);
-        event.registerEntityRenderer(ManaitaLightningBoltPlus.get(), ManaitaPlusLightningPlusBoltRenderer::new);
         event.registerEntityRenderer(ManaitaArrow.get(), RenderManaitaArrow::new);
 
         BlockEntityRenderers.register(ManaitaPlusBlockEntityCore.FURNACE_BLOCK_ENTITY.get(), RenderFurnaceManaitaBlockEntity::new);

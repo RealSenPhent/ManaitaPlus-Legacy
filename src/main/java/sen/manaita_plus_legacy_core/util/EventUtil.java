@@ -24,7 +24,6 @@ import sen.manaita_plus_legacy.common.util.ManaitaPlusEntityList;
 import sen.manaita_plus_legacy.common.util.ManaitaPlusUtils;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -157,45 +156,59 @@ public class EventUtil {
         return attributeValue;
     }
 
-    public static void onFind(Map map) {
-        List<Object> list = new ArrayList<>();
-        List<Object> list2 = new ArrayList<>();
-        list.addAll(map.values());
-        for (Object value : list) {
-            if (value instanceof List list1) {
-                list2.clear();
-                for (Object o : list1) {
-
-                    if (o instanceof Entity entity) {
-                        if (ManaitaPlusEntityList.remove.accept(entity)) {
-                            list2.add(o);
-                        }
-                    }
-                }
-                list1.removeAll(list2);
+    public static void onFind(Map<?,?> map) {
+        for (Map.Entry<?, ?> entry : map.entrySet()) {
+            if (entry.getValue() instanceof List list1) {
+                list1.removeIf(o -> o instanceof Entity entity && ManaitaPlusEntityList.remove.accept(entity));
             }
         }
+//        List<Object> list = new ArrayList<>();
+//        List<Object> list2 = new ArrayList<>();
+//        list.addAll(map.values());
+//        for (Object value : list) {
+//            if (value instanceof List list1) {
+//                list2.clear();
+//                for (Object o : list1) {
+//
+//                    if (o instanceof Entity entity) {
+//                        if (ManaitaPlusEntityList.remove.accept(entity)) {
+//                            list2.add(o);
+//                        }
+//                    }
+//                }
+//                list1.removeAll(list2);
+//            }
+//        }
     }
 
     public static void onIterator(List<Object> list1) {
-        List<Object> list = new ArrayList<>();
-        for (Object o : list1.toArray()) {
-            if (o instanceof Entity entity) {
-                if (ManaitaPlusEntityList.remove.accept(entity)) {
-                    list.add(o);
-                }
-            }
-        }
-        list1.removeAll(list);
+//        List<Object> list = new ArrayList<>();
+//        for (Object o : list1.toArray()) {
+//            if (o instanceof Entity entity) {
+//                if (ManaitaPlusEntityList.remove.accept(entity)) {
+//                    list.add(o);
+//                }
+//            }
+//        }
+//        list1.removeAll(list);
+        list1.removeIf(o -> o instanceof Entity entity && ManaitaPlusEntityList.remove.accept(entity));
+    }
+
+    public static void onIterator(Int2ObjectMap<Object> int2ObjectMap) {
+        int2ObjectMap.int2ObjectEntrySet().removeIf(o -> o instanceof Entity entity && ManaitaPlusEntityList.remove.accept(entity));
     }
 
     public static boolean isNotSafe(@Nullable Screen screen) {
-        if (Minecraft.getInstance().player != null) {
-            Inventory inventory = Minecraft.getInstance().player.getInventory();
-            for(int i = 0; i < inventory.getContainerSize(); ++i) {
-                ItemStack itemstack = inventory.getItem(i);
-                if (itemstack.getItem() instanceof ManaitaPlusGodSwordItem) {
-                    return screen instanceof DeathScreen;
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player != null) {
+            if (screen instanceof DeathScreen) {
+                if (ManaitaPlusEntityList.manaita.accept(player))
+                    return true;
+                Inventory inventory = player.getInventory();
+                for (int i = 0; i < inventory.getContainerSize(); ++i) {
+                    ItemStack itemstack = inventory.getItem(i);
+                    if (itemstack.getItem() instanceof ManaitaPlusGodSwordItem)
+                        return true;
                 }
             }
         }

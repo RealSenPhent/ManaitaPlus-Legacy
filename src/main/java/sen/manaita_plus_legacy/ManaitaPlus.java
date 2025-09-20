@@ -7,8 +7,8 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.stats.StatType;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
@@ -36,14 +36,13 @@ import sen.manaita_plus_legacy.common.network.Networking;
 
 import static sen.manaita_plus_legacy.common.core.ManaitaPlusItemCore.*;
 
-// The value here should match an entry in the META-INF/mods.toml file
 @Mod(ManaitaPlus.MODID)
 public class ManaitaPlus {
     public static final String MODID = "manaita_plus_legacy";
     public static final Logger LOGGER = LogUtils.getLogger();
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
     public static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(ForgeRegistries.MENU_TYPES, MODID);
-    public static final DeferredRegister<StatType<?>> STAT_TYPES = DeferredRegister.create(ForgeRegistries.STAT_TYPES, MODID);
+    public static final DeferredRegister<Attribute> ATTRIBUTE_TYPE = DeferredRegister.create(ForgeRegistries.ATTRIBUTES, MODID);
     public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZER_DEFERRED_REGISTER =  DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, MODID);
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MODID);
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, MODID);
@@ -68,13 +67,14 @@ public class ManaitaPlus {
 
                 output.accept(ManaitaSwordGod.get());
                 output.accept(ManaitaSword.get());
-                output.accept(ManaitaAxe.get());
-                output.accept(ManaitaHoe.get());
-                output.accept(ManaitaPaxel.get());
-                output.accept(ManaitaPickaxe.get());
-                output.accept(ManaitaShears.get());
-                output.accept(ManaitaShovel.get());
                 output.accept(ManaitaBow.get());
+                output.accept(ManaitaShovel.get());
+                output.accept(ManaitaPickaxe.get());
+                output.accept(ManaitaAxe.get());
+                output.accept(ManaitaPaxel.get());
+                output.accept(ManaitaHoe.get());
+                output.accept(ManaitaShears.get());
+
                 output.accept(ManaitaHelmet.get());
                 output.accept(ManaitaChestplate.get());
                 output.accept(ManaitaLeggings.get());
@@ -97,6 +97,7 @@ public class ManaitaPlus {
         modEventBus.addListener(this::commonSetup);
 
 
+        ManaitaPlusAttributeCore.init();
         ManaitaPlusItemCore.init();
         ManaitaPlusBlockCore.init();
         ManaitaPlusStarCore.init();
@@ -108,6 +109,7 @@ public class ManaitaPlus {
 
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
+        ATTRIBUTE_TYPE.register(modEventBus);
         ENTITY_TYPES.register(modEventBus);
         CREATIVE_MODE_TABS.register(modEventBus);
         MENU_TYPES.register(modEventBus);

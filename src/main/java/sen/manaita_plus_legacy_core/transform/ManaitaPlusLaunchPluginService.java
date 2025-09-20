@@ -67,49 +67,10 @@ public class ManaitaPlusLaunchPluginService implements ILaunchPluginService {
                 } else if ((method.name.equals("m_260822_") && method.desc.equals("(Lnet/minecraft/world/level/entity/EntityTypeTest;Lnet/minecraft/util/AbortableIterationConsumer;)V")) || (method.name.equals("m_156811_") && method.desc.equals("()V"))) {
                     InsnList insnNodes = new InsnList();
 
-                    // 计算局部变量索引 - 确保不会与现有局部变量冲突
-                    int baseLocals =  1; // 静态方法没有this参数
-                    // 加上方法参数占用的局部变量槽位
-                    Type[] argTypes = Type.getArgumentTypes(method.desc);
-                    for (Type argType : argTypes) {
-                        baseLocals += argType.getSize();
-                    }
-
-                    int iterator = baseLocals;
-                    int next = baseLocals + 1;
-                    method.maxLocals = Math.max(method.maxLocals, next + 1); // 确保maxLocals足够大
-
-                    LabelNode label1 = new LabelNode();
-                    LabelNode label2 = new LabelNode();
-                    LabelNode label3 = new LabelNode();
-
                     insnNodes.add(new VarInsnNode(Opcodes.ALOAD, 0));
                     insnNodes.add(new FieldInsnNode(Opcodes.GETFIELD, classNode.name, "f_156807_", "Lit/unimi/dsi/fastutil/ints/Int2ObjectMap;"));
-                    insnNodes.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, "it/unimi/dsi/fastutil/ints/Int2ObjectMap", "values", "()Lit/unimi/dsi/fastutil/objects/ObjectCollection;", true));
-                    insnNodes.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, "it/unimi/dsi/fastutil/objects/ObjectCollection", "iterator", "()Lit/unimi/dsi/fastutil/objects/ObjectIterator;", true));
-                    insnNodes.add(new VarInsnNode(Opcodes.ASTORE, iterator));
-                    insnNodes.add(label1);
-                    insnNodes.add(new FrameNode(Opcodes.F_APPEND, 1, new Object[]{"it/unimi/dsi/fastutil/objects/ObjectIterator"}, 0, null));
-                    insnNodes.add(new VarInsnNode(Opcodes.ALOAD, iterator));
-                    insnNodes.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, "it/unimi/dsi/fastutil/objects/ObjectIterator", "hasNext", "()Z", true));
-                    insnNodes.add(new JumpInsnNode(Opcodes.IFEQ, label2));
-                    insnNodes.add(new VarInsnNode(Opcodes.ALOAD, iterator));
-                    insnNodes.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, "it/unimi/dsi/fastutil/objects/ObjectIterator", "next", "()Ljava/lang/Object;", true));
-                    insnNodes.add(new VarInsnNode(Opcodes.ASTORE, next));
-                    insnNodes.add(new VarInsnNode(Opcodes.ALOAD, next));
-                    insnNodes.add(new TypeInsnNode(Opcodes.INSTANCEOF, "net/minecraft/world/entity/Entity"));
-                    insnNodes.add(new JumpInsnNode(Opcodes.IFEQ, label3));
-                    insnNodes.add(new VarInsnNode(Opcodes.ALOAD, next));
-                    insnNodes.add(new TypeInsnNode(Opcodes.CHECKCAST, "net/minecraft/world/entity/Entity"));
-                    insnNodes.add(new MethodInsnNode(Opcodes.INVOKESTATIC, owner, "isRemove", "(Lnet/minecraft/world/entity/Entity;)Z", false));
-                    insnNodes.add(new JumpInsnNode(Opcodes.IFEQ, label3));
-                    insnNodes.add(new VarInsnNode(Opcodes.ALOAD, iterator));
-                    insnNodes.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, "it/unimi/dsi/fastutil/objects/ObjectIterator", "remove", "()V", true));
-                    insnNodes.add(label3);
-                    insnNodes.add(new FrameNode(Opcodes.F_SAME, 0, null, 0, null));
-                    insnNodes.add(new JumpInsnNode(Opcodes.GOTO, label1));
-                    insnNodes.add(label2);
-                    insnNodes.add(new FrameNode(Opcodes.F_CHOP, 1, null, 0, null));
+                    insnNodes.add(new MethodInsnNode(Opcodes.INVOKESTATIC, owner, "onIterator", "(Lit/unimi/dsi/fastutil/ints/Int2ObjectMap;)V", false));
+
                     method.instructions.insert(insnNodes);
                     flag = true;
                 }

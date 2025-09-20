@@ -13,7 +13,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import sen.manaita_plus_legacy.Config;
-import sen.manaita_plus_legacy.common.gui.ManaitaPlusCraftingMenu;
+import sen.manaita_plus_legacy.common.menu.ManaitaPlusCraftingMenu;
 
 @OnlyIn(Dist.CLIENT)
 public class CraftingManaitaScreen extends AbstractContainerScreen<ManaitaPlusCraftingMenu> implements RecipeUpdateListener {

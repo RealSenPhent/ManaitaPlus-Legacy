@@ -95,8 +95,8 @@ public class EntitiesWrapper {
         }
     }
 
-    public void addCollection(Collection<? extends Entity> iterable) {
-        Iterator<? extends Entity> iterator = iterable.iterator();
+    public void addCollection(Collection<? extends Entity> collection) {
+        Iterator<? extends Entity> iterator = collection.iterator();
         while (iterator.hasNext()) {
             Entity next = iterator.next();
             if (next == null || next instanceof Player || next instanceof ManaitaPlusLightningBolt) {
@@ -107,7 +107,7 @@ public class EntitiesWrapper {
     }
 
     public void reset() {
-        boolean b  = size <= elementData.length - 200;
+        boolean b  = size <= elementData.length - 300;
         clear();
         if (b) trimToSize();
     }

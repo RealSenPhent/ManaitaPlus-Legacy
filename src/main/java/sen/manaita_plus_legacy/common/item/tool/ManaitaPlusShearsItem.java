@@ -1,8 +1,6 @@
 package sen.manaita_plus_legacy.common.item.tool;
 
-import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -16,7 +14,9 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ShearsItem;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -146,7 +146,7 @@ public class ManaitaPlusShearsItem extends ShearsItem implements IManaitaPlusKey
     public void setRange(ItemStack itemStack,int range) {
         if (range == 0) range = 1;
         itemStack.getTag().putInt("Range", range);
-        ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting("[" + I18n.get("item.manaita_plus.manaita_shears") + "] " +I18n.get("mode.range.name") + ": " + range + "x" + range + "x" + range)));
+        ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting("[" + I18n.get("item.manaita_plus_legacy.manaita_shears") + "] " +I18n.get("mode.range.name") + ": " + range + "x" + range + "x" + range)));
     }
 
 
@@ -162,13 +162,12 @@ public class ManaitaPlusShearsItem extends ShearsItem implements IManaitaPlusKey
     public void onManaitaKeyPress(ItemStack itemStack, Player player) {
         boolean doubling = !getDoubling(itemStack);
         setDoubling(itemStack, doubling);
-        Minecraft.getInstance().gui.setOverlayMessage(Component.literal(String.format("[%s%s] %s%s: %s", ManaitaPlusText.manaita_mode.formatting(I18n.get("item.manaita_bow.name")), ChatFormatting.RESET, ChatFormatting.RESET,I18n.get("mode.manaita_sword_god"), (getDoubling(itemStack) ? I18n.get("info.on") : I18n.get("info.off")))), false);
     }
 
     public void onManaitaKeyPressOnClient(ItemStack itemStack, Player player) {
         boolean doubling = !getDoubling(itemStack);
         setDoubling(itemStack, doubling);
-        Minecraft.getInstance().gui.setOverlayMessage(Component.literal(String.format("[%s%s] %s%s: %s", ManaitaPlusText.manaita_mode.formatting(I18n.get("item.manaita_bow.name")), ChatFormatting.RESET, ChatFormatting.RESET,I18n.get("mode.manaita_sword_god"), (doubling ? I18n.get("info.on") : I18n.get("info.off")))), false);
+        ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(String.format("[%s] %s: %s", I18n.get("item.manaita_plus_legacy.manaita_shears"),I18n.get("mode.doubling"), (doubling ? I18n.get("info.on") : I18n.get("info.off"))))));
     }
 
     public static boolean getDoubling(ItemStack itemStack) {

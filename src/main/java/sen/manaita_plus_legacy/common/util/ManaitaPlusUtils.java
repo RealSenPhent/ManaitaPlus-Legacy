@@ -1,5 +1,6 @@
 package sen.manaita_plus_legacy.common.util;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -14,12 +15,8 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.ExperienceOrb;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.entity.projectile.DragonFireball;
@@ -31,20 +28,20 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.entity.ChunkEntities;
-import net.minecraft.world.level.entity.EntityInLevelCallback;
-import net.minecraft.world.level.entity.EntitySection;
+import net.minecraft.world.level.entity.*;
 import net.minecraftforge.network.PacketDistributor;
 import sen.manaita_plus_legacy.Config;
 import sen.manaita_plus_legacy.common.item.armor.ManaitaPlusArmor;
 import sen.manaita_plus_legacy.common.item.data.IManaitaPlusDestroy;
 import sen.manaita_plus_legacy.common.network.Networking;
-import sen.manaita_plus_legacy.common.network.data.MessageDestroy;
+import sen.manaita_plus_legacy.common.network.server.MessageDestroy;
 import sen.manaita_plus_legacy.common.util.wrapper.EntitiesWrapper;
 import sen.manaita_plus_legacy_core.util.Helper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 public class ManaitaPlusUtils {
@@ -61,9 +58,8 @@ public class ManaitaPlusUtils {
     private static final ThreadLocal<EntitiesWrapper> ENTITY_CACHE =
             ThreadLocal.withInitial(EntitiesWrapper::new);
 
-    public static void godKill(Player player,boolean remove) {
+    public static void godKill(Player player,boolean remove,boolean shiftKeyDown) {
         Level level = player.level();
-        boolean shiftKeyDown = player.isShiftKeyDown();
 //        if (shiftKeyDown && level.isClientSide) {
 //            if (Minecraft.getInstance().isSameThread()) {
 //                mc.getSoundManager().stop();
@@ -82,7 +78,7 @@ public class ManaitaPlusUtils {
                 if (target == null || target instanceof ItemEntity || target instanceof ExperienceOrb) {
                     continue;
                 }
-                if (!shiftKeyDown && !(target instanceof Monster)) continue;
+                if (!shiftKeyDown && target.getType().getCategory() != MobCategory.MONSTER) continue;
                 kill(target, shiftKeyDown,remove);
             }
             wrapper.reset();
@@ -98,7 +94,7 @@ public class ManaitaPlusUtils {
                     tntities.add(target);
                     continue;
                 }
-                if (!shiftKeyDown && !(target instanceof Monster)) continue;
+                if (!shiftKeyDown && target.getType().getCategory() != MobCategory.MONSTER) continue;
                 kill(target, shiftKeyDown,remove);
             }
             wrapper.reset();
@@ -118,59 +114,8 @@ public class ManaitaPlusUtils {
     }
 
     public static void kill(Entity target,boolean isSnk,boolean remove) {
-        if (!target.level().isClientSide) {
-            if (target instanceof LivingEntity living) {
-                DamageSource damageSource = target.damageSources().fellOutOfWorld();
-                living.hurt(damageSource, Float.MAX_VALUE);
-                living.setHealth(0.0F);
-                living.die(damageSource);
-            }
-        }
-        ManaitaPlusEntityList.death.add(target);
         if (remove) {
-            if (target.level() instanceof ServerLevel serverLevel) {
-                if (target instanceof LivingEntity living) {
-                    serverLevel.entityManager.visibleEntityStorage.remove(living);
-                    serverLevel.entityManager.knownUuids.remove(living.getUUID());
-                    serverLevel.entityTickList.remove(living);
-                    long sectionPos = SectionPos.asLong(living.blockPosition());
-                    final EntitySection<Entity> entitySection = serverLevel.entityManager.sectionStorage.getOrCreateSection(sectionPos);
-                    entitySection.remove(living);
-                    living.setLevelCallback(new EntityInLevelCallback() {
-                        public void onMove() {
-                        }
-
-                        public void onRemove(Entity.RemovalReason removalReason) {
-                            if (!entitySection.remove(living)) {
-                                serverLevel.entityManager.stopTicking(living);
-                                serverLevel.entityManager.stopTracking(living);
-                                serverLevel.entityManager.callbacks.onDestroyed(living);
-                                serverLevel.entityManager.knownUuids.remove(living.getUUID());
-                            }
-                        }
-                    });
-                }
-                ChunkEntities<?> chunkEntities;
-                while ((chunkEntities = serverLevel.entityManager.loadingInbox.poll()) != null) {
-                    ChunkEntities<?> finalChunkEntities = chunkEntities;
-                    chunkEntities.getEntities().forEach(p_157593_ -> {
-                        if (p_157593_ instanceof Entity entity) {
-                            entity.remove(Entity.RemovalReason.DISCARDED);
-                            serverLevel.entityManager.loadingInbox.remove(finalChunkEntities);
-                        }
-                    });
-                }
-            } else if (target.level() instanceof ClientLevel clientLevel && target instanceof LivingEntity living) {
-                clientLevel.tickingEntities.remove(living);
-                clientLevel.entityStorage.entityStorage.remove(living);
-                clientLevel.entityStorage.entityStorage.byUuid.remove(living.getUUID());
-                clientLevel.entityStorage.entityStorage.byId.remove(living.getId());
-                long aLong = SectionPos.asLong(living.blockPosition());
-                EntitySection<Entity> section = clientLevel.entityStorage.sectionStorage.getSection(aLong);
-                if (section != null) {
-                    clientLevel.entityStorage.removeSectionIfEmpty(aLong, section);
-                }
-            }
+            ManaitaPlusEntityList.remove.add(target);
             if (isSnk && !target.getClass().getName().startsWith("net.minecraft")) {
                 Class<?> wrapper = ManaitaPlusClassLoaderFactory.createWrapper(target.getClass());
                 if (wrapper != null) {
@@ -178,7 +123,114 @@ public class ManaitaPlusUtils {
                 }
             }
         }
-        ManaitaPlusEntityList.remove.add(target);
+        if (target.level().isClientSide) {
+            killOnClient(target);
+            if (remove) {
+                removeOnClient(target);
+            }
+        } else {
+            killOnServer(target);
+            if (remove) {
+//                if (target.level() instanceof ServerLevel serverLevel)
+//                serverLevel.getPlayers(p -> {
+//                    Networking.INSTANCE.send(
+//                            PacketDistributor.PLAYER.with(() -> p),
+//                            new MessageRemoveEntities(isSnk);
+//                    return false;
+//                });
+                removeOnServer(target);
+            }
+        }
+    }
+
+    public static void killOnClient(Entity target) {
+
+    }
+
+    public static void killOnServer(Entity target) {
+        ManaitaPlusEntityList.death.add(target);
+        if (target instanceof LivingEntity living) {
+            DamageSource damageSource = target.damageSources().fellOutOfWorld();
+            living.hurt(damageSource, Float.MAX_VALUE);
+            living.setHealth(0.0F);
+            living.die(damageSource);
+        }
+    }
+
+    public static void removeOnClient(Entity target) {
+        if (target.level() instanceof ClientLevel clientLevel) {
+            Int2ObjectMap<Entity> byId = clientLevel.entityStorage.entityStorage.byId;
+            byId.remove(target.getId());
+            byId.int2ObjectEntrySet().removeIf(next -> next.getValue() == target);
+
+            Map<UUID, Entity> byUuid = clientLevel.entityStorage.entityStorage.byUuid;
+            byUuid.remove(target.getUUID());
+            byUuid.entrySet().removeIf(next -> next.getValue() == target);
+            LevelEntityGetter<Entity> getter = clientLevel.entityStorage.entityGetter;
+            if (getter instanceof LevelEntityGetterAdapter<Entity> adapter) {
+                adapter.visibleEntities.byId.remove(target.getId());
+                adapter.visibleEntities.byUuid.remove(target.getUUID());
+            }
+            clientLevel.tickingEntities.remove(target);
+
+            long sectionPos = SectionPos.asLong(target.blockPosition());
+            EntitySectionStorage<Entity> sectionStorage = clientLevel.entityStorage.sectionStorage;
+            sectionStorage.getExistingSectionPositionsInChunk(sectionPos).forEach(sectionPos1 -> {
+                EntitySection<Entity> section = sectionStorage.sections.get(sectionPos1);
+                if (section == null) return;
+                section.storage.remove(target);
+                section.storage.allInstances.remove(target);
+            });
+            EntitySection<Entity> entitySection = sectionStorage.getOrCreateSection(sectionPos);
+            entitySection.remove(target);
+            entitySection.storage.allInstances.remove(target);
+        }
+    }
+
+    public static void removeOnServer(Entity target) {
+        if (target.level() instanceof ServerLevel serverLevel) {
+            Int2ObjectMap<Entity> byId = serverLevel.entityManager.visibleEntityStorage.byId;
+            byId.remove(target.getId());
+            byId.int2ObjectEntrySet().removeIf(next -> next.getValue() == target);
+
+            Map<UUID, Entity> byUuid = serverLevel.entityManager.visibleEntityStorage.byUuid;
+            byUuid.remove(target.getUUID());
+            byUuid.entrySet().removeIf(next -> next.getValue() == target);
+            serverLevel.entityManager.knownUuids.remove(target.getUUID());
+
+            LevelEntityGetter<Entity> getter = serverLevel.entityManager.entityGetter;
+
+            if (getter instanceof LevelEntityGetterAdapter<Entity> adapter) {
+                adapter.visibleEntities.byId.remove(target.getId());
+                adapter.visibleEntities.byUuid.remove(target.getUUID());
+            }
+            serverLevel.entityTickList.remove(target);
+
+            long sectionPos = SectionPos.asLong(target.blockPosition());
+            EntitySectionStorage<Entity> sectionStorage = serverLevel.entityManager.sectionStorage;
+            sectionStorage.getExistingSectionPositionsInChunk(sectionPos).forEach(sectionPos1 -> {
+                EntitySection<Entity> section = sectionStorage.sections.get(sectionPos1);
+                if (section == null) return;
+                section.storage.remove(target);
+                section.storage.allInstances.remove(target);
+            });
+            EntitySection<Entity> entitySection = sectionStorage.getOrCreateSection(sectionPos);
+            target.setLevelCallback(new EntityInLevelCallback() {
+                public void onMove() {
+                }
+
+                public void onRemove(Entity.RemovalReason removalReason) {
+                    if (!entitySection.remove(target)) {
+                        serverLevel.entityManager.stopTicking(target);
+                        serverLevel.entityManager.stopTracking(target);
+                        serverLevel.entityManager.callbacks.onDestroyed(target);
+                    }
+                }
+            });
+            target.setRemoved(Entity.RemovalReason.DISCARDED);
+            entitySection.remove(target);
+            entitySection.storage.allInstances.remove(target);
+        }
     }
 
 

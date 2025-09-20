@@ -50,7 +50,9 @@ public class ManaitaPlusCraftingRecipe implements CraftingRecipe {
         }
         if (item == 2) {
             if (source) return true;
-        } else return false;
+        } else {
+            return false;
+        }
         boolean source1 = false;
         for (ItemStack itemStack : p_44002_.getItems()) {
             Item item1 = itemStack.getItem();
@@ -66,6 +68,7 @@ public class ManaitaPlusCraftingRecipe implements CraftingRecipe {
                 source1=true;
             }
         }
+
         return source & source1;
     }
 

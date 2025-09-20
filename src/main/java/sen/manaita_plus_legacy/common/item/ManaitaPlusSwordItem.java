@@ -115,14 +115,14 @@ public class ManaitaPlusSwordItem extends SwordItem implements IManaitaPlusKey {
     }
 
     public void onManaitaKeyPress(ItemStack itemStack, Player player) {
-        int sweep = itemStack.getTag().getInt("Sweep");
+        int sweep = itemStack.getOrCreateTag().getInt("Sweep");
         if (sweep == 0) sweep = 1;
         sweep = (sweep * 4) % 2048;
         setSweep(itemStack,sweep);
   }
 
     public void onManaitaKeyPressOnClient(ItemStack itemStack, Player player) {
-        int sweep = itemStack.getTag().getInt("Sweep");
+        int sweep = itemStack.getOrCreateTag().getInt("Sweep");
         if (sweep == 0) sweep = 1;
         sweep = (sweep * 4) % 2048;
         setSweep(itemStack,sweep);
@@ -131,10 +131,10 @@ public class ManaitaPlusSwordItem extends SwordItem implements IManaitaPlusKey {
 
     @Override
     public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
-        entity.hurt(entity.damageSources().playerAttack(player), (float) Double.MAX_VALUE);
+        entity.hurt(entity.damageSources().playerAttack(player), 10000);
         if (entity instanceof LivingEntity living) {
             living.die(living.damageSources().playerAttack(player));
-            living.setHealth(Float.NaN);
+            living.setHealth(0F);
             living.deathTime = 15;
         }
         return super.onLeftClickEntity(stack, player, entity);

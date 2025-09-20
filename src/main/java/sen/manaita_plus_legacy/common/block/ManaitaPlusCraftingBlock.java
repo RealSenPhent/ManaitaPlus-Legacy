@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import sen.manaita_plus_legacy.common.block.data.Data;
 import sen.manaita_plus_legacy.common.block.entity.ManaitaPlusCraftingBlockEntity;
 import sen.manaita_plus_legacy.common.core.ManaitaPlusBlockCore;
-import sen.manaita_plus_legacy.common.gui.ManaitaPlusCraftingMenu;
+import sen.manaita_plus_legacy.common.menu.ManaitaPlusCraftingMenu;
 
 import java.util.List;
 

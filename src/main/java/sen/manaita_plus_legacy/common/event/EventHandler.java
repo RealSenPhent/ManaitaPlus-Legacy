@@ -163,15 +163,19 @@ public class EventHandler {
             tradesTier.add(new ManaitaPlusBowVillagerTrade(
                     new ItemStack(ManaitaPlusBlockCore.CraftingBlockItem.get(), 64),
                     new ItemStack(ManaitaPlusItemCore.ManaitaBow.get(), 1),
-                    1, 10, 1));
+                    1, 0, 1));
             tradesTier.add(new ManaitaPlusBowVillagerTrade(
                     new ItemStack(ManaitaPlusBlockCore.FurnaceBlockItem.get(), 64),
                     new ItemStack(ManaitaPlusItemCore.ManaitaBow.get(), 1),
-                    1, 10, 1));
+                    1, 0, 1));
             tradesTier.add(new ManaitaPlusBowVillagerTrade(
                     new ItemStack(ManaitaPlusBlockCore.BrewingBlock.get(), 64),
                     new ItemStack(ManaitaPlusItemCore.ManaitaBow.get(), 1),
-                    1, 10, 1));
+                    1, 0, 1));
+            tradesTier.add(new ManaitaPlusBowVillagerTrade(
+                    new ItemStack(ManaitaPlusItemCore.ManaitaBow.get(), 1),
+                    new ItemStack(ManaitaPlusItemCore.ManaitaSwordGod.get(), 1),
+                    1, 0, 1));
         }
     }
 

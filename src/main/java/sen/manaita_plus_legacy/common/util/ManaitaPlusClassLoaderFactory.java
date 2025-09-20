@@ -32,7 +32,6 @@ public class ManaitaPlusClassLoaderFactory {
 //        if (Modifier.isFinal(callback.getModifiers()))
 //            return null;
         if (!Entity.class.isAssignableFrom(callback) || Player.class.isAssignableFrom(callback)) return null;
-        if (a.containsKey(callback)) return null;
         if (callback.getName().endsWith("Manaita")) return null;
 //        ManaitaPlus.LOGGER.info("ManaitaPlusClassLoaderFactory.createWrapper: " + callback.getName());
         try {

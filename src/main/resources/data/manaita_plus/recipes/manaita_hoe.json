@@ -7,10 +7,10 @@
   ],
   "key": {
     "&": {
-      "item": "manaita_plus_legacy:block_crafting_manaita"
+      "tag": "manaita_plus_legacy:manaita_block_eq"
     },
     "%": {
-      "item": "manaita_plus_legacy:manaita_wood_hook"
+      "item": "manaita_plus_legacy:manaita_hook"
     }
   },
   "result": {

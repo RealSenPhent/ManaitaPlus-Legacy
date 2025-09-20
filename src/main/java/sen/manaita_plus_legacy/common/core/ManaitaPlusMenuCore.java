@@ -3,9 +3,9 @@ package sen.manaita_plus_legacy.common.core;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.registries.RegistryObject;
-import sen.manaita_plus_legacy.common.gui.ManaitaPlusBrewingStandMenu;
-import sen.manaita_plus_legacy.common.gui.ManaitaPlusCraftingMenu;
-import sen.manaita_plus_legacy.common.gui.ManaitaPlusFurnaceMenu;
+import sen.manaita_plus_legacy.common.menu.ManaitaPlusBrewingStandMenu;
+import sen.manaita_plus_legacy.common.menu.ManaitaPlusCraftingMenu;
+import sen.manaita_plus_legacy.common.menu.ManaitaPlusFurnaceMenu;
 import static sen.manaita_plus_legacy.ManaitaPlus.MENU_TYPES;
 
 public class ManaitaPlusMenuCore {

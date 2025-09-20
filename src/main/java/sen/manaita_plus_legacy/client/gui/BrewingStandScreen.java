@@ -9,7 +9,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import sen.manaita_plus_legacy.Config;
-import sen.manaita_plus_legacy.common.gui.ManaitaPlusBrewingStandMenu;
+import sen.manaita_plus_legacy.common.menu.ManaitaPlusBrewingStandMenu;
 
 @OnlyIn(Dist.CLIENT)
 public class BrewingStandScreen extends AbstractContainerScreen<ManaitaPlusBrewingStandMenu> {

@@ -4,8 +4,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 import sen.manaita_plus_legacy.ManaitaPlus;
-import sen.manaita_plus_legacy.common.network.data.MessageKey;
-import sen.manaita_plus_legacy.common.network.data.MessageDestroy;
+import sen.manaita_plus_legacy.common.network.client.MessageKey;
+import sen.manaita_plus_legacy.common.network.server.MessageDestroy;
+import sen.manaita_plus_legacy.common.network.server.MessageRemoveEntities;
 
 public class Networking {
     public static SimpleChannel INSTANCE;
@@ -33,6 +34,10 @@ public class Networking {
                 .decoder(MessageDestroy::new)
                 .consumerNetworkThread(MessageDestroy::handler)
                 .add();
-
+        INSTANCE.messageBuilder(MessageRemoveEntities.class, nextID())
+                .encoder(MessageRemoveEntities::toBytes)
+                .decoder(MessageRemoveEntities::new)
+                .consumerNetworkThread(MessageRemoveEntities::handler)
+                .add();
     }
 }

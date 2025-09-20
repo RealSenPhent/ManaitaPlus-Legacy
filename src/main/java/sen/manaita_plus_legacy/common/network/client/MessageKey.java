@@ -1,4 +1,4 @@
-package sen.manaita_plus_legacy.common.network.data;
+package sen.manaita_plus_legacy.common.network.client;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;

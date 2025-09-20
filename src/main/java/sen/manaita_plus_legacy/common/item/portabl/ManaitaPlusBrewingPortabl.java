@@ -18,7 +18,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraftforge.network.NetworkHooks;
 import sen.manaita_plus_legacy.common.core.ManaitaPlusBlockEntityCore;
-import sen.manaita_plus_legacy.common.gui.ManaitaPlusBrewingStandMenu;
+import sen.manaita_plus_legacy.common.menu.ManaitaPlusBrewingStandMenu;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;

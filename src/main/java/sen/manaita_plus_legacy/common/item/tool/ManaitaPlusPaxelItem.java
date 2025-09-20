@@ -87,13 +87,11 @@ public class ManaitaPlusPaxelItem extends DiggerItem implements IManaitaPlusKey,
 
     @Override
     public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
-        if (!player.level().isClientSide) {
-            entity.hurt(entity.damageSources().playerAttack(player), (float) Double.MAX_VALUE);
-            if (entity instanceof LivingEntity living) {
-                living.die(living.damageSources().playerAttack(player));
-                living.setHealth(Float.NaN);
-                living.deathTime = 15;
-            }
+        entity.hurt(entity.damageSources().playerAttack(player), 10000);
+        if (entity instanceof LivingEntity living) {
+            living.die(living.damageSources().playerAttack(player));
+            living.setHealth(0F);
+            living.deathTime = 15;
         }
         return super.onLeftClickEntity(stack, player, entity);
     }
@@ -117,7 +115,7 @@ public class ManaitaPlusPaxelItem extends DiggerItem implements IManaitaPlusKey,
     public void onManaitaKeyPressOnClient(ItemStack itemStack, Player player) {
         boolean doubling = !getDoubling(itemStack);
         setDoubling(itemStack, doubling);
-        ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(String.format("[%s] %s: %s", I18n.get("item.manaita_plus.manaita_paxel"),I18n.get("mode.doubling"), (doubling ? I18n.get("info.on") : I18n.get("info.off"))))));
+        ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(String.format("[%s] %s: %s", I18n.get("item.manaita_plus_legacy.manaita_paxel"),I18n.get("mode.doubling"), (doubling ? I18n.get("info.on") : I18n.get("info.off"))))));
     }
 
     public static boolean getDoubling(ItemStack itemStack) {

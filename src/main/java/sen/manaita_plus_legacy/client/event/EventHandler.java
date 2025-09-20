@@ -15,17 +15,20 @@ import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import sen.manaita_plus_legacy.ManaitaPlus;
 import sen.manaita_plus_legacy.common.core.ManaitaPlusKeyBoardInputCore;
 import sen.manaita_plus_legacy.common.item.ManaitaPlusGodSwordItem;
 import sen.manaita_plus_legacy.common.item.data.IManaitaPlusKey;
 import sen.manaita_plus_legacy.common.network.Networking;
-import sen.manaita_plus_legacy.common.network.data.MessageKey;
+import sen.manaita_plus_legacy.common.network.client.MessageKey;
 
-@Mod.EventBusSubscriber(value = Dist.CLIENT)
+@Mod.EventBusSubscriber(modid = ManaitaPlus.MODID,value = Dist.CLIENT)
 public class EventHandler {
+    private static final Minecraft mc = Minecraft.getInstance();
 
     @SubscribeEvent
     public static void onKeyInput(InputEvent.Key event) {
+        if (mc.player == null) return;
         if (ManaitaPlusKeyBoardInputCore.MESSAGE_KEY.isDown()) {
             ItemStack mainHandItem = mc.player.getMainHandItem();
             if (!mainHandItem.isEmpty() && mainHandItem.getItem() instanceof IManaitaPlusKey iManaitaPlusKey) {
@@ -42,8 +45,6 @@ public class EventHandler {
             Networking.INSTANCE.sendToServer(new MessageKey((byte)1));
         }
     }
-
-    private static final Minecraft mc = Minecraft.getInstance();
 
     @SubscribeEvent
     public static void onRenderHand(RenderHandEvent event) {
