@@ -85,8 +85,8 @@ public class ManaitaPlusLegacyArmor extends ArmorItem {
 
         @Override
         public void appendHoverText(ItemStack p_41421_, @Nullable Level p_41422_, List<Component> p_41423_, TooltipFlag p_41424_) {
-            super.appendHoverText(p_41421_, p_41422_, p_41423_, p_41424_);
             p_41423_.add(Component.literal(ManaitaPlusText.manaita_mode.formatting(I18n.get("mode.nightvision") + ": " +  (getNightVision(p_41421_) ? I18n.get("info.on") : I18n.get("info.off") ))));
+            super.appendHoverText(p_41421_, p_41422_, p_41423_, p_41424_);
         }
 
         @Override
@@ -199,8 +199,8 @@ public class ManaitaPlusLegacyArmor extends ArmorItem {
 
         @Override
         public void appendHoverText(ItemStack p_41421_, @Nullable Level p_41422_, List<Component> p_41423_, TooltipFlag p_41424_) {
-            super.appendHoverText(p_41421_, p_41422_, p_41423_, p_41424_);
             p_41423_.add(Component.literal(ManaitaPlusText.manaita_mode.formatting(I18n.get("mode.invisibility") + ": " + (getInvisibility(p_41421_) ? I18n.get("info.on") : I18n.get("info.off") ))));
+            super.appendHoverText(p_41421_, p_41422_, p_41423_, p_41424_);
         }
 
         public static boolean getInvisibility(ItemStack itemStack) {

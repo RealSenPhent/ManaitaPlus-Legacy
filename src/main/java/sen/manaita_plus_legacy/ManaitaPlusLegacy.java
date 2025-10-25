@@ -145,7 +145,7 @@ public class ManaitaPlusLegacy {
     }
 
     public static void acceptTypePropertyFunction(Item... items) {
-        ResourceLocation location = new ResourceLocation(ManaitaPlusLegacy.MODID, "manaita_plus_legacy_type");
+        ResourceLocation location = new ResourceLocation(ManaitaPlusLegacy.MODID, ManaitaPlusLegacyNBTData.Type);
         ItemPropertyFunction typePropertyFunction = (stack, level, entity, seed) -> {
             if (stack.getTag() != null) {
                 return stack.hasTag() ? stack.getTag().getInt(ManaitaPlusLegacyNBTData.ItemType) : 0;

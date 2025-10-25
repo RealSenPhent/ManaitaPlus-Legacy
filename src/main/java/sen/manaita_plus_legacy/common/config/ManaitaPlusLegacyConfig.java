@@ -13,9 +13,17 @@ public class ManaitaPlusLegacyConfig
 {
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
 
-    private static final ForgeConfigSpec.IntValue drops_doubling = BUILDER
-            .comment("DropsDoubling")
-            .defineInRange("drops_doubling_value", 4, 1, Integer.MAX_VALUE);
+    private static final ForgeConfigSpec.BooleanValue creative_range_destroy = BUILDER
+            .comment("This determines whether the creative can use range mining")
+            .define("creative_range_destroy", false);
+
+    private static final ForgeConfigSpec.IntValue experience_drops_doubling = BUILDER
+            .comment("ExperienceDropsDoubling")
+            .defineInRange("experience_drops_doubling_value", 4, 1, Integer.MAX_VALUE);
+
+    private static final ForgeConfigSpec.IntValue item_drops_doubling = BUILDER
+            .comment("ItemDropsDoubling")
+            .defineInRange("item_drops_doubling_value", 4, 1, Integer.MAX_VALUE);
     
     private static final ForgeConfigSpec.IntValue crafting_doubling = BUILDER
             .comment("CraftingDoubling")
@@ -39,7 +47,9 @@ public class ManaitaPlusLegacyConfig
 
     public static final ForgeConfigSpec SPEC = BUILDER.build();
 
-    public static int drops_doubling_value;
+    public static boolean creative_range_destroy_value;
+    public static int item_drops_doubling_value;
+    public static int experience_drops_doubling_value;
     public static int crafting_doubling_value;
     public static int furnace_doubling_value;
     public static int brewing_doubling_value;
@@ -48,7 +58,9 @@ public class ManaitaPlusLegacyConfig
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event)
     {
-        drops_doubling_value = drops_doubling.get();
+        creative_range_destroy_value = creative_range_destroy.get();
+        item_drops_doubling_value = item_drops_doubling.get();
+        experience_drops_doubling_value = experience_drops_doubling.get();
         crafting_doubling_value = crafting_doubling.get();
         furnace_doubling_value = furnace_doubling.get();
         brewing_doubling_value = brewing_doubling.get();

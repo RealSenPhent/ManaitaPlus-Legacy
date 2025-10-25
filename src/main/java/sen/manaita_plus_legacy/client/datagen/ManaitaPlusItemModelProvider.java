@@ -20,7 +20,7 @@ public class ManaitaPlusItemModelProvider extends ItemModelProvider {
         for (int i = 1; i <= 8; i++) {
             String typeName = getTypeName(i + 1); // 获取类型名称
             builder.override()
-                    .predicate(modLoc("manaita_type"), i)
+                    .predicate(modLoc("manaita_plus_legacy_type"), i)
                     .model(withExistingParent("block/hook/fixed_hook_" + typeName, "item/generated")
                             .texture("layer0", modLoc("block/hook/fixed_hook_" + typeName)));
         }
@@ -32,7 +32,7 @@ public class ManaitaPlusItemModelProvider extends ItemModelProvider {
         for (int i = 1; i <= 8; i++) {
             String typeName = getTypeName(i); // 获取类型名称
             builder.override()
-                    .predicate(modLoc("manaita_type"), i)
+                    .predicate(modLoc("manaita_plus_legacy_type"), i)
                     .model(withExistingParent("crafting_manaita_" + typeName, "item/generated")
                             .texture("layer0", modLoc("block/crafting/crafting_manaita_" + typeName)));
         }
@@ -44,7 +44,7 @@ public class ManaitaPlusItemModelProvider extends ItemModelProvider {
         for (int i = 1; i <= 8; i++) {
             String typeName = getTypeName(i); // 获取类型名称
             builder.override()
-                    .predicate(modLoc("manaita_type"), i)
+                    .predicate(modLoc("manaita_plus_legacy_type"), i)
                     .model(withExistingParent("furnace_manaita_" + typeName, "item/generated")
                             .texture("layer0", modLoc("block/furnace/furnace_manaita_" + typeName)));
         }
@@ -56,7 +56,7 @@ public class ManaitaPlusItemModelProvider extends ItemModelProvider {
         for (int i = 1; i <= 8; i++) {
             String typeName = getTypeName(i); // 获取类型名称
             builder.override()
-                    .predicate(modLoc("manaita_type"), i)
+                    .predicate(modLoc("manaita_plus_legacy_type"), i)
                     .model(withExistingParent("brewing_manaita_" + typeName, "item/generated")
                             .texture("layer0", modLoc("block/brewing/brewing_manaita_" + typeName)));
         }

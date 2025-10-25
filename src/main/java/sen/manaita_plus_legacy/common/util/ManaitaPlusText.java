@@ -35,8 +35,8 @@ public enum ManaitaPlusText {
         for (int i = 0; i < stripFormatting.length(); i++) {
             char c = stripFormatting.charAt(i);
             int col = (i + colours.length - offset) % colours.length;
-            sb.append(c);
             sb.append(colours[col]);
+            sb.append(c);
         }
         return sb.toString();
     }

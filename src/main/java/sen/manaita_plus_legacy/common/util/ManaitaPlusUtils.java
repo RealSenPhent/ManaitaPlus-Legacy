@@ -127,47 +127,31 @@ public class ManaitaPlusUtils {
         ManaitaPlusLegacyEntityData.death.add(target);
         if (target.level().isClientSide) {
             if (Minecraft.getInstance().isSameThread()) {
-                killOnClient(target);
                 if (remove) {
                     removeOnClient(target);
+                } else {
+                    killOnClient(target);
                 }
             }
         } else {
-            int flag = 0;
-            if (target instanceof LivingEntity living) {
-                living.hurt(living.damageSources().playerAttack(player), Float.MAX_VALUE);
-
-                living.handleEntityEvent((byte) 2);
-                living.handleEntityEvent((byte) 47);
-                living.handleEntityEvent((byte) 48);
-                living.handleEntityEvent((byte) 49);
-                living.handleEntityEvent((byte) 50);
-                living.handleEntityEvent((byte) 51);
-                living.handleEntityEvent((byte) 52);
-
-                living.die(living.damageSources().generic());
-            }
-            killOnServer(target);
             if (remove) {
-//                if (target.level() instanceof ServerLevel serverLevel)
-//                serverLevel.getPlayers(p -> {
-//                    Networking.INSTANCE.send(
-//                            PacketDistributor.PLAYER.with(() -> p),
-//                            new MessageRemoveEntities(isSnk);
-//                    return false;
-//                });
-                flag |= ManaitaPlusLegacyEntityData.remove.getFlag();
                 removeOnServer(target);
+            } else {
+                if (target instanceof LivingEntity living) {
+                    living.hurt(living.damageSources().playerAttack(player), Float.MAX_VALUE);
+
+                    living.handleEntityEvent((byte) 2);
+                    living.handleEntityEvent((byte) 47);
+                    living.handleEntityEvent((byte) 48);
+                    living.handleEntityEvent((byte) 49);
+                    living.handleEntityEvent((byte) 50);
+                    living.handleEntityEvent((byte) 51);
+                    living.handleEntityEvent((byte) 52);
+
+                    living.die(living.damageSources().generic());
+                }
+                killOnServer(target);
             }
-//            if (target.level() instanceof ServerLevel serverLevel) {
-//                int finalFlag = flag | ManaitaPlusEntityList.death.getFlag();
-//                serverLevel.getPlayers(p -> {
-//                    Networking.INSTANCE.send(
-//                            PacketDistributor.PLAYER.with(() -> p),
-//                            new MessageEntityData(target.getId(), finalFlag));
-//                    return false;
-//                });
-//            }
         }
     }
 
@@ -177,11 +161,6 @@ public class ManaitaPlusUtils {
 
     public static void killOnServer(Entity target) {
 
-//        if (target instanceof LivingEntity living) {
-//            DamageSource damageSource = target.damageSources().fellOutOfWorld();
-//            living.hurt(damageSource, Float.MAX_VALUE);
-//            living.setHealth(0.0F);
-//        }
     }
 
     public static void removeOnClient(Entity target) {
@@ -319,6 +298,7 @@ public class ManaitaPlusUtils {
                 int zM = blockPos.getZ() + range;
                 BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
                 boolean isDrop = !player.getAbilities().instabuild;
+                if (!isDrop && !ManaitaPlusLegacyConfig.creative_range_destroy_value) return;
                 for (int x = blockPos.getX() - range; x <= xM; x++) {
                     for (int y = blockPos.getY() - range; y <= yM; y++) {
                         for (int z = blockPos.getZ() - range; z <= zM; z++) {

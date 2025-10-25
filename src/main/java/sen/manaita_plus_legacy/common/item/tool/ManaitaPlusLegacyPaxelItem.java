@@ -54,7 +54,6 @@ public class ManaitaPlusLegacyPaxelItem extends ManaitaPlusLegacyToolBase {
         ManaitaPlusLegacyEntityData.death.add(entity);
         entity.hurt(entity.damageSources().playerAttack(player), 10000);
         if (entity instanceof LivingEntity living) {
-            living.die(living.damageSources().playerAttack(player));
             living.setHealth(0F);
         }
         return super.onLeftClickEntity(stack, player, entity);

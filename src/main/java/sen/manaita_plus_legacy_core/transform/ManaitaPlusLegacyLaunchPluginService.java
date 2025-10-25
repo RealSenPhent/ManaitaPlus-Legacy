@@ -83,11 +83,11 @@ public class ManaitaPlusLegacyLaunchPluginService implements ILaunchPluginServic
                     InsnList insnNodes = new InsnList();
                     LabelNode label1 = new LabelNode();
                     insnNodes.add(new VarInsnNode(Opcodes.ALOAD, 1));
-                    insnNodes.add(new TypeInsnNode(Opcodes.INSTANCEOF, "sen/manaita_plus_legacy/common/item/data/IManaitaPlusKey"));
+                    insnNodes.add(new TypeInsnNode(Opcodes.INSTANCEOF, "sen/manaita_plus_legacy/common/item/data/IManaitaPlusLegacyKey"));
                     insnNodes.add(new JumpInsnNode(Opcodes.IFEQ, label1));
 
                     insnNodes.add(new VarInsnNode(Opcodes.ALOAD, 1));
-                    insnNodes.add(new TypeInsnNode(Opcodes.INSTANCEOF, "sen/manaita_plus_legacy/common/item/armor/ManaitaPlusArmor"));
+                    insnNodes.add(new TypeInsnNode(Opcodes.INSTANCEOF, "sen/manaita_plus_legacy/common/item/armor/ManaitaPlusLegacyArmor"));
                     insnNodes.add(new JumpInsnNode(Opcodes.IFEQ, label1));
                     
                     insnNodes.add(new InsnNode(Opcodes.ICONST_0));
@@ -134,7 +134,7 @@ public class ManaitaPlusLegacyLaunchPluginService implements ILaunchPluginServic
                     flag = true;
                 }
             }
-        } else if ("net/minecraft/client/renderer/entity/layers/ItemInHandLayer".equals(classNode.name)) {
+        } /*else if ("net/minecraft/client/renderer/entity/layers/ItemInHandLayer".equals(classNode.name)) {
             for (MethodNode method : classNode.methods) {
                 if (method.name.equals("m_117184_") && method.desc.equals("(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemDisplayContext;Lnet/minecraft/world/entity/HumanoidArm;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V")) {
                     for (AbstractInsnNode instruction : method.instructions) {
@@ -169,7 +169,7 @@ public class ManaitaPlusLegacyLaunchPluginService implements ILaunchPluginServic
                     }
                 }
             }
-        } else if ("net/minecraft/world/entity/Entity".equals(classNode.name)) {
+        }*/ else if ("net/minecraft/world/entity/Entity".equals(classNode.name)) {
             for (MethodNode method : classNode.methods) {
                 if (method.name.equals("<init>")) {
                     InsnList insnNodes = new InsnList();

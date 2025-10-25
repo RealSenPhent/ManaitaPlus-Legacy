@@ -1,8 +1,10 @@
 package sen.manaita_plus_legacy.common.event;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerTrades;
@@ -20,7 +22,6 @@ import sen.manaita_plus_legacy.ManaitaPlusLegacy;
 import sen.manaita_plus_legacy.common.config.ManaitaPlusLegacyConfig;
 import sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyBlockCore;
 import sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyItemCore;
-import sen.manaita_plus_legacy.common.item.armor.ManaitaPlusLegacyArmor;
 import sen.manaita_plus_legacy.common.item.data.IManaitaPlusLegacyDoubling;
 import sen.manaita_plus_legacy.common.item.data.IManaitaPlusLegacyKey;
 import sen.manaita_plus_legacy.common.trades.ManaitaPlusLegacyBowVillagerTrade;
@@ -36,45 +37,26 @@ public class EventHandler {
     @SubscribeEvent
     public static void onItemTooltip(ItemTooltipEvent event) {
         Item item = event.getItemStack().getItem();
-        if (item instanceof ManaitaPlusLegacyArmor) {
+        if (item instanceof IManaitaPlusLegacyKey) {
             List<Component> toolTip = event.getToolTip();
             Iterator<Component> iterator = toolTip.iterator();
-            Component component;
             while (iterator.hasNext()) {
-                component = iterator.next();
-                if (component instanceof MutableComponent mutableComponent) {
-                    for (Component sibling : mutableComponent.getSiblings()) {
-                        if (sibling instanceof MutableComponent mutableComponent1) {
-                            if (mutableComponent1.getContents() instanceof TranslatableContents) {
-                                iterator.remove();
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        } else if (item instanceof IManaitaPlusLegacyKey) {
-            List<Component> toolTip = event.getToolTip();
-            Iterator<Component> iterator = toolTip.iterator();
-            while1 : while (iterator.hasNext()) {
                 Component component = iterator.next();
                 if (component instanceof MutableComponent mutableComponent) {
-                    for (Component sibling : mutableComponent.getSiblings()) {
-                        if (sibling instanceof MutableComponent mutableComponent1) {
-                            if (mutableComponent1.getContents() instanceof TranslatableContents translatableContents) {
-                                if (translatableContents.getKey().startsWith("item.modifiers.")) {
-                                    while (iterator.hasNext()) {
-                                        iterator.next();
-                                        iterator.remove();
-                                    }
-                                    break while1;
-                                }
+                    ComponentContents contents = mutableComponent.getContents();
+                    if (contents instanceof TranslatableContents translatableContents) {
+                        if (translatableContents.getKey().startsWith("item.modifiers.")) {
+                            while (iterator.hasNext()) {
+                                iterator.next();
+                                iterator.remove();
                             }
+                            break;
                         }
                     }
                 }
             }
             toolTip.remove(toolTip.size() - 1);
+            toolTip.remove(toolTip.size() - 2);
         }
     }
 
@@ -93,23 +75,49 @@ public class EventHandler {
 
     @SubscribeEvent
     public static void onLivingDrops(LivingDropsEvent event) {
-        if (event.getSource().getEntity() instanceof Player player) {
-            ItemStack mainHandItem = player.getMainHandItem();
-            if (mainHandItem.getItem() instanceof IManaitaPlusLegacyDoubling doublingItem) {
-                if (doublingItem.isDoubling(mainHandItem)) {
-                    int magnification = ManaitaPlusLegacyConfig.drops_doubling_value;
-                    for (ItemEntity drop : event.getDrops()) {
-                        ItemStack dropStack = drop.getItem();
-                        dropStack.setCount(dropStack.getCount() * magnification);
-                        player.getInventory().add(dropStack);
-                    }
-                } else {
-                    for (ItemEntity drop : event.getDrops()) {
-                        player.getInventory().add(drop.getItem());
-                    }
-                }
-                event.getDrops().clear();
+        Player player;
+        if (event.getSource().getEntity() instanceof Player) {
+            player = (Player) event.getSource().getEntity();
+        } else {
+            LivingEntity killCredit = event.getEntity().getKillCredit();
+            if (killCredit instanceof Player) {
+                player = (Player) killCredit;
+            } else {
+                return;
             }
+        }
+        ItemStack mainHandItem = player.getMainHandItem();
+        if (mainHandItem.getItem() instanceof IManaitaPlusLegacyDoubling doublingItem) {
+            if (doublingItem.isDoubling(mainHandItem)) {
+                int magnification = ManaitaPlusLegacyConfig.item_drops_doubling_value;
+                for (ItemEntity drop : event.getDrops()) {
+                    ItemStack dropStack = drop.getItem();
+                    dropStack.setCount(dropStack.getCount() * magnification);
+                    player.getInventory().add(dropStack);
+                }
+            } else {
+                for (ItemEntity drop : event.getDrops()) {
+                    player.getInventory().add(drop.getItem());
+                }
+            }
+            event.getDrops().clear();
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onLivingExperienceDrop(LivingExperienceDropEvent event) {
+        Player attackingPlayer = event.getAttackingPlayer();
+
+        ItemStack mainHandItem = attackingPlayer.getMainHandItem();
+        if (mainHandItem.getItem() instanceof IManaitaPlusLegacyDoubling doublingItem) {
+            if (doublingItem.isDoubling(mainHandItem)) {
+                attackingPlayer.giveExperiencePoints(event.getDroppedExperience() * ManaitaPlusLegacyConfig.experience_drops_doubling_value);
+            } else {
+                attackingPlayer.giveExperiencePoints(event.getDroppedExperience());
+            }
+            event.setDroppedExperience(0);
+            event.setCanceled(true);
         }
     }
 

@@ -5,7 +5,6 @@ import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -30,13 +29,14 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ToolAction;
 import org.jetbrains.annotations.Nullable;
+import sen.manaita_plus_legacy.common.item.data.IManaitaPlusLegacyDoubling;
 import sen.manaita_plus_legacy.common.item.data.IManaitaPlusLegacyKey;
 import sen.manaita_plus_legacy.common.util.ManaitaPlusText;
 import sen.manaita_plus_legacy.common.util.ManaitaPlusUtils;
 
 import java.util.List;
 
-public class ManaitaPlusLegacySwordItem extends SwordItem implements IManaitaPlusLegacyKey {
+public class ManaitaPlusLegacySwordItem extends SwordItem implements IManaitaPlusLegacyKey, IManaitaPlusLegacyDoubling {
     private final Multimap<Attribute, AttributeModifier> defaultModifiers;
     public ManaitaPlusLegacySwordItem() {
         super(new ItemManaitaSwordTier(), 0, 0, new Item.Properties().fireResistant());
@@ -113,7 +113,7 @@ public class ManaitaPlusLegacySwordItem extends SwordItem implements IManaitaPlu
     }
 
     public void onManaitaKeyPress(ItemStack itemStack, Player player) {
-        int sweep = itemStack.getOrCreateTag().getInt("Sweep");
+        int sweep = getSweep(itemStack);
         if (sweep == 0) sweep = 1;
         sweep = (sweep * 4) % 2048;
         setSweep(itemStack,sweep);
@@ -134,10 +134,9 @@ public class ManaitaPlusLegacySwordItem extends SwordItem implements IManaitaPlu
     }
 
     public static int getSweep(ItemStack itemStack) {
-        if (itemStack.getTag() == null)
-            itemStack.setTag(new CompoundTag());
-        int sweep = itemStack.getTag().getInt("Sweep");
-        return sweep;
+        if (!itemStack.hasTag()) return 1;
+        assert itemStack.getTag() != null;
+        return itemStack.getTag().getInt("Sweep");
     }
 
     public static void setSweep(ItemStack itemStack,int sweep) {
