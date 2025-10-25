@@ -17,12 +17,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.shapes.CollisionContext;
 import sen.manaita_plus_legacy.common.block.ManaitaPlusCraftingBlock;
 import sen.manaita_plus_legacy.common.block.ManaitaPlusHookBlock;
-import sen.manaita_plus_legacy.common.block.data.Data;
+import sen.manaita_plus_legacy.common.block.data.ManaitaPlusLegacyBlockData;
+import sen.manaita_plus_legacy.common.util.ManaitaPlusLegacyNBTData;
 import sen.manaita_plus_legacy.common.util.ManaitaPlusUtils;
 
-import static sen.manaita_plus_legacy.common.core.ManaitaPlusBlockCore.CraftingBlock;
+import static sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyBlockCore.CraftingBlock;
 
 public class ManaitaPlusCraftingBlockItem extends BlockItem {
     public ManaitaPlusCraftingBlockItem() {
@@ -31,7 +33,7 @@ public class ManaitaPlusCraftingBlockItem extends BlockItem {
 
     @Override
     public Component getName(ItemStack p_41458_) {
-        return Component.literal(I18n.get("block.crafting."+ ManaitaPlusUtils.getTypes(p_41458_.getOrCreateTag().getInt("ManaitaType")) +"name"));
+        return Component.literal(I18n.get("block.crafting."+ ManaitaPlusUtils.getTypes(p_41458_.getOrCreateTag().getInt(ManaitaPlusLegacyNBTData.ItemType)) +"name"));
     }
 
     public InteractionResult place(BlockPlaceContext p_40577_) {
@@ -55,9 +57,9 @@ public class ManaitaPlusCraftingBlockItem extends BlockItem {
                     BlockPos relative = blockpos.relative(blockplacecontext.getClickedFace().getOpposite());
                     BlockState blockState = level.getBlockState(relative);
                     if (blockState.getBlock() instanceof ManaitaPlusHookBlock) {
-                        blockstate = blockstate.setValue(Data.HOOK, blockState.getValue(Data.TYPES)).setValue(Data.WALL, blockState.getValue(Data.FACING).getOpposite());
+                        blockstate = blockstate.setValue(ManaitaPlusLegacyBlockData.HOOK, blockState.getValue(ManaitaPlusLegacyBlockData.TYPES)).setValue(ManaitaPlusLegacyBlockData.WALL, blockState.getValue(ManaitaPlusLegacyBlockData.FACING)).setValue(ManaitaPlusLegacyBlockData.FACING, blockState.getValue(ManaitaPlusLegacyBlockData.FACING));
                         blockpos = relative;
-                    } else if (blockplacecontext.getClickedFace() != Direction.UP && blockplacecontext.getClickedFace() != Direction.DOWN) {
+                    } else if (blockplacecontext.getClickedFace() != Direction.UP && blockplacecontext.getClickedFace() != Direction.DOWN || !p_40577_.getLevel().isUnobstructed(blockState, p_40577_.getClickedPos(), player == null ? CollisionContext.empty() : CollisionContext.of(player))) {
                         return InteractionResult.FAIL;
                     }
                     if (!level.setBlock(blockpos, blockstate, 11)){
@@ -88,10 +90,14 @@ public class ManaitaPlusCraftingBlockItem extends BlockItem {
         }
     }
 
+    protected boolean canPlace(BlockPlaceContext p_40611_, BlockState p_40612_) {
+        return (!this.mustSurvive() || p_40612_.canSurvive(p_40611_.getLevel(), p_40611_.getClickedPos()));
+    }
+
     private BlockState updateBlockStateFromTag(BlockPos pos, Level level, ItemStack p_40605_, BlockState p_40606_) {
         BlockState blockstate = p_40606_;
         if (blockstate.getBlock() instanceof ManaitaPlusCraftingBlock && p_40605_.getTag() != null) {
-            BlockState manaitaType = blockstate.setValue(Data.TYPES, p_40605_.getTag().getInt("ManaitaType"));
+            BlockState manaitaType = blockstate.setValue(ManaitaPlusLegacyBlockData.TYPES, p_40605_.getTag().getInt(ManaitaPlusLegacyNBTData.ItemType));
             level.setBlock(pos, manaitaType, 2);
             return manaitaType;
         }

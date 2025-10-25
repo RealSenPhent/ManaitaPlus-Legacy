@@ -4,24 +4,24 @@ import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.client.model.generators.*;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import sen.manaita_plus_legacy.ManaitaPlus;
-import sen.manaita_plus_legacy.common.block.data.Data;
-import sen.manaita_plus_legacy.common.core.ManaitaPlusBlockCore;
+import sen.manaita_plus_legacy.ManaitaPlusLegacy;
+import sen.manaita_plus_legacy.common.block.data.ManaitaPlusLegacyBlockData;
+import sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyBlockCore;
 import sen.manaita_plus_legacy.common.util.ManaitaPlusUtils;
 
 public class ManaitaPlusBlockStateProvider extends BlockStateProvider {
 
     public ManaitaPlusBlockStateProvider(PackOutput output, ExistingFileHelper exFileHelper) {
-        super(output, ManaitaPlus.MODID, exFileHelper);
+        super(output, ManaitaPlusLegacy.MODID, exFileHelper);
     }
 
     @Override
     protected void registerStatesAndModels() {
         VariantBlockStateBuilder builder;
 
-        horizontalBlock(ManaitaPlusBlockCore.HookBlock.get(), state -> {
-            String typeName = ManaitaPlusUtils.getTypes1(state.getValue(sen.manaita_plus_legacy.common.block.data.Data.TYPES) + 1);
-            Direction direction1 = state.getValue(Data.FACING);
+        horizontalBlock(ManaitaPlusLegacyBlockCore.HookBlock.get(), state -> {
+            String typeName = ManaitaPlusUtils.getTypes1(state.getValue(ManaitaPlusLegacyBlockData.TYPES) + 1);
+            Direction direction1 = state.getValue(ManaitaPlusLegacyBlockData.FACING);
             ModelBuilder<BlockModelBuilder>.ElementBuilder modelFile = models().getBuilder("block/hook/hook_block_" + typeName  + "_" + direction1.getName())
                     .parent(models().getExistingFile(mcLoc(ModelProvider.BLOCK_FOLDER + "/cube_all")))
                     .texture("all", modLoc("block/hook/fixed_hook_" + typeName))
@@ -33,7 +33,7 @@ public class ManaitaPlusBlockStateProvider extends BlockStateProvider {
                     .end();
         });
 
-        builder = getVariantBuilder(ManaitaPlusBlockCore.CraftingBlock.get());
+        builder = getVariantBuilder(ManaitaPlusLegacyBlockCore.CraftingBlock.get());
 
         for (int i = 0; i <= 8; i++) {
             if(i == 0) {
@@ -42,7 +42,7 @@ public class ManaitaPlusBlockStateProvider extends BlockStateProvider {
                         .texture("particle", modLoc("block/crafting_manaita"));
 
                 builder.partialState()
-                        .with(sen.manaita_plus_legacy.common.block.data.Data.TYPES, i)
+                        .with(ManaitaPlusLegacyBlockData.TYPES, i)
                         .addModels(new ConfiguredModel(modelFile));
                 continue;
             }
@@ -52,11 +52,11 @@ public class ManaitaPlusBlockStateProvider extends BlockStateProvider {
                     .texture("particle", modLoc("block/crafting/crafting_manaita_" + ManaitaPlusUtils.getTypes1(i)));
 
             builder.partialState()
-                    .with(sen.manaita_plus_legacy.common.block.data.Data.TYPES, i)
+                    .with(ManaitaPlusLegacyBlockData.TYPES, i)
                     .addModels(new ConfiguredModel(modelFile));
         }
 
-        builder = getVariantBuilder(ManaitaPlusBlockCore.FurnaceBlock.get());
+        builder = getVariantBuilder(ManaitaPlusLegacyBlockCore.FurnaceBlock.get());
 
         for (int i = 0; i <= 8; i++) {
             if(i == 0) {
@@ -65,7 +65,7 @@ public class ManaitaPlusBlockStateProvider extends BlockStateProvider {
                         .texture("particle", modLoc("block/furnace_manaita"));
 
                 builder.partialState()
-                        .with(sen.manaita_plus_legacy.common.block.data.Data.TYPES, i)
+                        .with(ManaitaPlusLegacyBlockData.TYPES, i)
                         .addModels(new ConfiguredModel(modelFile));
                 continue;
             }
@@ -75,10 +75,10 @@ public class ManaitaPlusBlockStateProvider extends BlockStateProvider {
                     .texture("particle", modLoc("block/furnace/furnace_manaita_" + ManaitaPlusUtils.getTypes1(i)));
 
             builder.partialState()
-                    .with(sen.manaita_plus_legacy.common.block.data.Data.TYPES, i)
+                    .with(ManaitaPlusLegacyBlockData.TYPES, i)
                     .addModels(new ConfiguredModel(modelFile));
         }
-        builder = getVariantBuilder(ManaitaPlusBlockCore.BrewingBlock.get());
+        builder = getVariantBuilder(ManaitaPlusLegacyBlockCore.BrewingBlock.get());
 
         for (int i = 0; i <= 8; i++) {
             if(i == 0) {
@@ -87,7 +87,7 @@ public class ManaitaPlusBlockStateProvider extends BlockStateProvider {
                         .texture("particle", modLoc("block/brewing_manaita"));
 
                 builder.partialState()
-                        .with(sen.manaita_plus_legacy.common.block.data.Data.TYPES, i)
+                        .with(ManaitaPlusLegacyBlockData.TYPES, i)
                         .addModels(new ConfiguredModel(modelFile));
                 continue;
             }
@@ -97,7 +97,7 @@ public class ManaitaPlusBlockStateProvider extends BlockStateProvider {
                     .texture("particle", modLoc("block/brewing/brewing_manaita_" + ManaitaPlusUtils.getTypes1(i)));
 
             builder.partialState()
-                    .with(sen.manaita_plus_legacy.common.block.data.Data.TYPES, i)
+                    .with(ManaitaPlusLegacyBlockData.TYPES, i)
                     .addModels(new ConfiguredModel(modelFile));
         }
     }

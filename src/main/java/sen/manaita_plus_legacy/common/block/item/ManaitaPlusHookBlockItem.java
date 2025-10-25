@@ -16,9 +16,10 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import sen.manaita_plus_legacy.common.block.ManaitaPlusHookBlock;
-import sen.manaita_plus_legacy.common.block.data.Data;
+import sen.manaita_plus_legacy.common.block.data.ManaitaPlusLegacyBlockData;
+import sen.manaita_plus_legacy.common.util.ManaitaPlusLegacyNBTData;
 
-import static sen.manaita_plus_legacy.common.core.ManaitaPlusBlockCore.HookBlock;
+import static sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyBlockCore.HookBlock;
 
 public class ManaitaPlusHookBlockItem extends BlockItem {
     public ManaitaPlusHookBlockItem() {
@@ -27,7 +28,7 @@ public class ManaitaPlusHookBlockItem extends BlockItem {
 
     @Override
     public Component getName(ItemStack p_41458_) {
-        return Component.translatable("tile.fixed_hook." + p_41458_.getOrCreateTag().getInt("ManaitaType") + ".name");
+        return Component.translatable("tile.fixed_hook." + p_41458_.getOrCreateTag().getInt(ManaitaPlusLegacyNBTData.ItemType) + ".name");
     }
 
     public InteractionResult place(BlockPlaceContext p_40577_) {
@@ -82,7 +83,7 @@ public class ManaitaPlusHookBlockItem extends BlockItem {
     private BlockState updateBlockStateFromTag(BlockPos pos, Level level, ItemStack p_40605_, BlockState p_40606_) {
         BlockState blockstate = p_40606_;
         if (blockstate.getBlock() instanceof ManaitaPlusHookBlock && p_40605_.getTag() != null) {
-            BlockState manaitaType = blockstate.setValue(Data.TYPES, p_40605_.getTag().getInt("ManaitaType"));
+            BlockState manaitaType = blockstate.setValue(ManaitaPlusLegacyBlockData.TYPES, p_40605_.getTag().getInt(ManaitaPlusLegacyNBTData.ItemType));
             level.setBlock(pos, manaitaType, 2);
             return manaitaType;
         }

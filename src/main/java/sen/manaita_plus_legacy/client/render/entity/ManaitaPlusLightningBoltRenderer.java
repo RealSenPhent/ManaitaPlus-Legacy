@@ -6,23 +6,24 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
-import sen.manaita_plus_legacy.common.entity.ManaitaPlusLightningBolt;
+import sen.manaita_plus_legacy.common.entity.ManaitaPlusLegacyLightningBolt;
 
 import java.util.Random;
 
 @OnlyIn(Dist.CLIENT)
-public class ManaitaPlusLightningBoltRenderer extends EntityRenderer<ManaitaPlusLightningBolt> {
+public class ManaitaPlusLightningBoltRenderer extends EntityRenderer<ManaitaPlusLegacyLightningBolt> {
     public ManaitaPlusLightningBoltRenderer(EntityRendererProvider.Context p_174286_) {
         super(p_174286_);
     }
 
-    public void render(ManaitaPlusLightningBolt p_115266_, float p_115267_, float p_115268_, PoseStack p_115269_, MultiBufferSource p_115270_, int p_115271_) {
+    public void render(ManaitaPlusLegacyLightningBolt p_115266_, float p_115267_, float p_115268_, PoseStack p_115269_, MultiBufferSource p_115270_, int p_115271_) {
         float[] afloat = new float[8];
         float[] afloat1 = new float[8];
         float f = 0.0F;
@@ -84,10 +85,15 @@ public class ManaitaPlusLightningBoltRenderer extends EntityRenderer<ManaitaPlus
 //                    int b = (int) Math.min(random.nextFloat() * 255,255);
 //                    float[] colors = Color.RGBtoHSB(r,g,b, null);
 
-                    quad(matrix4f, vertexconsumer, f2, f3, j1, f4, f5, random.nextFloat(), random.nextFloat(), random.nextFloat(), random.nextFloat(), f10, f11, false, false, true, false);
-                    quad(matrix4f, vertexconsumer, f2, f3, j1, f4, f5, random.nextFloat(), random.nextFloat(), random.nextFloat(), random.nextFloat(), f10, f11, true, false, true, true);
-                    quad(matrix4f, vertexconsumer, f2, f3, j1, f4, f5, random.nextFloat(), random.nextFloat(), random.nextFloat(), random.nextFloat(), f10, f11, true, true, false, true);
-                    quad(matrix4f, vertexconsumer, f2, f3, j1, f4, f5, random.nextFloat(), random.nextFloat(), random.nextFloat(), random.nextFloat(), f10, f11, false, true, false, false);
+                    float r = random.nextFloat();
+                    float g = random.nextFloat();
+                    float b = random.nextFloat();
+                    float a = 0.375F;
+
+                    quad(matrix4f, vertexconsumer, f2, f3, j1, f4, f5, r, g, b, a, f10, f11, false, false, true, false);
+                    quad(matrix4f, vertexconsumer, f2, f3, j1, f4, f5, r, g, b, a, f10, f11, true, false, true, true);
+                    quad(matrix4f, vertexconsumer, f2, f3, j1, f4, f5, r, g, b, a, f10, f11, true, true, false, true);
+                    quad(matrix4f, vertexconsumer, f2, f3, j1, f4, f5, r, g, b, a, f10, f11, false, true, false, false);
                 }
             }
         }
@@ -102,7 +108,7 @@ public class ManaitaPlusLightningBoltRenderer extends EntityRenderer<ManaitaPlus
         p_115274_.vertex(p_253966_, p_115275_ + (p_115287_ ? p_115284_ : -p_115284_), (float)(p_115277_ * 16), p_115276_ + (p_115288_ ? p_115284_ : -p_115284_)).color(p_115280_, p_115281_, p_115282_, a).endVertex();
     }
 
-    public ResourceLocation getTextureLocation(ManaitaPlusLightningBolt p_115264_) {
-        return TextureAtlas.LOCATION_BLOCKS;
+    public @NotNull ResourceLocation getTextureLocation(ManaitaPlusLegacyLightningBolt p_115264_) {
+        return InventoryMenu.BLOCK_ATLAS;
     }
 }

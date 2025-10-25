@@ -12,20 +12,20 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import sen.manaita_plus_legacy.Config;
-import sen.manaita_plus_legacy.common.menu.ManaitaPlusCraftingMenu;
+import sen.manaita_plus_legacy.common.config.ManaitaPlusLegacyConfig;
+import sen.manaita_plus_legacy.common.menu.ManaitaPlusLegacyCraftingMenu;
 
 @OnlyIn(Dist.CLIENT)
-public class CraftingManaitaScreen extends AbstractContainerScreen<ManaitaPlusCraftingMenu> implements RecipeUpdateListener {
+public class CraftingManaitaScreen extends AbstractContainerScreen<ManaitaPlusLegacyCraftingMenu> implements RecipeUpdateListener {
     private static final ResourceLocation CRAFTING_TABLE_LOCATION = new ResourceLocation("textures/gui/container/crafting_table.png");
     private static final ResourceLocation RECIPE_BUTTON_LOCATION = new ResourceLocation("textures/gui/recipe_button.png");
     private final RecipeBookComponent recipeBookComponent = new RecipeBookComponent();
     private boolean widthTooNarrow;
     private final String doubling_text;
 
-    public CraftingManaitaScreen(ManaitaPlusCraftingMenu p_98448_, Inventory p_98449_, Component p_98450_) {
+    public CraftingManaitaScreen(ManaitaPlusLegacyCraftingMenu p_98448_, Inventory p_98449_, Component p_98450_) {
         super(p_98448_, p_98449_, p_98450_);
-        doubling_text = Config.crafting_doubling_value + "x";
+        doubling_text = ManaitaPlusLegacyConfig.crafting_doubling_value + "x";
     }
 
     protected void init() {

@@ -23,10 +23,11 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import sen.manaita_plus_legacy.common.block.data.Data;
+import sen.manaita_plus_legacy.common.block.data.ManaitaPlusLegacyBlockData;
 import sen.manaita_plus_legacy.common.block.entity.ManaitaPlusBrewingStandBlockEntity;
-import sen.manaita_plus_legacy.common.core.ManaitaPlusBlockCore;
-import sen.manaita_plus_legacy.common.core.ManaitaPlusBlockEntityCore;
+import sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyBlockCore;
+import sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyBlockEntityCore;
+import sen.manaita_plus_legacy.common.util.ManaitaPlusLegacyNBTData;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -36,15 +37,21 @@ public class ManaitaPlusBrewingStandBlock extends BaseEntityBlock {
 
     public ManaitaPlusBrewingStandBlock() {
         super(Properties.of().forceSolidOff());
-        this.registerDefaultState(this.stateDefinition.any().setValue(Data.HOOK, 8).setValue(Data.FACING, Direction.NORTH).setValue(Data.WALL,Direction.DOWN).setValue(Data.TYPES,0).setValue(HAS_BOTTLE[0], Boolean.valueOf(false)).setValue(HAS_BOTTLE[1], Boolean.valueOf(false)).setValue(HAS_BOTTLE[2], Boolean.valueOf(false)));
+        this.registerDefaultState(this.stateDefinition.any().setValue(ManaitaPlusLegacyBlockData.HOOK, 8).setValue(ManaitaPlusLegacyBlockData.FACING, Direction.NORTH).setValue(ManaitaPlusLegacyBlockData.WALL,Direction.DOWN).setValue(ManaitaPlusLegacyBlockData.TYPES,0).setValue(HAS_BOTTLE[0], Boolean.valueOf(false)).setValue(HAS_BOTTLE[1], Boolean.valueOf(false)).setValue(HAS_BOTTLE[2], Boolean.valueOf(false)));
     }
 
 
     @Override
     public VoxelShape getShape(BlockState p_60555_, BlockGetter p_60556_, BlockPos p_60557_, CollisionContext p_60558_) {
-        Direction wall = p_60555_.getValue(Data.WALL);
-        Direction direction = p_60555_.getValue(Data.FACING);
-        return wall == Direction.EAST ? Data.shapeEAST : wall == Direction.SOUTH ? Data.shapeSOUTH : wall == Direction.NORTH ? Data.shapeNORTH : wall == Direction.WEST ? Data.shapeWEST :  direction == Direction.NORTH || direction == Direction.SOUTH ? wall == Direction.UP ? Data.shapeUNS : Data.shapeDNS : wall == Direction.UP ? Data.shapeUWE :  Data.shapeDWE;
+        Direction wall = p_60555_.getValue(ManaitaPlusLegacyBlockData.WALL);
+        Direction direction = p_60555_.getValue(ManaitaPlusLegacyBlockData.FACING);
+        boolean hasHook = p_60555_.getValue(ManaitaPlusLegacyBlockData.HOOK) != 8;
+        return wall == Direction.EAST ? hasHook ? ManaitaPlusLegacyBlockData.shapeAndE : ManaitaPlusLegacyBlockData.shapeEAST : wall == Direction.SOUTH
+                ? hasHook ? ManaitaPlusLegacyBlockData.shapeAndS : ManaitaPlusLegacyBlockData.shapeSOUTH :
+                wall == Direction.NORTH ? hasHook ? ManaitaPlusLegacyBlockData.shapeAndN : ManaitaPlusLegacyBlockData.shapeNORTH :
+                        wall == Direction.WEST ? hasHook ? ManaitaPlusLegacyBlockData.shapeAndW : ManaitaPlusLegacyBlockData.shapeWEST :
+                                direction == Direction.NORTH || direction == Direction.SOUTH ? wall == Direction.UP ? ManaitaPlusLegacyBlockData.shapeUNS :
+                                        ManaitaPlusLegacyBlockData.shapeDNS : wall == Direction.UP ? ManaitaPlusLegacyBlockData.shapeUWE :  ManaitaPlusLegacyBlockData.shapeDWE;
     }
 
     @Override
@@ -52,13 +59,14 @@ public class ManaitaPlusBrewingStandBlock extends BaseEntityBlock {
         List<ItemStack> list = Lists.newArrayList();
         ItemStack itemStack = new ItemStack(p_287732_.getBlock());
         itemStack.setTag(new CompoundTag());
-        itemStack.getTag().putInt("ManaitaType",p_287732_.getValue(Data.TYPES));
+        itemStack.getTag().putInt(ManaitaPlusLegacyNBTData.ItemType,p_287732_.getValue(ManaitaPlusLegacyBlockData.TYPES));
         list.add(itemStack);
-        int hook = p_287732_.getValue(Data.HOOK);
+        int hook = p_287732_.getValue(ManaitaPlusLegacyBlockData.HOOK);
         if (hook != 8) {
-            itemStack = new ItemStack(ManaitaPlusBlockCore.HookBlockItem.get());
+            itemStack = new ItemStack(ManaitaPlusLegacyBlockCore.HookBlockItem.get());
             itemStack.setTag(new CompoundTag());
-            itemStack.getTag().putInt("ManaitaType",hook);
+            itemStack.getTag().putInt(ManaitaPlusLegacyNBTData.ItemType,hook);
+            list.add(itemStack);
         }
         return list;
     }
@@ -78,7 +86,7 @@ public class ManaitaPlusBrewingStandBlock extends BaseEntityBlock {
     }
 
     public BlockState getStateForPlacement(BlockPlaceContext p_48689_) {
-        return this.defaultBlockState().setValue(Data.WALL,p_48689_.getClickedFace().getOpposite()).setValue(Data.FACING, p_48689_.getHorizontalDirection().getOpposite());
+        return this.defaultBlockState().setValue(ManaitaPlusLegacyBlockData.WALL,p_48689_.getClickedFace().getOpposite()).setValue(ManaitaPlusLegacyBlockData.FACING, p_48689_.getHorizontalDirection().getOpposite());
     }
 
 
@@ -87,15 +95,15 @@ public class ManaitaPlusBrewingStandBlock extends BaseEntityBlock {
     }
 
     public BlockState rotate(BlockState p_48722_, Rotation p_48723_) {
-        return p_48722_.setValue(Data.FACING, p_48723_.rotate(p_48722_.getValue(Data.FACING)));
+        return p_48722_.setValue(ManaitaPlusLegacyBlockData.FACING, p_48723_.rotate(p_48722_.getValue(ManaitaPlusLegacyBlockData.FACING)));
     }
 
     public BlockState mirror(BlockState p_48719_, Mirror p_48720_) {
-        return p_48719_.rotate(p_48720_.getRotation(p_48719_.getValue(Data.FACING)));
+        return p_48719_.rotate(p_48720_.getRotation(p_48719_.getValue(ManaitaPlusLegacyBlockData.FACING)));
     }
 
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_48725_) {
-        p_48725_.add(Data.FACING,Data.TYPES,HAS_BOTTLE[0], HAS_BOTTLE[1], HAS_BOTTLE[2], Data.WALL, Data.HOOK);
+        p_48725_.add(ManaitaPlusLegacyBlockData.FACING, ManaitaPlusLegacyBlockData.TYPES,HAS_BOTTLE[0], HAS_BOTTLE[1], HAS_BOTTLE[2], ManaitaPlusLegacyBlockData.WALL, ManaitaPlusLegacyBlockData.HOOK);
     }
 
     public BlockEntity newBlockEntity(BlockPos p_153277_, BlockState p_153278_) {
@@ -104,7 +112,7 @@ public class ManaitaPlusBrewingStandBlock extends BaseEntityBlock {
 
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level p_152694_, BlockState p_152695_, BlockEntityType<T> p_152696_) {
-        return p_152694_.isClientSide ? null : createTickerHelper(p_152696_, ManaitaPlusBlockEntityCore.BREWING_BLOCK_ENTITY.get(), ManaitaPlusBrewingStandBlockEntity::serverTick);
+        return p_152694_.isClientSide ? null : createTickerHelper(p_152696_, ManaitaPlusLegacyBlockEntityCore.BREWING_BLOCK_ENTITY.get(), ManaitaPlusBrewingStandBlockEntity::serverTick);
     }
 
 

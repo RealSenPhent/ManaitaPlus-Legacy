@@ -1,32 +1,27 @@
 package sen.manaita_plus_legacy.common.event;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
-import sen.manaita_plus_legacy.ManaitaPlus;
-import sen.manaita_plus_legacy.common.recipe.ingredient.NBTIngredient;
+import sen.manaita_plus_legacy.ManaitaPlusLegacy;
+import sen.manaita_plus_legacy.common.recipe.ingredient.ManaitaPlusLegacyNBTIngredient;
 
-import static sen.manaita_plus_legacy.common.core.ManaitaPlusKeyBoardInputCore.MESSAGE_ARMOR_KEY;
-import static sen.manaita_plus_legacy.common.core.ManaitaPlusKeyBoardInputCore.MESSAGE_KEY;
-
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = ManaitaPlus.MODID)
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = ManaitaPlusLegacy.MODID)
 public class EventRegisterHandler {
-    @SubscribeEvent
-    public static void onRegisterKeyMappings(RegisterKeyMappingsEvent event) {
-        event.register(MESSAGE_KEY);
-        event.register(MESSAGE_ARMOR_KEY);
-    }
-
-
     @SubscribeEvent
     public static void onRegisters(RegisterEvent event) {
         if (event.getRegistryKey().equals(ForgeRegistries.Keys.RECIPE_SERIALIZERS)) {
-            CraftingHelper.register(new ResourceLocation("manaita_plus_legacy", "nbt"), NBTIngredient.Serializer.INSTANCE);
+            CraftingHelper.register(new ResourceLocation("manaita_plus_legacy", "nbt"), ManaitaPlusLegacyNBTIngredient.Serializer.INSTANCE);
         }
+    }
+
+    @SubscribeEvent
+    public static void onEntityAttributeModification(EntityAttributeModificationEvent event) {
+//        event.getTypes().forEach(entityType -> event.add(entityType, ManaitaPlusAttributeCore.Type.get()));
     }
 
 

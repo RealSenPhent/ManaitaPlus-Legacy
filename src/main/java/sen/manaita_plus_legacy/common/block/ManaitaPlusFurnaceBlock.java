@@ -19,10 +19,11 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import sen.manaita_plus_legacy.common.block.data.Data;
+import sen.manaita_plus_legacy.common.block.data.ManaitaPlusLegacyBlockData;
 import sen.manaita_plus_legacy.common.block.entity.ManaitaPlusFurnaceBlockEntity;
-import sen.manaita_plus_legacy.common.core.ManaitaPlusBlockCore;
-import sen.manaita_plus_legacy.common.core.ManaitaPlusBlockEntityCore;
+import sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyBlockCore;
+import sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyBlockEntityCore;
+import sen.manaita_plus_legacy.common.util.ManaitaPlusLegacyNBTData;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -30,7 +31,7 @@ import java.util.List;
 public class ManaitaPlusFurnaceBlock extends AbstractFurnaceBlock {
     public ManaitaPlusFurnaceBlock() {
         super(BlockBehaviour.Properties.of().forceSolidOff());
-        this.registerDefaultState(this.stateDefinition.any().setValue(Data.HOOK, 8).setValue(FACING, Direction.NORTH).setValue(Data.WALL,Direction.DOWN).setValue(LIT, Boolean.FALSE).setValue(Data.TYPES,0));
+        this.registerDefaultState(this.stateDefinition.any().setValue(ManaitaPlusLegacyBlockData.HOOK, 8).setValue(FACING, Direction.NORTH).setValue(ManaitaPlusLegacyBlockData.WALL,Direction.DOWN).setValue(LIT, Boolean.FALSE).setValue(ManaitaPlusLegacyBlockData.TYPES,0));
     }
 
     protected void openContainer(Level p_53631_, BlockPos p_53632_, Player p_53633_) {
@@ -51,27 +52,34 @@ public class ManaitaPlusFurnaceBlock extends AbstractFurnaceBlock {
         List<ItemStack> list = Lists.newArrayList();
         ItemStack itemStack = new ItemStack(p_287732_.getBlock());
         itemStack.setTag(new CompoundTag());
-        itemStack.getTag().putInt("ManaitaType",p_287732_.getValue(Data.TYPES));
+        itemStack.getTag().putInt(ManaitaPlusLegacyNBTData.ItemType,p_287732_.getValue(ManaitaPlusLegacyBlockData.TYPES));
         list.add(itemStack);
-        int hook = p_287732_.getValue(Data.HOOK);
+        int hook = p_287732_.getValue(ManaitaPlusLegacyBlockData.HOOK);
         if (hook != 8) {
-            itemStack = new ItemStack(ManaitaPlusBlockCore.HookBlockItem.get());
+            itemStack = new ItemStack(ManaitaPlusLegacyBlockCore.HookBlockItem.get());
             itemStack.setTag(new CompoundTag());
-            itemStack.getTag().putInt("ManaitaType",hook);
+            itemStack.getTag().putInt(ManaitaPlusLegacyNBTData.ItemType,hook);
+            list.add(itemStack);
         }
         return list;
     }
 
     public BlockState getStateForPlacement(BlockPlaceContext p_48689_) {
-        return this.defaultBlockState().setValue(FACING, p_48689_.getHorizontalDirection().getOpposite()).setValue(Data.WALL,p_48689_.getClickedFace().getOpposite()).setValue(Data.FACING, p_48689_.getHorizontalDirection().getOpposite());
+        return this.defaultBlockState().setValue(FACING, p_48689_.getHorizontalDirection().getOpposite()).setValue(ManaitaPlusLegacyBlockData.WALL,p_48689_.getClickedFace().getOpposite()).setValue(ManaitaPlusLegacyBlockData.FACING, p_48689_.getHorizontalDirection().getOpposite());
     }
 
 
     @Override
     public VoxelShape getShape(BlockState p_60555_, BlockGetter p_60556_, BlockPos p_60557_, CollisionContext p_60558_) {
-        Direction wall = p_60555_.getValue(Data.WALL);
-        Direction direction = p_60555_.getValue(Data.FACING);
-        return wall == Direction.EAST ? Data.shapeEAST : wall == Direction.SOUTH ? Data.shapeSOUTH : wall == Direction.NORTH ? Data.shapeNORTH : wall == Direction.WEST ? Data.shapeWEST :  direction == Direction.NORTH || direction == Direction.SOUTH ? wall == Direction.UP ? Data.shapeUNS : Data.shapeDNS : wall == Direction.UP ? Data.shapeUWE :  Data.shapeDWE;
+        Direction wall = p_60555_.getValue(ManaitaPlusLegacyBlockData.WALL);
+        Direction direction = p_60555_.getValue(ManaitaPlusLegacyBlockData.FACING);
+        boolean hasHook = p_60555_.getValue(ManaitaPlusLegacyBlockData.HOOK) != 8;
+        return wall == Direction.EAST ? hasHook ? ManaitaPlusLegacyBlockData.shapeAndE : ManaitaPlusLegacyBlockData.shapeEAST : wall == Direction.SOUTH
+                ? hasHook ? ManaitaPlusLegacyBlockData.shapeAndS : ManaitaPlusLegacyBlockData.shapeSOUTH :
+                wall == Direction.NORTH ? hasHook ? ManaitaPlusLegacyBlockData.shapeAndN : ManaitaPlusLegacyBlockData.shapeNORTH :
+                        wall == Direction.WEST ? hasHook ? ManaitaPlusLegacyBlockData.shapeAndW : ManaitaPlusLegacyBlockData.shapeWEST :
+                                direction == Direction.NORTH || direction == Direction.SOUTH ? wall == Direction.UP ? ManaitaPlusLegacyBlockData.shapeUNS :
+                                        ManaitaPlusLegacyBlockData.shapeDNS : wall == Direction.UP ? ManaitaPlusLegacyBlockData.shapeUWE :  ManaitaPlusLegacyBlockData.shapeDWE;
     }
 
     public BlockState rotate(BlockState p_154354_, Rotation p_154355_) {
@@ -86,11 +94,11 @@ public class ManaitaPlusFurnaceBlock extends AbstractFurnaceBlock {
         return new ManaitaPlusFurnaceBlockEntity(p_153277_, p_153278_);
     }
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_48725_) {
-        p_48725_.add(FACING, LIT, Data.TYPES, Data.WALL, Data.HOOK);
+        p_48725_.add(FACING, LIT, ManaitaPlusLegacyBlockData.TYPES, ManaitaPlusLegacyBlockData.WALL, ManaitaPlusLegacyBlockData.HOOK);
     }
 
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level p_153273_, BlockState p_153274_, BlockEntityType<T> p_153275_) {
-        return p_153273_.isClientSide ? null : createTickerHelper(p_153275_, ManaitaPlusBlockEntityCore.FURNACE_BLOCK_ENTITY.get(), ManaitaPlusFurnaceBlockEntity::serverTick);
+        return p_153273_.isClientSide ? null : createTickerHelper(p_153275_, ManaitaPlusLegacyBlockEntityCore.FURNACE_BLOCK_ENTITY.get(), ManaitaPlusFurnaceBlockEntity::serverTick);
     }
 }

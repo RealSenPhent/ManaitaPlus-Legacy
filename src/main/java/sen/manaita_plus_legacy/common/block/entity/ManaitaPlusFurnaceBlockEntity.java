@@ -30,9 +30,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import sen.manaita_plus_legacy.Config;
-import sen.manaita_plus_legacy.common.core.ManaitaPlusBlockEntityCore;
-import sen.manaita_plus_legacy.common.menu.ManaitaPlusFurnaceMenu;
+import sen.manaita_plus_legacy.common.config.ManaitaPlusLegacyConfig;
+import sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyBlockEntityCore;
+import sen.manaita_plus_legacy.common.menu.ManaitaPlusLegacyFurnaceMenu;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -45,7 +45,7 @@ public class ManaitaPlusFurnaceBlockEntity extends AbstractFurnaceBlockEntity {
     private final RecipeManager.CachedCheck<Container, ? extends AbstractCookingRecipe> quickCheck;
 
     public ManaitaPlusFurnaceBlockEntity(BlockPos p_155545_, BlockState p_155546_) {
-        super(ManaitaPlusBlockEntityCore.FURNACE_BLOCK_ENTITY.get(), p_155545_, p_155546_, RecipeType.SMELTING);
+        super(ManaitaPlusLegacyBlockEntityCore.FURNACE_BLOCK_ENTITY.get(), p_155545_, p_155546_, RecipeType.SMELTING);
         this.quickCheck = RecipeManager.createCheck(RecipeType.SMELTING);
     }
 
@@ -54,7 +54,7 @@ public class ManaitaPlusFurnaceBlockEntity extends AbstractFurnaceBlockEntity {
     }
 
     protected AbstractContainerMenu createMenu(int p_59293_, Inventory p_59294_) {
-        return new ManaitaPlusFurnaceMenu(p_59293_, p_59294_, this, this.dataAccess);
+        return new ManaitaPlusLegacyFurnaceMenu(p_59293_, p_59294_, this, this.dataAccess);
     }
 
 
@@ -136,7 +136,7 @@ public class ManaitaPlusFurnaceBlockEntity extends AbstractFurnaceBlockEntity {
             ItemStack itemstack2 = p_267073_.get(2);
             if (itemstack2.isEmpty()) {
                 ItemStack copy = itemstack1.copy();
-                copy.setCount(copy.getCount() * Config.furnace_doubling_value);
+                copy.setCount(copy.getCount() * ManaitaPlusLegacyConfig.furnace_doubling_value);
                 p_267073_.set(2, copy);
             } else if (itemstack2.is(itemstack1.getItem())) {
                 itemstack2.grow(itemstack1.getCount() * 64);

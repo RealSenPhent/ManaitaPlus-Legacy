@@ -19,10 +19,10 @@ import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import sen.manaita_plus_legacy.Config;
+import sen.manaita_plus_legacy.common.config.ManaitaPlusLegacyConfig;
 import sen.manaita_plus_legacy.common.block.ManaitaPlusBrewingStandBlock;
-import sen.manaita_plus_legacy.common.core.ManaitaPlusBlockEntityCore;
-import sen.manaita_plus_legacy.common.menu.ManaitaPlusBrewingStandMenu;
+import sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyBlockEntityCore;
+import sen.manaita_plus_legacy.common.menu.ManaitaPlusLegacyBrewingStandMenu;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -64,7 +64,7 @@ public class ManaitaPlusBrewingStandBlockEntity extends BaseContainerBlockEntity
     };
 
     public ManaitaPlusBrewingStandBlockEntity(BlockPos p_155283_, BlockState p_155284_) {
-        super(ManaitaPlusBlockEntityCore.BREWING_BLOCK_ENTITY.get(), p_155283_, p_155284_);
+        super(ManaitaPlusLegacyBlockEntityCore.BREWING_BLOCK_ENTITY.get(), p_155283_, p_155284_);
     }
 
     protected Component getDefaultName() {
@@ -145,7 +145,7 @@ public class ManaitaPlusBrewingStandBlockEntity extends BaseContainerBlockEntity
         net.minecraftforge.common.brewing.BrewingRecipeRegistry.brewPotions(p_155293_, itemstack, SLOTS_FOR_SIDES);
         for (int slotsForSide : SLOTS_FOR_SIDES) {
             ItemStack itemStack = p_155293_.get(slotsForSide);
-            if (itemstack != ItemStack.EMPTY)  itemStack.setCount(itemStack.getCount() * Config.brewing_doubling_value);
+            if (itemstack != ItemStack.EMPTY)  itemStack.setCount(itemStack.getCount() * ManaitaPlusLegacyConfig.brewing_doubling_value);
         }
         net.minecraftforge.event.ForgeEventFactory.onPotionBrewed(p_155293_);
         if (itemstack.hasCraftingRemainingItem()) {
@@ -228,7 +228,7 @@ public class ManaitaPlusBrewingStandBlockEntity extends BaseContainerBlockEntity
     }
 
     protected AbstractContainerMenu createMenu(int p_58990_, Inventory p_58991_) {
-        return new ManaitaPlusBrewingStandMenu(p_58990_, p_58991_, this, this.dataAccess);
+        return new ManaitaPlusLegacyBrewingStandMenu(p_58990_, p_58991_, this, this.dataAccess);
     }
 
     net.minecraftforge.common.util.LazyOptional<? extends net.minecraftforge.items.IItemHandler>[] handlers =

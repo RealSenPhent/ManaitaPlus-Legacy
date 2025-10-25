@@ -1,0 +1,6 @@
+{
+  "required": false,
+  "minVersion": "0.8",
+  "plugin": "sen.manaita_plus_legacy.common.mixin.MixinPlugin",
+  "package": "sen.manaita_plus_legacy.common.mixin.impl"
+}

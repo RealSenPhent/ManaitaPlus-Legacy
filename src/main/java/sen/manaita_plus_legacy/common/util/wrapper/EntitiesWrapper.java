@@ -1,8 +1,11 @@
 package sen.manaita_plus_legacy.common.util.wrapper;
 
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.boss.EnderDragonPart;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.player.Player;
-import sen.manaita_plus_legacy.common.entity.ManaitaPlusLightningBolt;
+import net.minecraftforge.entity.PartEntity;
+import sen.manaita_plus_legacy.common.entity.ManaitaPlusLegacyLightningBolt;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -23,6 +26,20 @@ public class EntitiesWrapper {
     }
 
     public boolean add(Entity e) {
+        if (e.isMultipartEntity()) {
+            if (e.getParts() != null)
+                for (PartEntity<?> part : e.getParts()) {
+                    if (part != null)
+                        add(part);
+                }
+            if (e instanceof EnderDragon dragon) {
+                EnderDragonPart[] subEntities = dragon.getSubEntities();
+                for (EnderDragonPart subEntity : subEntities) {
+                    if (subEntity != null)
+                        add(subEntity);
+                }
+            }
+        }
         add(e, elementData, size);
         return true;
     }
@@ -88,7 +105,7 @@ public class EntitiesWrapper {
         Iterator<? extends Entity> iterator = iterable.iterator();
         while (iterator.hasNext()) {
             Entity next = iterator.next();
-            if (next == null || next instanceof Player || next instanceof ManaitaPlusLightningBolt) {
+            if (next == null || next instanceof Player || next instanceof ManaitaPlusLegacyLightningBolt) {
                 continue;
             }
             add(next);
@@ -99,7 +116,7 @@ public class EntitiesWrapper {
         Iterator<? extends Entity> iterator = collection.iterator();
         while (iterator.hasNext()) {
             Entity next = iterator.next();
-            if (next == null || next instanceof Player || next instanceof ManaitaPlusLightningBolt) {
+            if (next == null || next instanceof Player || next instanceof ManaitaPlusLegacyLightningBolt) {
                 continue;
             }
             add(next);

@@ -3,12 +3,12 @@ package sen.manaita_plus_legacy.client.datagen;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import sen.manaita_plus_legacy.ManaitaPlus;
+import sen.manaita_plus_legacy.ManaitaPlusLegacy;
 
 public class ManaitaPlusItemModelProvider extends ItemModelProvider {
 
     public ManaitaPlusItemModelProvider(PackOutput output, ExistingFileHelper exFileHelper) {
-        super(output, ManaitaPlus.MODID, exFileHelper);
+        super(output, ManaitaPlusLegacy.MODID, exFileHelper);
     }
 
     @Override

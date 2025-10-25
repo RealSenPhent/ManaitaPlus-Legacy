@@ -8,18 +8,18 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import sen.manaita_plus_legacy.Config;
-import sen.manaita_plus_legacy.common.menu.ManaitaPlusBrewingStandMenu;
+import sen.manaita_plus_legacy.common.config.ManaitaPlusLegacyConfig;
+import sen.manaita_plus_legacy.common.menu.ManaitaPlusLegacyBrewingStandMenu;
 
 @OnlyIn(Dist.CLIENT)
-public class BrewingStandScreen extends AbstractContainerScreen<ManaitaPlusBrewingStandMenu> {
+public class BrewingStandScreen extends AbstractContainerScreen<ManaitaPlusLegacyBrewingStandMenu> {
     private static final ResourceLocation BREWING_STAND_LOCATION = new ResourceLocation("textures/gui/container/brewing_stand.png");
     private static final int[] BUBBLELENGTHS = new int[]{29, 24, 20, 16, 11, 6, 0};
     private final String doubling_text;
 
-    public BrewingStandScreen(ManaitaPlusBrewingStandMenu p_98332_, Inventory p_98333_, Component p_98334_) {
+    public BrewingStandScreen(ManaitaPlusLegacyBrewingStandMenu p_98332_, Inventory p_98333_, Component p_98334_) {
         super(p_98332_, p_98333_, p_98334_);
-        doubling_text = Config.brewing_doubling_value + "x";
+        doubling_text = ManaitaPlusLegacyConfig.brewing_doubling_value + "x";
     }
 
     protected void init() {

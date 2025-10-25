@@ -16,92 +16,97 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.village.VillagerTradesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import sen.manaita_plus_legacy.common.core.ManaitaPlusBlockCore;
-import sen.manaita_plus_legacy.common.core.ManaitaPlusItemCore;
-import sen.manaita_plus_legacy.common.item.ManaitaPlusGodSwordItem;
-import sen.manaita_plus_legacy.common.item.armor.ManaitaPlusArmor;
-import sen.manaita_plus_legacy.common.trades.ManaitaPlusBowVillagerTrade;
-import sen.manaita_plus_legacy.common.util.ManaitaPlusEntityList;
+import sen.manaita_plus_legacy.ManaitaPlusLegacy;
+import sen.manaita_plus_legacy.common.config.ManaitaPlusLegacyConfig;
+import sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyBlockCore;
+import sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyItemCore;
+import sen.manaita_plus_legacy.common.item.armor.ManaitaPlusLegacyArmor;
+import sen.manaita_plus_legacy.common.item.data.IManaitaPlusLegacyDoubling;
+import sen.manaita_plus_legacy.common.item.data.IManaitaPlusLegacyKey;
+import sen.manaita_plus_legacy.common.trades.ManaitaPlusLegacyBowVillagerTrade;
+import sen.manaita_plus_legacy.common.trades.ManaitaPlusLegacySwordGodVillagerTrade;
+import sen.manaita_plus_legacy.common.util.ManaitaPlusLegacyEntityData;
 import sen.manaita_plus_legacy.common.util.ManaitaPlusUtils;
 
+import java.util.Iterator;
 import java.util.List;
 
-@Mod.EventBusSubscriber
+@Mod.EventBusSubscriber(modid = ManaitaPlusLegacy.MODID)
 public class EventHandler {
     @SubscribeEvent
     public static void onItemTooltip(ItemTooltipEvent event) {
         Item item = event.getItemStack().getItem();
-        if (item instanceof ManaitaPlusGodSwordItem) {
+        if (item instanceof ManaitaPlusLegacyArmor) {
             List<Component> toolTip = event.getToolTip();
-            for (Component component : toolTip) {
-                if (component instanceof MutableComponent mutableComponent) {                    for (Component sibling : mutableComponent.getSiblings()) {
+            Iterator<Component> iterator = toolTip.iterator();
+            Component component;
+            while (iterator.hasNext()) {
+                component = iterator.next();
+                if (component instanceof MutableComponent mutableComponent) {
+                    for (Component sibling : mutableComponent.getSiblings()) {
+                        if (sibling instanceof MutableComponent mutableComponent1) {
+                            if (mutableComponent1.getContents() instanceof TranslatableContents) {
+                                iterator.remove();
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        } else if (item instanceof IManaitaPlusLegacyKey) {
+            List<Component> toolTip = event.getToolTip();
+            Iterator<Component> iterator = toolTip.iterator();
+            while1 : while (iterator.hasNext()) {
+                Component component = iterator.next();
+                if (component instanceof MutableComponent mutableComponent) {
+                    for (Component sibling : mutableComponent.getSiblings()) {
                         if (sibling instanceof MutableComponent mutableComponent1) {
                             if (mutableComponent1.getContents() instanceof TranslatableContents translatableContents) {
-                                if (translatableContents.getKey().startsWith("attribute.modifier.equals.")) {
-                                    if (translatableContents.getArgs()[0] != null)  translatableContents.getArgs()[0] = "Infinity";
+                                if (translatableContents.getKey().startsWith("item.modifiers.")) {
+                                    while (iterator.hasNext()) {
+                                        iterator.next();
+                                        iterator.remove();
+                                    }
+                                    break while1;
                                 }
                             }
                         }
                     }
                 }
             }
-        } else if (item instanceof ManaitaPlusArmor) {
-            List<Component> toolTip = event.getToolTip();
-            for (Component component : toolTip) {
-                if (component instanceof MutableComponent mutableComponent) {
-                    for (Component sibling : mutableComponent.getSiblings()) {
-                        if (sibling instanceof MutableComponent mutableComponent1) {
-                            if (mutableComponent1.getContents() instanceof TranslatableContents translatableContents) {
-                                mutableComponent.getSiblings().remove(translatableContents);
-                            }
-                        }
-                    }
-                }
-            }
+            toolTip.remove(toolTip.size() - 1);
         }
     }
-
-//    @SubscribeEvent
-//    public static void registerAttributes(EntityAttributeCreationEvent event) {
-//        event.put(ManaitaPlusEntityCore.ManaitaLightningBolt.get(), ManaitaPlusLightningBolt.createAttributes().b());
-//    }
-
 
     @SubscribeEvent
     public static void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
         if (event.getAction() != PlayerInteractEvent.LeftClickBlock.Action.START) return;
         Player player = event.getEntity();
-        ManaitaPlusUtils.desBlocks(player.getMainHandItem(),event.getLevel(),event.getPos(),player);
+        ManaitaPlusUtils.destroyBlocks(player.getMainHandItem(),event.getLevel(),event.getPos(),player);
     }
 
     @SubscribeEvent
     public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
-        ManaitaPlusEntityList.death.remove(event.getEntity());
-        ManaitaPlusEntityList.remove.remove(event.getEntity());
+        ManaitaPlusLegacyEntityData.death.remove(event.getEntity());
+        ManaitaPlusLegacyEntityData.remove.remove(event.getEntity());
     }
-
-//    @SubscribeEvent
-//    public static void onLevelTickStart(TickEvent.LevelTickEvent event) {
-//        if (event.phase == TickEvent.Phase.START) {
-//            for (Entity entity : ManaitaPlusEntityList.manaita.getEntities()) {
-//                if (entity instanceof Player player) {
-//                    if (!player.getInventory().hasAnyMatching(stack -> !stack.isEmpty() && stack.getItem() instanceof ManaitaPlusGodSwordItem)) {
-//                        ManaitaPlusEntityList.manaita.remove(player);
-//                    }
-//                }
-//            }
-//        }
-//    }
-
-
 
     @SubscribeEvent
     public static void onLivingDrops(LivingDropsEvent event) {
         if (event.getSource().getEntity() instanceof Player player) {
-            if (player.getMainHandItem().getItem() instanceof ManaitaPlusGodSwordItem && player.isShiftKeyDown()) {
-                for (ItemEntity drop : event.getDrops()) {
-                    ItemStack copy = drop.getItem().copy();
-                    player.getInventory().add(copy);
+            ItemStack mainHandItem = player.getMainHandItem();
+            if (mainHandItem.getItem() instanceof IManaitaPlusLegacyDoubling doublingItem) {
+                if (doublingItem.isDoubling(mainHandItem)) {
+                    int magnification = ManaitaPlusLegacyConfig.drops_doubling_value;
+                    for (ItemEntity drop : event.getDrops()) {
+                        ItemStack dropStack = drop.getItem();
+                        dropStack.setCount(dropStack.getCount() * magnification);
+                        player.getInventory().add(dropStack);
+                    }
+                } else {
+                    for (ItemEntity drop : event.getDrops()) {
+                        player.getInventory().add(drop.getItem());
+                    }
                 }
                 event.getDrops().clear();
             }
@@ -160,48 +165,28 @@ public class EventHandler {
         if (event.getType() == VillagerProfession.WEAPONSMITH) {
             List<VillagerTrades.ItemListing> tradesTier = event.getTrades().get(5);
 
-            tradesTier.add(new ManaitaPlusBowVillagerTrade(
-                    new ItemStack(ManaitaPlusBlockCore.CraftingBlockItem.get(), 64),
-                    new ItemStack(ManaitaPlusItemCore.ManaitaBow.get(), 1),
+            tradesTier.add(new ManaitaPlusLegacyBowVillagerTrade(
+                    new ItemStack(ManaitaPlusLegacyBlockCore.CraftingBlockItem.get(), 64),
+                    new ItemStack(ManaitaPlusLegacyItemCore.ManaitaBow.get(), 1),
                     1, 0, 1));
-            tradesTier.add(new ManaitaPlusBowVillagerTrade(
-                    new ItemStack(ManaitaPlusBlockCore.FurnaceBlockItem.get(), 64),
-                    new ItemStack(ManaitaPlusItemCore.ManaitaBow.get(), 1),
+            tradesTier.add(new ManaitaPlusLegacyBowVillagerTrade(
+                    new ItemStack(ManaitaPlusLegacyBlockCore.FurnaceBlockItem.get(), 64),
+                    new ItemStack(ManaitaPlusLegacyItemCore.ManaitaBow.get(), 1),
                     1, 0, 1));
-            tradesTier.add(new ManaitaPlusBowVillagerTrade(
-                    new ItemStack(ManaitaPlusBlockCore.BrewingBlock.get(), 64),
-                    new ItemStack(ManaitaPlusItemCore.ManaitaBow.get(), 1),
+            tradesTier.add(new ManaitaPlusLegacyBowVillagerTrade(
+                    new ItemStack(ManaitaPlusLegacyBlockCore.BrewingBlock.get(), 64),
+                    new ItemStack(ManaitaPlusLegacyItemCore.ManaitaBow.get(), 1),
                     1, 0, 1));
-            tradesTier.add(new ManaitaPlusBowVillagerTrade(
-                    new ItemStack(ManaitaPlusItemCore.ManaitaBow.get(), 1),
-                    new ItemStack(ManaitaPlusItemCore.ManaitaSwordGod.get(), 1),
+
+
+            tradesTier.add(new ManaitaPlusLegacySwordGodVillagerTrade(
+                    new ItemStack(ManaitaPlusLegacyItemCore.ManaitaBow.get(), 1),
+                    new ItemStack(ManaitaPlusLegacyItemCore.ManaitaSwordGod.get(), 1),
                     1, 0, 1));
         }
     }
 
 
 
-//
-//    private static final Field field;
-//
-//    static {
-//        try {
-//            field = ClientLevel.class.getDeclaredField("blockStatePredictionHandler");
-//            field.setAccessible(true);
-//        } catch (NoSuchFieldException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
-//
-//    private void startPrediction(ClientLevel p_233730_, PredictiveAction p_233731_) {
-//        try (BlockStatePredictionHandler blockstatepredictionhandler = ((BlockStatePredictionHandler)field.get(p_233730_)).startPredicting()) {
-//            int i = blockstatepredictionhandler.currentSequence();
-//            Packet<ServerGamePacketListener> packet = p_233731_.predict(i);
-//            mc.getConnection().send(packet);
-//        } catch (IllegalAccessException e) {
-//            throw new RuntimeException(e);
-//        }
-//
-//    }
 
 }

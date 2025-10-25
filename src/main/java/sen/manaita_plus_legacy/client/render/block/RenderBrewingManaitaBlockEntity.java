@@ -19,9 +19,10 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import sen.manaita_plus_legacy.common.block.ManaitaPlusBrewingStandBlock;
-import sen.manaita_plus_legacy.common.block.data.Data;
+import sen.manaita_plus_legacy.common.block.data.ManaitaPlusLegacyBlockData;
 import sen.manaita_plus_legacy.common.block.entity.ManaitaPlusBrewingStandBlockEntity;
-import sen.manaita_plus_legacy.common.core.ManaitaPlusBlockCore;
+import sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyBlockCore;
+import sen.manaita_plus_legacy.common.util.ManaitaPlusLegacyNBTData;
 
 @OnlyIn(Dist.CLIENT)
 public class RenderBrewingManaitaBlockEntity implements BlockEntityRenderer<ManaitaPlusBrewingStandBlockEntity> {
@@ -31,8 +32,8 @@ public class RenderBrewingManaitaBlockEntity implements BlockEntityRenderer<Mana
 
     public RenderBrewingManaitaBlockEntity(BlockEntityRendererProvider.Context p_173673_) {
         this.entityRenderer = p_173673_.getEntityRenderer();
-        stack = new ItemStack(ManaitaPlusBlockCore.BrewingBlockItem.get());
-        block = ManaitaPlusBlockCore.HookBlock.get().defaultBlockState();
+        stack = new ItemStack(ManaitaPlusLegacyBlockCore.BrewingBlockItem.get());
+        block = ManaitaPlusLegacyBlockCore.HookBlock.get().defaultBlockState();
         CompoundTag p41752 = new CompoundTag();
         stack.setTag(p41752);
     }
@@ -43,8 +44,8 @@ public class RenderBrewingManaitaBlockEntity implements BlockEntityRenderer<Mana
     public void render(ManaitaPlusBrewingStandBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         BlockState blockState = blockEntity.getBlockState();
 
-        Direction direction = blockState.getValue(Data.FACING);
-        Direction wall = blockState.getValue(Data.WALL);
+        Direction direction = blockState.getValue(ManaitaPlusLegacyBlockData.FACING);
+        Direction wall = blockState.getValue(ManaitaPlusLegacyBlockData.WALL);
 
         poseStack.pushPose();
 
@@ -112,14 +113,14 @@ public class RenderBrewingManaitaBlockEntity implements BlockEntityRenderer<Mana
 
         Block block = blockEntity.getBlockState().getBlock();
         if (block instanceof ManaitaPlusBrewingStandBlock) {
-            stack.getTag().putInt("ManaitaType",blockEntity.getBlockState().getValue(Data.TYPES));
+            stack.getTag().putInt(ManaitaPlusLegacyNBTData.ItemType,blockEntity.getBlockState().getValue(ManaitaPlusLegacyBlockData.TYPES));
             BakedModel bakedModel = itemRenderer.getModel(stack,blockEntity.getLevel(),null,0);
             itemRenderer.render(stack, ItemDisplayContext.FIXED,true,poseStack,bufferSource,packedLight,packedOverlay,bakedModel);
         }
         poseStack.popPose();
-        if (blockEntity.getBlockState().getValue(Data.HOOK) != 8) {
+        if (blockEntity.getBlockState().getValue(ManaitaPlusLegacyBlockData.HOOK) != 8) {
             BlockRenderDispatcher blockRenderer = Minecraft.getInstance().getBlockRenderer();
-            BlockState hookBlock = this.block.setValue(Data.FACING, blockEntity.getBlockState().getValue(Data.FACING)).setValue(Data.TYPES, blockEntity.getBlockState().getValue(Data.HOOK));
+            BlockState hookBlock = this.block.setValue(ManaitaPlusLegacyBlockData.FACING, blockEntity.getBlockState().getValue(ManaitaPlusLegacyBlockData.FACING)).setValue(ManaitaPlusLegacyBlockData.TYPES, blockEntity.getBlockState().getValue(ManaitaPlusLegacyBlockData.HOOK));
             blockRenderer.renderSingleBlock(hookBlock, poseStack, bufferSource, packedLight, packedOverlay, net.minecraftforge.client.model.data.ModelData.EMPTY, null);
         }
 

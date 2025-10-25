@@ -14,7 +14,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.Mth;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -29,12 +28,11 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.entity.*;
-import net.minecraftforge.network.PacketDistributor;
-import sen.manaita_plus_legacy.Config;
-import sen.manaita_plus_legacy.common.item.armor.ManaitaPlusArmor;
-import sen.manaita_plus_legacy.common.item.data.IManaitaPlusDestroy;
+import sen.manaita_plus_legacy.common.config.ManaitaPlusLegacyConfig;
+import sen.manaita_plus_legacy.common.item.armor.ManaitaPlusLegacyArmor;
+import sen.manaita_plus_legacy.common.item.data.IManaitaPlusLegacyDestroy;
 import sen.manaita_plus_legacy.common.network.Networking;
-import sen.manaita_plus_legacy.common.network.server.MessageDestroy;
+import sen.manaita_plus_legacy.common.network.server.DestroyBlockPacket;
 import sen.manaita_plus_legacy.common.util.wrapper.EntitiesWrapper;
 import sen.manaita_plus_legacy_core.util.Helper;
 
@@ -79,13 +77,15 @@ public class ManaitaPlusUtils {
                     continue;
                 }
                 if (!shiftKeyDown && target.getType().getCategory() != MobCategory.MONSTER) continue;
-                kill(target, shiftKeyDown,remove);
+                attack(target, player,remove);
             }
+            client.getPartEntities().clear();
             wrapper.reset();
         } else if (level instanceof ServerLevel server) {
             List<Entity> tntities = new ArrayList<>();
             EntitiesWrapper wrapper = ENTITY_CACHE.get();
             wrapper.addIterable(server.getAllEntities());
+            wrapper.addIterable(server.getPartEntities());
             Entity[] entities = wrapper.getEntities();
             for (int i = 0; i < wrapper.size(); i++) {
                 Entity entity = entities[i];
@@ -95,8 +95,9 @@ public class ManaitaPlusUtils {
                     continue;
                 }
                 if (!shiftKeyDown && target.getType().getCategory() != MobCategory.MONSTER) continue;
-                kill(target, shiftKeyDown,remove);
+                attack(target, player,remove);
             }
+            server.getPartEntities().clear();
             wrapper.reset();
             for (Entity tntity : tntities) {
                 if (tntity instanceof ItemEntity item) {
@@ -113,22 +114,39 @@ public class ManaitaPlusUtils {
         }
     }
 
-    public static void kill(Entity target,boolean isSnk,boolean remove) {
+    public static void attack(Entity target, Player player, boolean remove) {
         if (remove) {
-            ManaitaPlusEntityList.remove.add(target);
-            if (isSnk && !target.getClass().getName().startsWith("net.minecraft")) {
+            ManaitaPlusLegacyEntityData.remove.add(target);
+            if (player.isShiftKeyDown() && !target.getClass().getName().startsWith("net.minecraft")) {
                 Class<?> wrapper = ManaitaPlusClassLoaderFactory.createWrapper(target.getClass());
                 if (wrapper != null) {
                     Helper.setFieldValue(target, wrapper);
                 }
             }
         }
+        ManaitaPlusLegacyEntityData.death.add(target);
         if (target.level().isClientSide) {
-            killOnClient(target);
-            if (remove) {
-                removeOnClient(target);
+            if (Minecraft.getInstance().isSameThread()) {
+                killOnClient(target);
+                if (remove) {
+                    removeOnClient(target);
+                }
             }
         } else {
+            int flag = 0;
+            if (target instanceof LivingEntity living) {
+                living.hurt(living.damageSources().playerAttack(player), Float.MAX_VALUE);
+
+                living.handleEntityEvent((byte) 2);
+                living.handleEntityEvent((byte) 47);
+                living.handleEntityEvent((byte) 48);
+                living.handleEntityEvent((byte) 49);
+                living.handleEntityEvent((byte) 50);
+                living.handleEntityEvent((byte) 51);
+                living.handleEntityEvent((byte) 52);
+
+                living.die(living.damageSources().generic());
+            }
             killOnServer(target);
             if (remove) {
 //                if (target.level() instanceof ServerLevel serverLevel)
@@ -138,8 +156,18 @@ public class ManaitaPlusUtils {
 //                            new MessageRemoveEntities(isSnk);
 //                    return false;
 //                });
+                flag |= ManaitaPlusLegacyEntityData.remove.getFlag();
                 removeOnServer(target);
             }
+//            if (target.level() instanceof ServerLevel serverLevel) {
+//                int finalFlag = flag | ManaitaPlusEntityList.death.getFlag();
+//                serverLevel.getPlayers(p -> {
+//                    Networking.INSTANCE.send(
+//                            PacketDistributor.PLAYER.with(() -> p),
+//                            new MessageEntityData(target.getId(), finalFlag));
+//                    return false;
+//                });
+//            }
         }
     }
 
@@ -148,13 +176,12 @@ public class ManaitaPlusUtils {
     }
 
     public static void killOnServer(Entity target) {
-        ManaitaPlusEntityList.death.add(target);
-        if (target instanceof LivingEntity living) {
-            DamageSource damageSource = target.damageSources().fellOutOfWorld();
-            living.hurt(damageSource, Float.MAX_VALUE);
-            living.setHealth(0.0F);
-            living.die(damageSource);
-        }
+
+//        if (target instanceof LivingEntity living) {
+//            DamageSource damageSource = target.damageSources().fellOutOfWorld();
+//            living.hurt(damageSource, Float.MAX_VALUE);
+//            living.setHealth(0.0F);
+//        }
     }
 
     public static void removeOnClient(Entity target) {
@@ -230,12 +257,14 @@ public class ManaitaPlusUtils {
             target.setRemoved(Entity.RemovalReason.DISCARDED);
             entitySection.remove(target);
             entitySection.storage.allInstances.remove(target);
+
+            serverLevel.getChunkSource().removeEntity(target);
         }
     }
 
 
     public static boolean isManaita(Player player) {
-        return ManaitaPlusEntityList.manaita.accept(player);
+        return ManaitaPlusLegacyEntityData.manaita.accept(player);
 //        if (player.getInventory() != null) {
 //            return player.getInventory().hasAnyMatching(stack -> !stack.isEmpty() && stack.getItem() instanceof ManaitaPlusGodSwordItem);
 //        }
@@ -261,7 +290,7 @@ public class ManaitaPlusUtils {
 
     public static boolean isManaitaArmor(Player player) {
         for (ItemStack itemStack : player.getInventory().armor) {
-            if (itemStack == null || !(itemStack.getItem() instanceof ManaitaPlusArmor))
+            if (itemStack == null || !(itemStack.getItem() instanceof ManaitaPlusLegacyArmor))
                 return false;
         }
         return true;
@@ -269,31 +298,27 @@ public class ManaitaPlusUtils {
 
     public static boolean isManaitaArmorPart(Player player) {
         for (ItemStack itemStack : player.getInventory().armor) {
-            if (itemStack != null && itemStack.getItem() instanceof ManaitaPlusArmor)
+            if (itemStack != null && itemStack.getItem() instanceof ManaitaPlusLegacyArmor)
                 return true;
         }
         return false;
     }
 
-    public static void desBlocks(ItemStack stack,Level level,BlockPos blockPos,Player player) {
-        if (stack.getItem() instanceof IManaitaPlusDestroy des) {
+    public static void destroyBlocks(ItemStack stack, Level level, BlockPos blockPos, Player player) {
+        if (stack.getItem() instanceof IManaitaPlusLegacyDestroy des) {
             int range = des.getRange(stack) >> 1;
             boolean doubling = stack.getTag() != null && stack.getTag().getBoolean("Doubling");
             if (range == 0) {
-                desBlock(stack, level, blockPos, player,doubling);
+                destroyBlock(stack, level, blockPos, player,doubling);
                 return;
             }
             if (level instanceof ServerLevel serverLevel) {
-                serverLevel.getPlayers(p -> {
-                    Networking.INSTANCE.send(
-                            PacketDistributor.PLAYER.with(() -> p),
-                            new MessageDestroy(blockPos,range,stack.getItem()));
-                    return false;
-                });
+                Networking.sendToTrackBySeen(serverLevel,player,new DestroyBlockPacket(blockPos,range,stack.getItem()));
                 int xM = blockPos.getX() + range;
                 int yM = blockPos.getY() + range;
                 int zM = blockPos.getZ() + range;
                 BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
+                boolean isDrop = !player.getAbilities().instabuild;
                 for (int x = blockPos.getX() - range; x <= xM; x++) {
                     for (int y = blockPos.getY() - range; y <= yM; y++) {
                         for (int z = blockPos.getZ() - range; z <= zM; z++) {
@@ -306,22 +331,29 @@ public class ManaitaPlusUtils {
 
 //                            boolean removed = blockState.onDestroyedByPlayer(level, pos, player, false, level.getFluidState(pos));
 //                            block.playerWillDestroy(level, mutableBlockPos, blockState, player);
+
                             boolean removed = setBlock(level, mutableBlockPos, level.getFluidState(mutableBlockPos).createLegacyBlock(), 2);
                             if (removed)
                                 block.destroy(level, mutableBlockPos, blockState);
                             player.awardStat(Stats.BLOCK_MINED.get(block));
-                            player.causeFoodExhaustion(0.005F);
                             player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
 
-                            List<ItemStack> drops = Block.getDrops(blockState, serverLevel, mutableBlockPos, blockEntity, player, stack);
-                            if (drops.isEmpty()) popResource(serverLevel, mutableBlockPos, new ItemStack(block,doubling ? 4 : 1));
-                            else drops.forEach((p_49859_) -> {
-                                if (doubling) p_49859_.setCount(p_49859_.getCount() * Config.destroy_doubling_value);
-                                popResource(serverLevel, mutableBlockPos, p_49859_);
-                            });
-                            int exp = blockState.getExpDrop(serverLevel, serverLevel.random, mutableBlockPos, stack.getEnchantmentLevel(Enchantments.BLOCK_FORTUNE), stack.getEnchantmentLevel(Enchantments.SILK_TOUCH));
-                            if (doubling) exp *= Config.destroy_doubling_value;
-                            block.popExperience(serverLevel, mutableBlockPos, exp);
+                            if (isDrop) {
+                                player.causeFoodExhaustion(0.005F);
+                                List<ItemStack> drops = Block.getDrops(blockState, serverLevel, mutableBlockPos, blockEntity, player, stack);
+                                if (drops.isEmpty())
+                                    popResource(serverLevel, mutableBlockPos, new ItemStack(block, doubling ? ManaitaPlusLegacyConfig.destroy_doubling_value : 1));
+                                else
+                                    drops.forEach((p_49859_) -> {
+                                        if (doubling)
+                                            p_49859_.setCount(p_49859_.getCount() * ManaitaPlusLegacyConfig.destroy_doubling_value);
+                                        popResource(serverLevel, mutableBlockPos, p_49859_);
+                                    });
+                                int exp = blockState.getExpDrop(serverLevel, serverLevel.random, mutableBlockPos, stack.getEnchantmentLevel(Enchantments.BLOCK_FORTUNE), stack.getEnchantmentLevel(Enchantments.SILK_TOUCH));
+                                if (doubling)
+                                    exp *= ManaitaPlusLegacyConfig.destroy_doubling_value;
+                                block.popExperience(serverLevel, mutableBlockPos, exp);
+                            }
                         }
                     }
                 }
@@ -379,8 +411,8 @@ public class ManaitaPlusUtils {
         }
     }
 
-    public static void desBlock(ItemStack stack,Level level,BlockPos pos,Player player,boolean doubling) {
-        if (stack.getItem() instanceof IManaitaPlusDestroy des) {
+    public static void destroyBlock(ItemStack stack, Level level, BlockPos pos, Player player, boolean doubling) {
+        if (stack.getItem() instanceof IManaitaPlusLegacyDestroy des) {
             BlockState blockState = level.getBlockState(pos);
             if (!des.accept(blockState))
                 return;
@@ -397,18 +429,25 @@ public class ManaitaPlusUtils {
                     block.destroy(level, pos, blockState);
 
                 player.awardStat(Stats.BLOCK_MINED.get(block));
-                player.causeFoodExhaustion(0.005F);
                 player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
 
-                List<ItemStack> drops = Block.getDrops(blockState, serverLevel, pos, blockEntity, player, stack);
-                if (drops.isEmpty()) popResource(serverLevel, pos, new ItemStack(block,doubling ? 4 : 1));
-                else drops.forEach((p_49859_) -> {
-                    if (doubling) p_49859_.setCount(p_49859_.getCount() * 4);
-                    popResource(serverLevel, pos, p_49859_);
-                });
-                int exp = blockState.getExpDrop(serverLevel, serverLevel.random, pos, stack.getEnchantmentLevel(Enchantments.BLOCK_FORTUNE), stack.getEnchantmentLevel(Enchantments.SILK_TOUCH));
-                if (doubling) exp *= 4;
-                block.popExperience(serverLevel, pos, exp);
+                boolean isDrop = !player.getAbilities().instabuild;
+                if (isDrop) {
+                    player.causeFoodExhaustion(0.005F);
+                    List<ItemStack> drops = Block.getDrops(blockState, serverLevel, pos, blockEntity, player, stack);
+                    if (drops.isEmpty())
+                        popResource(serverLevel, pos, new ItemStack(block, doubling ? 4 : 1));
+                    else
+                        drops.forEach((p_49859_) -> {
+                            if (doubling)
+                                p_49859_.setCount(p_49859_.getCount() * 4);
+                            popResource(serverLevel, pos, p_49859_);
+                        });
+                    int exp = blockState.getExpDrop(serverLevel, serverLevel.random, pos, stack.getEnchantmentLevel(Enchantments.BLOCK_FORTUNE), stack.getEnchantmentLevel(Enchantments.SILK_TOUCH));
+                    if (doubling)
+                        exp *= 4;
+                    block.popExperience(serverLevel, pos, exp);
+                }
             } else if (level instanceof ClientLevel clientLevel) {
 
 //                            Networking.INSTANCE.sendToServer(new MessageDes(pos));
