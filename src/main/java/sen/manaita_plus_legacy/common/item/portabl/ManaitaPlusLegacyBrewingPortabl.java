@@ -19,7 +19,7 @@ import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraftforge.network.NetworkHooks;
 import sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyBlockEntityCore;
 import sen.manaita_plus_legacy.common.menu.ManaitaPlusLegacyBrewingStandMenu;
-import sen.manaita_plus_legacy.common.util.ManaitaPlusLegacyNBTData;
+import sen.manaita_plus_legacy.common.util.tag.ManaitaPlusLegacyTagData;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -31,7 +31,7 @@ public class ManaitaPlusLegacyBrewingPortabl extends Item {
 
     @Override
     public Component getName(ItemStack p_41458_) {
-        return Component.translatable("item.portableBrewing."+ p_41458_.getOrCreateTag().getInt(ManaitaPlusLegacyNBTData.ItemType) +".name");
+        return Component.translatable("item.portableBrewing."+ p_41458_.getOrCreateTag().getInt(ManaitaPlusLegacyTagData.ItemType) +".name");
     }
 
 

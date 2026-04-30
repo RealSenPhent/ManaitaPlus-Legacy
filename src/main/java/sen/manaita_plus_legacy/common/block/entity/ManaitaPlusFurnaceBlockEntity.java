@@ -3,13 +3,15 @@ package sen.manaita_plus_legacy.common.block.entity;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.minecraft.core.*;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
@@ -19,7 +21,8 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.inventory.RecipeHolder;
+import net.minecraft.world.inventory.StackedContentsCompatible;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
@@ -27,7 +30,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
+import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import sen.manaita_plus_legacy.common.config.ManaitaPlusLegacyConfig;
@@ -37,15 +40,16 @@ import sen.manaita_plus_legacy.common.menu.ManaitaPlusLegacyFurnaceMenu;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ManaitaPlusFurnaceBlockEntity extends AbstractFurnaceBlockEntity {
+public class ManaitaPlusFurnaceBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer, RecipeHolder, StackedContentsCompatible {
     private static final int[] SLOTS_FOR_UP = new int[]{0};
     private static final int[] SLOTS_FOR_DOWN = new int[]{2, 1};
     private static final int[] SLOTS_FOR_SIDES = new int[]{1};
+    protected NonNullList<ItemStack> items = NonNullList.withSize(3, ItemStack.EMPTY);
     private final Object2IntOpenHashMap<ResourceLocation> recipesUsed = new Object2IntOpenHashMap<>();
     private final RecipeManager.CachedCheck<Container, ? extends AbstractCookingRecipe> quickCheck;
 
     public ManaitaPlusFurnaceBlockEntity(BlockPos p_155545_, BlockState p_155546_) {
-        super(ManaitaPlusLegacyBlockEntityCore.FURNACE_BLOCK_ENTITY.get(), p_155545_, p_155546_, RecipeType.SMELTING);
+        super(ManaitaPlusLegacyBlockEntityCore.FURNACE_BLOCK_ENTITY.get(), p_155545_, p_155546_);
         this.quickCheck = RecipeManager.createCheck(RecipeType.SMELTING);
     }
 
@@ -54,15 +58,10 @@ public class ManaitaPlusFurnaceBlockEntity extends AbstractFurnaceBlockEntity {
     }
 
     protected AbstractContainerMenu createMenu(int p_59293_, Inventory p_59294_) {
-        return new ManaitaPlusLegacyFurnaceMenu(p_59293_, p_59294_, this, this.dataAccess);
+        return new ManaitaPlusLegacyFurnaceMenu(p_59293_, p_59294_, this, null);
     }
 
-
-    private static boolean isNeverAFurnaceFuel(Item p_58398_) {
-        return p_58398_.builtInRegistryHolder().is(ItemTags.NON_FLAMMABLE_WOOD);
-    }
-
-
+    
     @Override
     public int getMaxStackSize() {
         return Integer.MAX_VALUE;
@@ -70,7 +69,7 @@ public class ManaitaPlusFurnaceBlockEntity extends AbstractFurnaceBlockEntity {
 
     public void load(CompoundTag p_155025_) {
         super.load(p_155025_);
-        this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
+        this.items = NonNullList.withSize(3, ItemStack.EMPTY);
         ContainerHelper.loadAllItems(p_155025_, this.items);
         CompoundTag compoundtag = p_155025_.getCompound("RecipesUsed");
 

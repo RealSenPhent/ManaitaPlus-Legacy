@@ -5,6 +5,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 import sen.manaita_plus_legacy.common.item.data.IManaitaPlusLegacyKey;
+import sen.manaita_plus_legacy.common.network.Networking;
+import sen.manaita_plus_legacy.common.util.ManaitaPlusUtils;
+import sen.manaita_plus_legacy.common.util.entity.ManaitaPlusLegacyEntityData;
 
 import java.util.function.Supplier;
 
@@ -32,16 +35,23 @@ public class KeyPressPacket {
             if (sender == null) return;
             switch (key) {
                 case 0:
+                case 2:
+                case 3:
                     ItemStack mainHandItem = sender.getMainHandItem();
                     if (!mainHandItem.isEmpty() && mainHandItem.getItem() instanceof IManaitaPlusLegacyKey key) {
-                        key.onManaitaKeyPress(mainHandItem, sender);
+                        key.onManaitaKeyPress(mainHandItem, sender, this.key);
                     }
                     break;
                 case 1:
                     for (ItemStack itemStack : sender.getInventory().armor) {
                         if (!itemStack.isEmpty() && itemStack.getItem() instanceof IManaitaPlusLegacyKey key) {
-                            key.onManaitaKeyPress(itemStack, sender);
+                            key.onManaitaKeyPress(itemStack, sender, this.key);
                         }
+                    }
+                    break;
+                case 4:
+                    if (ManaitaPlusLegacyEntityData.manaita.accept(sender)) {
+                        ManaitaPlusUtils.godKill(0,true,sender.isShiftKeyDown(),sender);
                     }
                     break;
             }

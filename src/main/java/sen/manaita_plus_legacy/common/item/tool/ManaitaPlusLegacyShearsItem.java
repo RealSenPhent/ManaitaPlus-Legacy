@@ -3,7 +3,6 @@ package sen.manaita_plus_legacy.common.item.tool;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -32,8 +31,9 @@ import org.jetbrains.annotations.Nullable;
 import sen.manaita_plus_legacy.common.item.data.IManaitaPlusLegacyDestroy;
 import sen.manaita_plus_legacy.common.item.data.IManaitaPlusLegacyDoubling;
 import sen.manaita_plus_legacy.common.item.data.IManaitaPlusLegacyKey;
-import sen.manaita_plus_legacy.common.util.ManaitaPlusText;
+import sen.manaita_plus_legacy.common.item.tool.base.ManaitaPlusLegacyToolBase;
 import sen.manaita_plus_legacy.common.util.ManaitaPlusUtils;
+import sen.manaita_plus_legacy.common.util.text.ManaitaPlusText;
 
 import java.util.HashMap;
 import java.util.List;
@@ -131,43 +131,27 @@ public class ManaitaPlusLegacyShearsItem extends ShearsItem implements IManaitaP
         return InteractionResultHolder.pass(itemInHand);
     }
 
-    public int getRange(ItemStack itemStack) {
-        if (itemStack.getTag() == null)
-            itemStack.setTag(new CompoundTag());
-
-        int range = itemStack.getTag().getInt("Range");
-        if (range == 0) {
-            itemStack.getTag().putInt("Range", 1);
-            return 1;
-        }
-        return range;
-    }
-
-    public void setRange(ItemStack itemStack,int range) {
-        if (range == 0) range = 1;
-        itemStack.getTag().putInt("Range", range);
-        ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting("[" + I18n.get("item.manaita_plus_legacy.manaita_shears") + "] " +I18n.get("mode.range.name") + ": " + range + "x" + range + "x" + range)));
-    }
-
-
     @Override
     public void appendHoverText(ItemStack p_41421_, @Nullable Level p_41422_, List<Component> p_41423_, TooltipFlag p_41424_) {
         super.appendHoverText(p_41421_, p_41422_, p_41423_, p_41424_);
         String range = String.valueOf(getRange(p_41421_));
-        p_41423_.add(Component.literal(ManaitaPlusText.manaita_mode.formatting(I18n.get("mode.manaita_tool") + ": " + range + "x" + range + "x" + range)));
-        p_41423_.add(Component.literal(ManaitaPlusText.manaita_mode.formatting(I18n.get("mode.doubling") + ":" + (isDoubling(p_41421_) ? I18n.get("info.on") : I18n.get("info.off")))));
+        p_41423_.add(Component.literal(ManaitaPlusText.manaita_mode.formatting(I18n.get("mode.manaita_tool.name") + ": " + range + "x" + range + "x" + range)));
+        p_41423_.add(Component.literal(ManaitaPlusText.manaita_mode.formatting(I18n.get("mode.doubling.name") + ":" + (isDoubling(ManaitaPlusLegacyToolBase.getType(p_41421_)) ? I18n.get("info.on") : I18n.get("info.off")))));
     }
 
-
-    public void onManaitaKeyPress(ItemStack itemStack, Player player) {
-        boolean doubling = !isDoubling(itemStack);
-        setDoubling(itemStack, doubling);
+    @Override
+    public void onManaitaKeyPress(ItemStack itemStack, Player paramEntityPlayer,int i) {
+        if (i == 0) {
+            int type = ManaitaPlusLegacyToolBase.getType(itemStack);
+            setDoubling(itemStack, type);
+        }
     }
 
-    public void onManaitaKeyPressOnClient(ItemStack itemStack, Player player) {
-        boolean doubling = !isDoubling(itemStack);
-        setDoubling(itemStack, doubling);
-        ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(String.format("[%s] %s: %s", I18n.get("item.manaita_plus_legacy.manaita_shears"),I18n.get("mode.doubling"), (doubling ? I18n.get("info.on") : I18n.get("info.off"))))));
+    @Override
+    public void onManaitaKeyPressOnClient(ItemStack itemStack, Player paramEntityPlayer,int i) {
+        if (i == 0) {
+            ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + I18n.get("mode.doubling.name") + ": " + (setDoubling(itemStack, ManaitaPlusLegacyToolBase.getType(itemStack)) ? I18n.get("info.on") : I18n.get("info.off")))));
+        }
     }
 
     @Override

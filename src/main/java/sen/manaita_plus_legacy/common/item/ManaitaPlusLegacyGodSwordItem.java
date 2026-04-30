@@ -7,6 +7,7 @@ import com.mojang.math.Axis;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -26,16 +27,17 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyItemCore;
 import sen.manaita_plus_legacy.common.entity.ManaitaPlusLegacyLightningBolt;
 import sen.manaita_plus_legacy.common.item.data.IManaitaPlusLegacyDoubling;
 import sen.manaita_plus_legacy.common.item.data.IManaitaPlusLegacyKey;
 import sen.manaita_plus_legacy.common.item.tier.ManaitaPlusLegacyToolTier;
-import sen.manaita_plus_legacy.common.network.Networking;
-import sen.manaita_plus_legacy.common.network.server.ChangeEntityDataPacket;
-import sen.manaita_plus_legacy.common.util.ManaitaPlusLegacyEntityData;
-import sen.manaita_plus_legacy.common.util.ManaitaPlusLegacyNBTData;
-import sen.manaita_plus_legacy.common.util.ManaitaPlusText;
+import sen.manaita_plus_legacy.common.item.tool.base.ManaitaPlusLegacyToolBase;
 import sen.manaita_plus_legacy.common.util.ManaitaPlusUtils;
+import sen.manaita_plus_legacy.common.util.entity.ManaitaPlusLegacyEntityData;
+import sen.manaita_plus_legacy.common.util.item.ManaitaPlusItemData;
+import sen.manaita_plus_legacy.common.util.tag.ManaitaPlusLegacyTagData;
+import sen.manaita_plus_legacy.common.util.text.ManaitaPlusText;
 
 import java.util.List;
 import java.util.Random;
@@ -53,20 +55,26 @@ public class ManaitaPlusLegacyGodSwordItem extends SwordItem implements IManaita
     }
 
 
-
-
     @Override
     public boolean onDroppedByPlayer(ItemStack item, Player player) {
-        ManaitaPlusLegacyEntityData.manaita.remove(player);
-        Networking.sendToSameLevelPlayers(player.level(), new ChangeEntityDataPacket(player.getId(), -ManaitaPlusLegacyEntityData.death.getFlag()));
-        return super.onDroppedByPlayer(item, player);
+//        ManaitaPlusLegacyEntityData.manaita.remove(player);
+//        Networking.sendToAllPlayer(new ChangeEntityDataPacket(player.getUUID(), -ManaitaPlusLegacyEntityData.death.getFlag()));
+//        return super.onDroppedByPlayer(item, player);
+        return true;
     }
 
     @Override
     public void inventoryTick(ItemStack p_41404_, Level p_41405_, Entity p_41406_, int p_41407_, boolean p_41408_) {
         if (p_41406_ instanceof  Player player) {
+            player.getCooldowns().removeCooldown(ManaitaPlusLegacyItemCore.ManaitaSwordGod.get());
             player.getAbilities().mayfly = true;
             player.setHealth(player.getMaxHealth());
+            if (p_41404_.hasTag()) {
+                if (isAntiDisarming(ManaitaPlusLegacyToolBase.getType(p_41404_))) {
+//                    if (!ManaitaPlusItemData.stackList.contains(p_41404_)) ManaitaPlusItemData.stackList.add(p_41404_);
+                    ManaitaPlusLegacyEntityData.anti.add(player);
+                }
+            }
         }
         ManaitaPlusLegacyEntityData.manaita.add(p_41406_);
     }
@@ -74,14 +82,14 @@ public class ManaitaPlusLegacyGodSwordItem extends SwordItem implements IManaita
     @Override
     public boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
         if (entity instanceof Player player) {
-            ManaitaPlusUtils.godKill(player,isRemove(stack),player.isShiftKeyDown());
+            ManaitaPlusUtils.godKill(stack,player);
         }
         return false;
     }
 
     @Override
     public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
-        ManaitaPlusUtils.attack(entity, player,isRemove(stack));
+        ManaitaPlusUtils.attack(entity, player,isRemove(ManaitaPlusLegacyToolBase.getType(stack)));
         return true;
     }
 
@@ -107,7 +115,7 @@ public class ManaitaPlusLegacyGodSwordItem extends SwordItem implements IManaita
                 }
             }
         }
-        ManaitaPlusUtils.godKill(player,isRemove(itemstack),player.isShiftKeyDown());
+        ManaitaPlusUtils.godKill(itemstack,player);
         return InteractionResultHolder.pass(itemstack);
     }
 
@@ -119,8 +127,20 @@ public class ManaitaPlusLegacyGodSwordItem extends SwordItem implements IManaita
     @Override
     public void appendHoverText(ItemStack p_41421_, @Nullable Level p_41422_, List<Component> p_41423_, TooltipFlag p_41424_) {
         super.appendHoverText(p_41421_, p_41422_, p_41423_, p_41424_);
-        p_41423_.add(Component.literal(ManaitaPlusText.manaita_mode.formatting(I18n.get("mode.doubling") + ":" + (isDoubling(p_41421_) ? I18n.get("info.on") : I18n.get("info.off")))));
-        p_41423_.add(Component.literal(ManaitaPlusText.manaita_mode.formatting(I18n.get("mode.remove.name") + ":" + (isRemove(p_41421_) ? I18n.get("info.on") : I18n.get("info.off")))));
+        int type = ManaitaPlusLegacyToolBase.getType(p_41421_);
+        StringBuilder sb = new StringBuilder(I18n.get("mode.pick.name") + ": ");
+        if (ManaitaPlusLegacyToolBase.canPick(type,true)) {
+            sb.append(I18n.get("info.pick_items.name"));
+            if (ManaitaPlusLegacyToolBase.canPick(type,false)) sb.append("&").append(I18n.get("info.pick_experience.name"));
+        } else if (ManaitaPlusLegacyToolBase.canPick(type,false)) {
+            sb.append(I18n.get("info.pick_experience.name"));
+        } else {
+            sb.append("None");
+        }
+        p_41423_.add(Component.literal(ManaitaPlusText.manaita_mode.formatting(I18n.get("mode.doubling.name") + ":" + (isDoubling(type) ? I18n.get("info.on") : I18n.get("info.off")))));
+        p_41423_.add(Component.literal(ManaitaPlusText.manaita_mode.formatting(I18n.get("mode.remove.name") + ":" + (isRemove(type) ? I18n.get("info.on") : I18n.get("info.off")))));
+        p_41423_.add(Component.literal(ManaitaPlusText.manaita_mode.formatting(I18n.get("mode.anti_disarming.name") + ":" + (isAntiDisarming(type) ? I18n.get("info.on") : I18n.get("info.off")))));
+        p_41423_.add(Component.literal(ManaitaPlusText.manaita_mode.formatting(sb.toString())));
         p_41423_.add(Component.empty());
         p_41423_.add(Component.literal(ManaitaPlusText.manaita_enchantment.formatting(I18n.get("info.item.manaita_sword_god.1"))));
     }
@@ -179,36 +199,73 @@ public class ManaitaPlusLegacyGodSwordItem extends SwordItem implements IManaita
         return true;
     }
 
-    public void onManaitaKeyPress(ItemStack itemStack, Player player) {
-        if (player.isShiftKeyDown()) {
-            boolean remove = !isRemove(itemStack);
-            setRemove(itemStack, remove);
-        } else {
-            boolean doubling = !isDoubling(itemStack);
-            setDoubling(itemStack, doubling);
+    public void onManaitaKeyPress(ItemStack itemStack, Player player,int i) {
+        if (i == 0) {
+            int type = ManaitaPlusLegacyToolBase.getType(itemStack);
+            if (player.isShiftKeyDown()) {
+                setRemove(itemStack, type);
+            } else {
+                setDoubling(itemStack, type);
+            }
+        } else if (i == 2) {
+            int type = ManaitaPlusLegacyToolBase.getType(itemStack);
+            ManaitaPlusLegacyToolBase.setPickMode(itemStack, player.isShiftKeyDown(), type);
+        } else if (i == 3) {
+            boolean flag = ManaitaPlusLegacyTagData.toggleMode(itemStack,ManaitaPlusLegacyTagData.antiDisarming);
+            if (flag) ManaitaPlusLegacyEntityData.anti.add(player);
+            else ManaitaPlusLegacyEntityData.anti.remove(player);
         }
     }
 
-    public void onManaitaKeyPressOnClient(ItemStack itemStack, Player player) {
-        if (player.isShiftKeyDown()) {
-            boolean remove = !isRemove(itemStack);
-            setRemove(itemStack, remove);
-            ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(String.format("[%s] %s: %s", I18n.get("item.manaita_sword_god.name"), I18n.get("mode.remove.name"), (remove ? I18n.get("info.on") : I18n.get("info.off"))))));
-        } else {
-            boolean doubling = !isDoubling(itemStack);
-            setDoubling(itemStack, doubling);
-            ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(String.format("[%s] %s: %s", I18n.get("item.manaita_sword_god.name"), I18n.get("mode.doubling"), (doubling ? I18n.get("info.on") : I18n.get("info.off"))))));
+    public void onManaitaKeyPressOnClient(ItemStack itemStack, Player player,int i) {
+        if (i == 0) {
+            if (player.isShiftKeyDown()) {
+                ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + I18n.get("mode.remove.name") + ": " + (setRemove(itemStack, ManaitaPlusLegacyToolBase.getType(itemStack)) ? I18n.get("info.on") : I18n.get("info.off")))));
+            } else {
+                ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + I18n.get("mode.doubling.name") + ": " + (setDoubling(itemStack, ManaitaPlusLegacyToolBase.getType(itemStack)) ? I18n.get("info.on") : I18n.get("info.off")))));
+            }
+            ManaitaPlusItemData.current = itemStack;
+        } else if (i == 2) {
+            ManaitaPlusLegacyToolBase.setPickMode(itemStack, player.isShiftKeyDown(), ManaitaPlusLegacyToolBase.getType(itemStack));
+            int type = ManaitaPlusLegacyToolBase.getType(itemStack);
+            StringBuilder sb = new StringBuilder(I18n.get("mode.pick.name") + ": ");
+            if (ManaitaPlusLegacyToolBase.canPick(type,true)) {
+                sb.append(I18n.get("info.pick_items.name"));
+                if (ManaitaPlusLegacyToolBase.canPick(type,false)) sb.append("&").append(I18n.get("info.pick_experience.name"));
+            } else if (ManaitaPlusLegacyToolBase.canPick(type,false)) {
+                sb.append(I18n.get("info.pick_experience.name"));
+            } else {
+                sb.append("None");
+            }
+            ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + sb)));
+            ManaitaPlusItemData.current = itemStack;
+        } else if (i == 3) {
+            boolean flag = ManaitaPlusLegacyTagData.toggleMode(itemStack,ManaitaPlusLegacyTagData.antiDisarming);
+            if (flag) ManaitaPlusLegacyEntityData.anti.add(player);
+            else ManaitaPlusLegacyEntityData.anti.remove(player);
+//            if (!ManaitaPlusItemData.stackList.contains(itemStack)) ManaitaPlusItemData.stackList.add(itemStack);
+            ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + I18n.get("mode.anti_disarming.name") + ": " + (flag ? I18n.get("info.on") : I18n.get("info.off")))));
+            ManaitaPlusItemData.current = itemStack;
         }
     }
 
 
-    public static boolean isRemove(ItemStack itemStack) {
-        if (!itemStack.hasTag()) return false;
-        assert itemStack.getTag() != null;
-        return itemStack.getTag().getBoolean(ManaitaPlusLegacyNBTData.Remove);
+    public static boolean isAntiDisarming(int type) {
+        return (type & ManaitaPlusLegacyTagData.antiDisarming) != 0;
     }
 
-    public static void setRemove(ItemStack itemStack,boolean remove) {
-        itemStack.getOrCreateTag().putBoolean(ManaitaPlusLegacyNBTData.Remove, remove);
+    public static boolean isRemove(int type) {
+        return (type & ManaitaPlusLegacyTagData.remove) != 0;
+    }
+
+    public static boolean setRemove(ItemStack itemStack,int type) {
+        CompoundTag orCreateTag = itemStack.getOrCreateTag();
+        if ((type & ManaitaPlusLegacyTagData.remove) == 0) {
+            orCreateTag.putInt(ManaitaPlusLegacyTagData.Type, type | ManaitaPlusLegacyTagData.remove);
+            return true;
+        } else {
+            orCreateTag.putInt(ManaitaPlusLegacyTagData.Type, type & ~ManaitaPlusLegacyTagData.remove);
+            return false;
+        }
     }
 }

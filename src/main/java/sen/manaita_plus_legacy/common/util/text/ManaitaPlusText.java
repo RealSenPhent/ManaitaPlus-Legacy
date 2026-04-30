@@ -1,7 +1,8 @@
-package sen.manaita_plus_legacy.common.util;
+package sen.manaita_plus_legacy.common.util.text;
 
 import net.minecraft.ChatFormatting;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 public enum ManaitaPlusText {
@@ -22,18 +23,17 @@ public enum ManaitaPlusText {
 
     ManaitaPlusText(double delay,ChatFormatting... chatFormattings) {
         this.chatFormattings = Arrays.stream(chatFormattings).map(ChatFormatting::toString).toArray(String[]::new);
-        if (delay <= 0.0D)
-            delay = 0.001D;
         this.delay = delay;
     }
 
-    public String formatting(String input) {
-        String stripFormatting = ChatFormatting.stripFormatting(input);
+    public String formatting(@Nonnull String input) {
+        input = ChatFormatting.stripFormatting(input);
+        assert input != null;
         String[] colours = this.chatFormattings;
-        StringBuilder sb = new StringBuilder(stripFormatting.length() * 3);
+        StringBuilder sb = new StringBuilder(input.length() * 3);
         int offset = (int)Math.floor((System.currentTimeMillis() & 0x3FFFL) / delay) % colours.length;
-        for (int i = 0; i < stripFormatting.length(); i++) {
-            char c = stripFormatting.charAt(i);
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
             int col = (i + colours.length - offset) % colours.length;
             sb.append(colours[col]);
             sb.append(c);

@@ -9,6 +9,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.network.NetworkEvent;
@@ -24,7 +25,7 @@ public class DestroyBlockPacket {
 
     public DestroyBlockPacket(FriendlyByteBuf buffer) {
         blockPos = buffer.readBlockPos();
-        range = buffer.readInt();
+        range = buffer.readVarInt();
         item = buffer.readById(BuiltInRegistries.ITEM);
     }
 
@@ -37,7 +38,7 @@ public class DestroyBlockPacket {
 
     public void toBytes(FriendlyByteBuf buf) {
         buf.writeBlockPos(blockPos);
-        buf.writeInt(range);
+        buf.writeVarInt(range);
         buf.writeId(BuiltInRegistries.ITEM, item);
     }
 
@@ -58,8 +59,8 @@ public class DestroyBlockPacket {
                             BlockState blockState = level.getBlockState(mutableBlockPos.set(x, y, z));
                             if (blockState == null || !des.accept(blockState))
                                 continue;
-//                            Block block = blockState.getBlock();
-//                            block.playerWillDestroy(level, mutableBlockPos, blockState, mc.player);
+                            Block block = blockState.getBlock();
+                            block.playerWillDestroy(level, mutableBlockPos, blockState, mc.player);
 
                             ManaitaPlusUtils.setBlock(level, mutableBlockPos, level.getFluidState(mutableBlockPos).createLegacyBlock(), 10);
 

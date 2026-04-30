@@ -14,17 +14,21 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 import sen.manaita_plus_legacy.common.item.data.IManaitaPlusLegacyKey;
-import sen.manaita_plus_legacy.common.util.ManaitaPlusText;
 import sen.manaita_plus_legacy.common.util.ManaitaPlusUtils;
+import sen.manaita_plus_legacy.common.util.tag.ManaitaPlusLegacyTagData;
+import sen.manaita_plus_legacy.common.util.text.ManaitaPlusText;
 
 import java.util.List;
 
-public class ManaitaPlusLegacyArmor extends ArmorItem {
+public abstract class ManaitaPlusLegacyArmor extends ArmorItem implements IManaitaPlusLegacyKey {
     public ManaitaPlusLegacyArmor(Type p_266831_) {
         super(new ArmorMaterial(), p_266831_, new Item.Properties().fireResistant());
     }
@@ -77,7 +81,7 @@ public class ManaitaPlusLegacyArmor extends ArmorItem {
         }
     }
 
-    public static class Helmet extends ManaitaPlusLegacyArmor implements IManaitaPlusLegacyKey {
+    public static class Helmet extends ManaitaPlusLegacyArmor {
         public Helmet() {
             super(ArmorItem.Type.HELMET);
         }
@@ -85,7 +89,7 @@ public class ManaitaPlusLegacyArmor extends ArmorItem {
 
         @Override
         public void appendHoverText(ItemStack p_41421_, @Nullable Level p_41422_, List<Component> p_41423_, TooltipFlag p_41424_) {
-            p_41423_.add(Component.literal(ManaitaPlusText.manaita_mode.formatting(I18n.get("mode.nightvision") + ": " +  (getNightVision(p_41421_) ? I18n.get("info.on") : I18n.get("info.off") ))));
+            p_41423_.add(Component.literal(ManaitaPlusText.manaita_mode.formatting(I18n.get("mode.nightvision.name") + ": " +  (getNightVision(p_41421_) ? I18n.get("info.on") : I18n.get("info.off") ))));
             super.appendHoverText(p_41421_, p_41422_, p_41423_, p_41424_);
         }
 
@@ -117,22 +121,22 @@ public class ManaitaPlusLegacyArmor extends ArmorItem {
         }
 
         public static boolean getNightVision(ItemStack itemStack) {
-            return itemStack.getOrCreateTag().getBoolean("NightVision");
+            return itemStack.getOrCreateTag().getBoolean(ManaitaPlusLegacyTagData.NightVision);
         }
 
         @Override
-        public void onManaitaKeyPress(ItemStack paramItemStack, Player paramEntityPlayer) {
+        public void onManaitaKeyPress(ItemStack paramItemStack, Player paramEntityPlayer,int i) {
             if (paramEntityPlayer.isShiftKeyDown()) {
-                boolean nightVision = !paramItemStack.getOrCreateTag().getBoolean("NightVision");
-                paramItemStack.getTag().putBoolean("NightVision", nightVision);
+                boolean nightVision = !paramItemStack.getOrCreateTag().getBoolean(ManaitaPlusLegacyTagData.NightVision);
+                paramItemStack.getTag().putBoolean(ManaitaPlusLegacyTagData.NightVision, nightVision);
             }
         }
 
         @Override
-        public void onManaitaKeyPressOnClient(ItemStack paramItemStack, Player paramEntityPlayer) {
+        public void onManaitaKeyPressOnClient(ItemStack itemStack, Player paramEntityPlayer,int i) {
             if (paramEntityPlayer.isShiftKeyDown()) {
-                boolean nightVision = !paramItemStack.getOrCreateTag().getBoolean("NightVision");
-                ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(String.format("[%s] %s: %b",  I18n.get("item.helmet.name"), I18n.get("mode.nightvision"), nightVision))));
+                boolean nightVision = !itemStack.getOrCreateTag().getBoolean(ManaitaPlusLegacyTagData.NightVision);
+                ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + I18n.get("mode.nightvision.name") + ": " + (nightVision ? I18n.get("info.on") : I18n.get("info.off")))));
             }
         }
     }
@@ -167,9 +171,19 @@ public class ManaitaPlusLegacyArmor extends ArmorItem {
                 }
             }
         }
+
+        @Override
+        public void onManaitaKeyPress(ItemStack paramItemStack, Player paramEntityPlayer, int i) {
+
+        }
+
+        @Override
+        public void onManaitaKeyPressOnClient(ItemStack paramItemStack, Player paramEntityPlayer, int i) {
+
+        }
     }
 
-    public static class Leggings extends ManaitaPlusLegacyArmor implements IManaitaPlusLegacyKey {
+    public static class Leggings extends ManaitaPlusLegacyArmor {
         public Leggings() {
             super(ArmorItem.Type.LEGGINGS);
         }
@@ -199,34 +213,36 @@ public class ManaitaPlusLegacyArmor extends ArmorItem {
 
         @Override
         public void appendHoverText(ItemStack p_41421_, @Nullable Level p_41422_, List<Component> p_41423_, TooltipFlag p_41424_) {
-            p_41423_.add(Component.literal(ManaitaPlusText.manaita_mode.formatting(I18n.get("mode.invisibility") + ": " + (getInvisibility(p_41421_) ? I18n.get("info.on") : I18n.get("info.off") ))));
+            p_41423_.add(Component.literal(ManaitaPlusText.manaita_mode.formatting(I18n.get("mode.invisibility.name") + ": " + (getInvisibility(p_41421_) ? I18n.get("info.on") : I18n.get("info.off") ))));
             super.appendHoverText(p_41421_, p_41422_, p_41423_, p_41424_);
         }
 
         public static boolean getInvisibility(ItemStack itemStack) {
-            return itemStack.getOrCreateTag().getBoolean("Invisibility");
+            if (!itemStack.hasTag()) return false;
+            return itemStack.getTag().getBoolean(ManaitaPlusLegacyTagData.Invisibility);
         }
 
         @Override
-        public void onManaitaKeyPress(ItemStack paramItemStack, Player paramEntityPlayer) {
+        public void onManaitaKeyPress(ItemStack itemStack, Player paramEntityPlayer,int i) {
             if (paramEntityPlayer.isShiftKeyDown()) {
-                boolean nightVision = !paramItemStack.getOrCreateTag().getBoolean("Invisibility");
-                paramItemStack.getTag().putBoolean("Invisibility", nightVision);
+                boolean nightVision = !itemStack.getOrCreateTag().getBoolean(ManaitaPlusLegacyTagData.Invisibility);
+                itemStack.getOrCreateTag().putBoolean(ManaitaPlusLegacyTagData.Invisibility, nightVision);
            }
         }
 
 
         @Override
-        public void onManaitaKeyPressOnClient(ItemStack paramItemStack, Player paramEntityPlayer) {
+        public void onManaitaKeyPressOnClient(ItemStack itemStack, Player paramEntityPlayer,int i) {
             if (paramEntityPlayer.isShiftKeyDown()) {
-                boolean nightVision = !paramItemStack.getOrCreateTag().getBoolean("Invisibility");
-                paramItemStack.getTag().putBoolean("Invisibility", nightVision);
+                boolean invisibility = !itemStack.getOrCreateTag().getBoolean(ManaitaPlusLegacyTagData.Invisibility);
+                itemStack.getOrCreateTag().putBoolean(ManaitaPlusLegacyTagData.Invisibility, invisibility);
+                ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + I18n.get("mode.invisibility.name") + ": " + (invisibility ? I18n.get("info.on") : I18n.get("info.off")))));
             }
         }
 
     }
 
-    public static class Boots extends ManaitaPlusLegacyArmor implements IManaitaPlusLegacyKey {
+    public static class Boots extends ManaitaPlusLegacyArmor {
         public Boots() {
             super(ArmorItem.Type.BOOTS);
         }
@@ -253,23 +269,23 @@ public class ManaitaPlusLegacyArmor extends ArmorItem {
         }
 
         @Override
-        public void onManaitaKeyPress(ItemStack paramItemStack, Player paramEntityPlayer) {
+        public void onManaitaKeyPress(ItemStack paramItemStack, Player paramEntityPlayer,int i) {
             if (!paramEntityPlayer.isShiftKeyDown()) {
-                int speed = Math.max(1,paramItemStack.getOrCreateTag().getInt("Speed") + 1) % 10;
-                paramItemStack.getTag().putInt("Speed", speed);
+                int speed = Math.max(1,paramItemStack.getOrCreateTag().getInt(ManaitaPlusLegacyTagData.Speed) + 1) % 10;
+                paramItemStack.getOrCreateTag().putInt(ManaitaPlusLegacyTagData.Speed, speed);
             }
         }
 
         @Override
-        public void onManaitaKeyPressOnClient(ItemStack paramItemStack, Player paramEntityPlayer) {
+        public void onManaitaKeyPressOnClient(ItemStack paramItemStack, Player paramEntityPlayer,int i) {
             if (!paramEntityPlayer.isShiftKeyDown()) {
-                int speed = Math.max(1,paramItemStack.getOrCreateTag().getInt("Speed") + 1) % 10;
-                ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(String.format("[%s] %s: %d", I18n.get("item.boots.name"), I18n.get("mode.speed"), speed))));
+                int speed = Math.max(1,paramItemStack.getOrCreateTag().getInt(ManaitaPlusLegacyTagData.Speed) + 1) % 10;
+                ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(paramItemStack.getDisplayName().getString() + " " + I18n.get("mode.speed.name") + ": " + speed)));
             }
         }
 
         public static int getSpeed(ItemStack itemStack) {
-            return Math.max(itemStack.getOrCreateTag().getInt("Speed"),1);
+            return Math.max(itemStack.getOrCreateTag().getInt(ManaitaPlusLegacyTagData.Speed),1);
         }
     }
 

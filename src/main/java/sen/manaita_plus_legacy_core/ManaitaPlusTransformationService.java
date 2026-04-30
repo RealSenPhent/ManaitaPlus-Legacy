@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ManaitaManaitaPlusTransformationService implements ITransformationService {
+public class ManaitaPlusTransformationService implements ITransformationService {
 
     static {
         LaunchPluginHandler handler = Helper.getFieldValue(Launcher.INSTANCE, "launchPlugins", LaunchPluginHandler.class);

@@ -13,7 +13,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import sen.manaita_plus_legacy.common.item.tool.base.ManaitaPlusLegacyToolBase;
-import sen.manaita_plus_legacy.common.util.ManaitaPlusText;
+import sen.manaita_plus_legacy.common.util.text.ManaitaPlusText;
 import sen.manaita_plus_legacy.common.util.ManaitaPlusUtils;
 
 import java.util.HashMap;
@@ -39,7 +39,7 @@ public class ManaitaPlusLegacyPickaxeItem extends ManaitaPlusLegacyToolBase {
         ItemStack itemInHand = p_41433_.getItemInHand(p_41434_);
         if (!p_41432_.isClientSide) {
             if (p_41433_.isShiftKeyDown()) {
-                setRange(itemInHand,(getRange(itemInHand) + 2) % 21);
+                setRange(itemInHand,((getRange(itemInHand) + 2) % 21) | 1);
             } else {
                 Map<Enchantment, Integer> enchantmentMap = new HashMap<>();
                 enchantmentMap.put(Enchantments.BLOCK_FORTUNE, 10);

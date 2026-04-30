@@ -1,4 +1,4 @@
-package sen.manaita_plus_legacy.common.util;
+package sen.manaita_plus_legacy.common.util.color;
 
 public class ManaitaPlusColor {
     public static long milliTime() {

@@ -26,8 +26,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import org.jetbrains.annotations.Nullable;
 import sen.manaita_plus_legacy.common.item.tool.base.ManaitaPlusLegacyToolBase;
-import sen.manaita_plus_legacy.common.util.ManaitaPlusLegacyEntityData;
-import sen.manaita_plus_legacy.common.util.ManaitaPlusText;
+import sen.manaita_plus_legacy.common.network.Networking;
+import sen.manaita_plus_legacy.common.network.server.ChangeDeathDataPacket;
+import sen.manaita_plus_legacy.common.util.entity.ManaitaPlusLegacyEntityData;
+import sen.manaita_plus_legacy.common.util.text.ManaitaPlusText;
 
 import java.util.List;
 import java.util.Optional;
@@ -51,11 +53,19 @@ public class ManaitaPlusLegacyPaxelItem extends ManaitaPlusLegacyToolBase {
 
     @Override
     public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
-        ManaitaPlusLegacyEntityData.death.add(entity);
-        entity.hurt(entity.damageSources().playerAttack(player), 10000);
-        if (entity instanceof LivingEntity living) {
-            living.setHealth(0F);
+        if (!player.level().isClientSide) {
+            if (entity instanceof LivingEntity living) {
+                living.hurt(living.damageSources().playerAttack(player), Float.MAX_VALUE);
+                living.setLastHurtByPlayer(player);
+                living.setHealth(0F);
+                living.handleEntityEvent((byte) 2);
+                living.die(living.damageSources().playerAttack(player));
+            }
+            if (entity instanceof ServerPlayer serverPlayer) {
+                Networking.sendToPlayer(serverPlayer, new ChangeDeathDataPacket(1));
+            }
         }
+        ManaitaPlusLegacyEntityData.death.add(entity);
         return super.onLeftClickEntity(stack, player, entity);
     }
 
@@ -72,10 +82,6 @@ public class ManaitaPlusLegacyPaxelItem extends ManaitaPlusLegacyToolBase {
         return true;
     }
 
-    @Override
-    public void inventoryTick(ItemStack p_41404_, Level p_41405_, Entity p_41406_, int p_41407_, boolean p_41408_) {
-        p_41404_.setPopTime(0);
-    }
 
     @Override
     public InteractionResult useOn(UseOnContext p_41427_) {

@@ -26,7 +26,7 @@ import sen.manaita_plus_legacy.common.block.data.ManaitaPlusLegacyBlockData;
 import sen.manaita_plus_legacy.common.block.entity.ManaitaPlusCraftingBlockEntity;
 import sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyBlockCore;
 import sen.manaita_plus_legacy.common.menu.ManaitaPlusLegacyCraftingMenu;
-import sen.manaita_plus_legacy.common.util.ManaitaPlusLegacyNBTData;
+import sen.manaita_plus_legacy.common.util.tag.ManaitaPlusLegacyTagData;
 
 import java.util.List;
 
@@ -59,13 +59,13 @@ public class ManaitaPlusCraftingBlock extends BaseEntityBlock {
         List<ItemStack> list = Lists.newArrayList();
         ItemStack itemStack = new ItemStack(p_287732_.getBlock());
         itemStack.setTag(new CompoundTag());
-        itemStack.getTag().putInt(ManaitaPlusLegacyNBTData.ItemType,p_287732_.getValue(ManaitaPlusLegacyBlockData.TYPES));
+        itemStack.getTag().putInt(ManaitaPlusLegacyTagData.ItemType,p_287732_.getValue(ManaitaPlusLegacyBlockData.TYPES));
         list.add(itemStack);
         int hook = p_287732_.getValue(ManaitaPlusLegacyBlockData.HOOK);
         if (hook != 8) {
             itemStack = new ItemStack(ManaitaPlusLegacyBlockCore.HookBlockItem.get());
             itemStack.setTag(new CompoundTag());
-            itemStack.getTag().putInt(ManaitaPlusLegacyNBTData.ItemType,hook);
+            itemStack.getTag().putInt(ManaitaPlusLegacyTagData.ItemType,hook);
             list.add(itemStack);
         }
         return list;
@@ -77,12 +77,11 @@ public class ManaitaPlusCraftingBlock extends BaseEntityBlock {
             return InteractionResult.SUCCESS;
         } else {
             p_52236_.openMenu(p_52233_.getMenuProvider(p_52234_, p_52235_));
-//            p_52236_.awardStat(((ResourceLocation) ManaitaPlusStarCore.INTERACT_WITH_CRAFTING_MANAITA_TABLE.get()));
             return InteractionResult.CONSUME;
         }
 
     }
-//
+
     public MenuProvider getMenuProvider(BlockState p_52240_, Level p_52241_, BlockPos p_52242_) {
         return new SimpleMenuProvider((p_52229_, p_52230_, p_52231_) -> new ManaitaPlusLegacyCraftingMenu(p_52229_, p_52230_, ContainerLevelAccess.create(p_52241_, p_52242_)), CONTAINER_TITLE);
     }

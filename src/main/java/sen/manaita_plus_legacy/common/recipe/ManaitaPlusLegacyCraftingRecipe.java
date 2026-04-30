@@ -22,7 +22,7 @@ import sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyBlockCore;
 import sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyItemCore;
 import sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyRecipeSerializerCore;
 import sen.manaita_plus_legacy.common.item.ManaitaPlusLegacySourceItem;
-import sen.manaita_plus_legacy.common.util.ManaitaPlusLegacyNBTData;
+import sen.manaita_plus_legacy.common.util.tag.ManaitaPlusLegacyTagData;
 
 public class ManaitaPlusLegacyCraftingRecipe implements CraftingRecipe {
     private final ResourceLocation id;
@@ -84,7 +84,7 @@ public class ManaitaPlusLegacyCraftingRecipe implements CraftingRecipe {
             if ((itemStack1 != null && item1 instanceof ManaitaPlusHookBlockItem) || (itemStack3 != null && (item1 instanceof ManaitaPlusCraftingBlockItem || item1 instanceof ManaitaPlusFurnaceBlockItem || item1 instanceof ManaitaPlusBrewingBlockItem))) {
                 if (itemStack3 == null) itemStack3 = itemStack2;
                 if (itemStack1 == null) itemStack1 = itemStack2;
-                if (itemStack1.getTag() != null && itemStack1.getTag().getInt(ManaitaPlusLegacyNBTData.ItemType) != 0) continue;
+                if (itemStack1.getTag() != null && itemStack1.getTag().getInt(ManaitaPlusLegacyTagData.ItemType) != 0) continue;
                 ItemStack itemStack4;
                 Item item = itemStack1.getItem();
                 if (item instanceof ManaitaPlusCraftingBlockItem) {
@@ -94,7 +94,7 @@ public class ManaitaPlusLegacyCraftingRecipe implements CraftingRecipe {
                 } else if (item instanceof ManaitaPlusBrewingBlockItem) {
                     itemStack4 = new ItemStack(ManaitaPlusLegacyItemCore.ManaitaBrewingPortable.get());
                 } else continue;
-                if (itemStack3.hasTag()) itemStack4.getOrCreateTag().putInt(ManaitaPlusLegacyNBTData.ItemType, itemStack3.getTag().getInt(ManaitaPlusLegacyNBTData.ItemType) + 1);
+                if (itemStack3.hasTag()) itemStack4.getOrCreateTag().putInt(ManaitaPlusLegacyTagData.ItemType, itemStack3.getTag().getInt(ManaitaPlusLegacyTagData.ItemType) + 1);
                 return itemStack4;
             }
             if ((source && itemStack2 != ItemStack.EMPTY) || (itemStack != null && item1 instanceof ManaitaPlusLegacySourceItem)) {
@@ -106,13 +106,13 @@ public class ManaitaPlusLegacyCraftingRecipe implements CraftingRecipe {
             if (item1 instanceof ManaitaPlusLegacySourceItem) source = true;
             else if (item1 instanceof ManaitaPlusHookBlockItem) itemStack3 = itemStack2;
             else if (item1 instanceof ManaitaPlusCraftingBlockItem) {
-                if (itemStack2.getTag() != null && itemStack2.getTag().getInt(ManaitaPlusLegacyNBTData.ItemType) != 0) continue;
+                if (itemStack2.getTag() != null && itemStack2.getTag().getInt(ManaitaPlusLegacyTagData.ItemType) != 0) continue;
                 itemStack1 = new ItemStack(ManaitaPlusLegacyBlockCore.CraftingBlockItem.get());
             } else if (item1 instanceof ManaitaPlusFurnaceBlockItem) {
-                if (itemStack2.getTag() != null && itemStack2.getTag().getInt(ManaitaPlusLegacyNBTData.ItemType) != 0)  continue;
+                if (itemStack2.getTag() != null && itemStack2.getTag().getInt(ManaitaPlusLegacyTagData.ItemType) != 0)  continue;
                 itemStack1 = new ItemStack(ManaitaPlusLegacyBlockCore.FurnaceBlockItem.get());
             } else if (item1 instanceof ManaitaPlusBrewingBlockItem) {
-                if (itemStack2.getTag() != null && itemStack2.getTag().getInt(ManaitaPlusLegacyNBTData.ItemType) != 0)  continue;
+                if (itemStack2.getTag() != null && itemStack2.getTag().getInt(ManaitaPlusLegacyTagData.ItemType) != 0)  continue;
                 itemStack1 = new ItemStack(ManaitaPlusLegacyBlockCore.BrewingBlockItem.get());
             } else if (itemStack2 != ItemStack.EMPTY) itemStack = itemStack2;
         }
@@ -136,7 +136,7 @@ public class ManaitaPlusLegacyCraftingRecipe implements CraftingRecipe {
             else if (typeBlock == Items.NETHERITE_BLOCK)
                 types = 8;
             else return ItemStack.EMPTY;
-            itemStack1.getOrCreateTag().putInt(ManaitaPlusLegacyNBTData.ItemType, types);
+            itemStack1.getOrCreateTag().putInt(ManaitaPlusLegacyTagData.ItemType, types);
             return itemStack1;
         }
         return ItemStack.EMPTY;

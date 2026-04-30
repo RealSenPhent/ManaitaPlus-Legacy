@@ -22,7 +22,7 @@ import sen.manaita_plus_legacy.common.block.ManaitaPlusBrewingStandBlock;
 import sen.manaita_plus_legacy.common.block.data.ManaitaPlusLegacyBlockData;
 import sen.manaita_plus_legacy.common.block.entity.ManaitaPlusBrewingStandBlockEntity;
 import sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyBlockCore;
-import sen.manaita_plus_legacy.common.util.ManaitaPlusLegacyNBTData;
+import sen.manaita_plus_legacy.common.util.tag.ManaitaPlusLegacyTagData;
 
 @OnlyIn(Dist.CLIENT)
 public class RenderBrewingManaitaBlockEntity implements BlockEntityRenderer<ManaitaPlusBrewingStandBlockEntity> {
@@ -113,7 +113,7 @@ public class RenderBrewingManaitaBlockEntity implements BlockEntityRenderer<Mana
 
         Block block = blockEntity.getBlockState().getBlock();
         if (block instanceof ManaitaPlusBrewingStandBlock) {
-            stack.getTag().putInt(ManaitaPlusLegacyNBTData.ItemType,blockEntity.getBlockState().getValue(ManaitaPlusLegacyBlockData.TYPES));
+            stack.getTag().putInt(ManaitaPlusLegacyTagData.ItemType,blockEntity.getBlockState().getValue(ManaitaPlusLegacyBlockData.TYPES));
             BakedModel bakedModel = itemRenderer.getModel(stack,blockEntity.getLevel(),null,0);
             itemRenderer.render(stack, ItemDisplayContext.FIXED,true,poseStack,bufferSource,packedLight,packedOverlay,bakedModel);
         }

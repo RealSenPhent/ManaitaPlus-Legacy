@@ -6,8 +6,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import sen.manaita_plus_legacy.ManaitaPlusLegacy;
 
-// An example config class. This is not required, but it's a good idea to have one to keep your config organized.
-// Demonstrates how to use Forge's config APIs
 @Mod.EventBusSubscriber(modid = ManaitaPlusLegacy.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ManaitaPlusLegacyConfig
 {
@@ -55,6 +53,7 @@ public class ManaitaPlusLegacyConfig
     public static int brewing_doubling_value;
     public static int destroy_doubling_value;
     public static int source_doubling_value;
+
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event)
     {

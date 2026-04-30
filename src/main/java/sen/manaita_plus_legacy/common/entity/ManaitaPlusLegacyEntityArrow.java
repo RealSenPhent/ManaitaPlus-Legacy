@@ -1,5 +1,6 @@
 package sen.manaita_plus_legacy.common.entity;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -12,7 +13,9 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.entity.PartEntity;
 import sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyEntityCore;
-import sen.manaita_plus_legacy.common.util.ManaitaPlusLegacyEntityData;
+import sen.manaita_plus_legacy.common.network.Networking;
+import sen.manaita_plus_legacy.common.network.server.ChangeDeathDataPacket;
+import sen.manaita_plus_legacy.common.util.entity.ManaitaPlusLegacyEntityData;
 
 public class ManaitaPlusLegacyEntityArrow extends AbstractArrow {
     public ManaitaPlusLegacyEntityArrow(EntityType<? extends AbstractArrow> p_36721_, Level p_36722_) {
@@ -47,6 +50,9 @@ public class ManaitaPlusLegacyEntityArrow extends AbstractArrow {
             } else if (owner instanceof LivingEntity living) {
                 DamageSource source = entity.damageSources().mobAttack(living);
                 entity.hurt(source, 100000);
+            }
+            if (entity instanceof ServerPlayer serverPlayer) {
+                Networking.sendToPlayer(serverPlayer, new ChangeDeathDataPacket(1));
             }
             ManaitaPlusLegacyEntityData.death.add(entity);
         }

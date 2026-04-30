@@ -30,28 +30,19 @@ public class EntitiesWrapper {
             if (e.getParts() != null)
                 for (PartEntity<?> part : e.getParts()) {
                     if (part != null)
-                        add(part);
+                        add(part, elementData, size);
                 }
             if (e instanceof EnderDragon dragon) {
                 EnderDragonPart[] subEntities = dragon.getSubEntities();
                 for (EnderDragonPart subEntity : subEntities) {
                     if (subEntity != null)
-                        add(subEntity);
+                        add(subEntity, elementData, size);
                 }
             }
         }
         add(e, elementData, size);
         return true;
     }
-
-    public void trimToSize() {
-        if (size < elementData.length) {
-            elementData = (size == 0)
-                    ? EMPTY_ELEMENTDATA
-                    : Arrays.copyOf(elementData, size);
-        }
-    }
-
 
     private void add(Entity e, Object[] elementData, int s) {
         if (s == elementData.length)
@@ -60,16 +51,10 @@ public class EntitiesWrapper {
         size = s + 1;
     }
 
-    private void clear() {
-        final Object[] es = elementData;
-        for (int to = size, i = size = 0; i < to; i++)
-            es[i] = null;
-    }
-
-    private Object[] grow(int minCapacity) {
+    private Object[] grow() {
         int oldCapacity = elementData.length;
         int newCapacity = newLength(oldCapacity,
-                minCapacity - oldCapacity, /* minimum growth */
+                size + 1 - oldCapacity, /* minimum growth */
                 oldCapacity >> 1           /* preferred growth */);
         return elementData = Arrays.copyOf(elementData, newCapacity);
     }
@@ -84,22 +69,15 @@ public class EntitiesWrapper {
             return prefLength;
         } else {
             // put code cold in a separate method
-            return hugeLength(oldLength, minGrowth);
+            int minLength = oldLength + minGrowth;
+            if (minLength < 0) { // overflow
+                throw new OutOfMemoryError(
+                        "Required array length " + oldLength + " + " + minGrowth + " is too large");
+            } else
+                return Math.max(minLength, SOFT_MAX_ARRAY_LENGTH);
         }
     }
 
-    private static int hugeLength(int oldLength, int minGrowth) {
-        int minLength = oldLength + minGrowth;
-        if (minLength < 0) { // overflow
-            throw new OutOfMemoryError(
-                    "Required array length " + oldLength + " + " + minGrowth + " is too large");
-        } else
-            return Math.max(minLength, SOFT_MAX_ARRAY_LENGTH);
-    }
-
-    private Object[] grow() {
-        return grow(size + 1);
-    }
 
     public void addIterable(Iterable<? extends Entity> iterable) {
         Iterator<? extends Entity> iterator = iterable.iterator();
@@ -124,9 +102,15 @@ public class EntitiesWrapper {
     }
 
     public void reset() {
-        boolean b  = size <= elementData.length - 300;
-        clear();
-        if (b) trimToSize();
+        boolean b = size <= elementData.length - 300;
+        final Object[] es = elementData;
+        for (int to = size, i = size = 0; i < to; i++)
+            es[i] = null;
+        if (b) {
+            if (size < elementData.length) {
+                elementData = EMPTY_ELEMENTDATA;
+            }
+        }
     }
 
     public Entity[] getEntities() {

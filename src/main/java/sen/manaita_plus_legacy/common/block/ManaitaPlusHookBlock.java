@@ -17,7 +17,7 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import sen.manaita_plus_legacy.common.block.data.ManaitaPlusLegacyBlockData;
-import sen.manaita_plus_legacy.common.util.ManaitaPlusLegacyNBTData;
+import sen.manaita_plus_legacy.common.util.tag.ManaitaPlusLegacyTagData;
 
 import java.util.List;
 
@@ -38,13 +38,17 @@ public class ManaitaPlusHookBlock extends Block {
         ItemStack itemStack = new ItemStack(p_287732_.getBlock());
         itemStack.setTag(new CompoundTag());
         int type = p_287732_.getValue(ManaitaPlusLegacyBlockData.TYPES);
-        itemStack.getTag().putInt(ManaitaPlusLegacyNBTData.ItemType,type);
+        itemStack.getTag().putInt(ManaitaPlusLegacyTagData.ItemType,type);
         return Lists.newArrayList(itemStack);
     }
 
 
     public BlockState getStateForPlacement(BlockPlaceContext p_48689_) {
-        return this.defaultBlockState().setValue(ManaitaPlusLegacyBlockData.FACING, p_48689_.getClickedFace());
+        Direction clickedFace = p_48689_.getClickedFace();
+        if (clickedFace == Direction.UP || clickedFace == Direction.DOWN) {
+            clickedFace = p_48689_.getHorizontalDirection().getOpposite();
+        }
+        return this.defaultBlockState().setValue(ManaitaPlusLegacyBlockData.FACING, clickedFace);
     }
 
     public RenderShape getRenderShape(BlockState p_48727_) {

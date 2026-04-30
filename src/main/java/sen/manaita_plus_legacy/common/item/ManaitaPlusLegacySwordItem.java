@@ -2,7 +2,6 @@ package sen.manaita_plus_legacy.common.item;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -27,20 +26,27 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.ToolAction;
 import org.jetbrains.annotations.Nullable;
 import sen.manaita_plus_legacy.common.item.data.IManaitaPlusLegacyDoubling;
 import sen.manaita_plus_legacy.common.item.data.IManaitaPlusLegacyKey;
-import sen.manaita_plus_legacy.common.util.ManaitaPlusText;
+import sen.manaita_plus_legacy.common.item.tool.base.ManaitaPlusLegacyToolBase;
 import sen.manaita_plus_legacy.common.util.ManaitaPlusUtils;
+import sen.manaita_plus_legacy.common.util.tag.ManaitaPlusLegacyTagData;
+import sen.manaita_plus_legacy.common.util.text.ManaitaPlusText;
 
 import java.util.List;
+
+import static sen.manaita_plus_legacy.common.item.tool.base.ManaitaPlusLegacyToolBase.*;
 
 public class ManaitaPlusLegacySwordItem extends SwordItem implements IManaitaPlusLegacyKey, IManaitaPlusLegacyDoubling {
     private final Multimap<Attribute, AttributeModifier> defaultModifiers;
     public ManaitaPlusLegacySwordItem() {
         super(new ItemManaitaSwordTier(), 0, 0, new Item.Properties().fireResistant());
         ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
+        builder.put(ForgeMod.ENTITY_REACH.get(), new AttributeModifier(BASE_ENTITY_REACH_UUID, "Tool modifier", Double.POSITIVE_INFINITY, AttributeModifier.Operation.ADDITION));
+        builder.put(ForgeMod.BLOCK_REACH.get(), new AttributeModifier(BASE_BLOCK_REACH_UUID, "Tool modifier", Double.POSITIVE_INFINITY, AttributeModifier.Operation.ADDITION));
         builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", Double.POSITIVE_INFINITY, AttributeModifier.Operation.ADDITION));
         builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier", Double.POSITIVE_INFINITY, AttributeModifier.Operation.ADDITION));
         this.defaultModifiers = builder.build();
@@ -62,7 +68,7 @@ public class ManaitaPlusLegacySwordItem extends SwordItem implements IManaitaPlu
                     if (entity1 instanceof  LivingEntity living) {
                         if (!player.level().isClientSide) {
                             living.hurt(living.damageSources().playerAttack(player), Float.MAX_VALUE);
-                            living.setHealth(Float.NaN);
+                            living.setHealth(0F);
                         }
                         for (int i = 0; i < 5; i++) {
                             living.handleEntityEvent((byte) 2);
@@ -101,7 +107,9 @@ public class ManaitaPlusLegacySwordItem extends SwordItem implements IManaitaPlu
     @Override
     public void appendHoverText(ItemStack p_41421_, @Nullable Level p_41422_, List<Component> p_41423_, TooltipFlag p_41424_) {
         super.appendHoverText(p_41421_, p_41422_, p_41423_, p_41424_);
-        p_41423_.add(Component.literal(ManaitaPlusText.manaita_mode.formatting(I18n.get("mode.manaita_sword") + ":"  + getSweep(p_41421_))));
+        p_41423_.add(Component.literal(ManaitaPlusText.manaita_mode.formatting(I18n.get("mode.manaita_sword.name") + ":"  + getSweep(p_41421_))));
+        p_41423_.add(Component.literal(ManaitaPlusText.manaita_mode.formatting(I18n.get("mode.doubling.name") + ":" + (isDoubling(getType(p_41421_)) ? I18n.get("info.on") : I18n.get("info.off")))));
+        p_41423_.add(Component.literal(ManaitaPlusText.manaita_mode.formatting(getPickDesc(ManaitaPlusLegacyToolBase.getType(p_41421_)))));
         p_41423_.add(Component.empty());
         p_41423_.add(Component.literal(ManaitaPlusText.manaita_infinity.formatting(I18n.get("info.attack"))));
     }
@@ -112,20 +120,54 @@ public class ManaitaPlusLegacySwordItem extends SwordItem implements IManaitaPlu
         return Component.literal(ManaitaPlusText.manaita_infinity.formatting(I18n.get("item.manaita_sword.name")));
     }
 
-    public void onManaitaKeyPress(ItemStack itemStack, Player player) {
-        int sweep = getSweep(itemStack);
-        if (sweep == 0) sweep = 1;
-        sweep = (sweep * 4) % 2048;
-        setSweep(itemStack,sweep);
-  }
 
-    public void onManaitaKeyPressOnClient(ItemStack itemStack, Player player) {
-        int sweep = itemStack.getOrCreateTag().getInt("Sweep");
-        if (sweep == 0) sweep = 1;
-        sweep = (sweep * 4) % 2048;
-        setSweep(itemStack,sweep);
-        ManaitaPlusUtils.chat(Component.literal(String.format("[%s%s] %s%s: %s",ManaitaPlusText.manaita_mode.formatting(I18n.get("item.manaita_sword.name")), ChatFormatting.RESET, ChatFormatting.RESET,I18n.get("mode.manaita_sword"), sweep)));
+
+    @Override
+    public void onManaitaKeyPressOnClient(ItemStack itemStack, Player player,int i) {
+        if (i == 0) {
+            if (player.isShiftKeyDown()) {
+                int sweep = itemStack.getOrCreateTag().getInt(ManaitaPlusLegacyTagData.Sweep);
+                sweep = ((sweep * 4) % 4096);
+                if (sweep == 0) sweep = 1;
+                setSweep(itemStack, sweep);
+                ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + I18n.get("mode.manaita_sword.name") + ": " + sweep)));
+            } else
+                ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + I18n.get("mode.doubling.name") + ": " + (setDoubling(itemStack, getType(itemStack)) ? I18n.get("info.on") : I18n.get("info.off")))));
+        } else if (i == 2) {
+            ManaitaPlusLegacyToolBase.setPickMode(itemStack, player.isShiftKeyDown(), ManaitaPlusLegacyToolBase.getType(itemStack));
+            int type = ManaitaPlusLegacyToolBase.getType(itemStack);
+            StringBuilder sb = new StringBuilder(I18n.get("mode.pick.name") + ": ");
+            if (ManaitaPlusLegacyToolBase.canPick(type,true)) {
+                sb.append(I18n.get("info.pick_items.name"));
+                if (ManaitaPlusLegacyToolBase.canPick(type,false)) sb.append("&").append(I18n.get("info.pick_experience.name"));
+            } else if (ManaitaPlusLegacyToolBase.canPick(type,false)) {
+                sb.append(I18n.get("info.pick_experience.name"));
+            } else {
+                sb.append("None");
+            }
+            ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + sb)));
+        }
     }
+    
+
+    @Override
+    public void onManaitaKeyPress(ItemStack itemStack, Player paramEntityPlayer,int i) {
+        if (i == 0) {
+            if (paramEntityPlayer.isShiftKeyDown()) {
+                int sweep = itemStack.getOrCreateTag().getInt(ManaitaPlusLegacyTagData.Sweep);
+                sweep = ((sweep * 4) % 4096);
+                if (sweep == 0) sweep = 1;
+                setSweep(itemStack,sweep);
+           } else {
+                int type = getType(itemStack);
+                setDoubling(itemStack, type);
+            }
+        } else if (i == 2) {
+            int type = ManaitaPlusLegacyToolBase.getType(itemStack);
+            ManaitaPlusLegacyToolBase.setPickMode(itemStack, paramEntityPlayer.isShiftKeyDown(), type);
+        }
+    }
+
 
     @Override
     public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
@@ -136,11 +178,11 @@ public class ManaitaPlusLegacySwordItem extends SwordItem implements IManaitaPlu
     public static int getSweep(ItemStack itemStack) {
         if (!itemStack.hasTag()) return 1;
         assert itemStack.getTag() != null;
-        return itemStack.getTag().getInt("Sweep");
+        return itemStack.getTag().getInt(ManaitaPlusLegacyTagData.Sweep);
     }
 
     public static void setSweep(ItemStack itemStack,int sweep) {
-        itemStack.getTag().putInt("Sweep", sweep);
+        itemStack.getTag().putInt(ManaitaPlusLegacyTagData.Sweep, sweep);
     }
 
     @Override

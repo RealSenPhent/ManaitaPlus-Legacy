@@ -4,6 +4,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 public interface IManaitaPlusLegacyKey {
-    void onManaitaKeyPress(ItemStack paramItemStack, Player paramEntityPlayer);
-    void onManaitaKeyPressOnClient(ItemStack paramItemStack, Player paramEntityPlayer);
+    void onManaitaKeyPress(ItemStack paramItemStack, Player paramEntityPlayer,int i);
+    void onManaitaKeyPressOnClient(ItemStack paramItemStack, Player paramEntityPlayer,int i);
 }

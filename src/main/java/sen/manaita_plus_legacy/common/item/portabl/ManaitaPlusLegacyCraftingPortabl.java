@@ -13,7 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkHooks;
 import sen.manaita_plus_legacy.common.menu.ManaitaPlusLegacyCraftingMenu;
-import sen.manaita_plus_legacy.common.util.ManaitaPlusLegacyNBTData;
+import sen.manaita_plus_legacy.common.util.tag.ManaitaPlusLegacyTagData;
 
 import javax.annotation.Nullable;
 
@@ -24,7 +24,7 @@ public class ManaitaPlusLegacyCraftingPortabl extends Item {
 
     @Override
     public Component getName(ItemStack p_41458_) {
-        return Component.translatable("item.portableCrafting."+ p_41458_.getOrCreateTag().getInt(ManaitaPlusLegacyNBTData.ItemType) +".name");
+        return Component.translatable("item.portableCrafting."+ p_41458_.getOrCreateTag().getInt(ManaitaPlusLegacyTagData.ItemType) +".name");
     }
 
 

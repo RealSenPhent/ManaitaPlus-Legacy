@@ -31,7 +31,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkHooks;
 import sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyBlockEntityCore;
 import sen.manaita_plus_legacy.common.menu.ManaitaPlusLegacyFurnaceMenu;
-import sen.manaita_plus_legacy.common.util.ManaitaPlusLegacyNBTData;
+import sen.manaita_plus_legacy.common.util.tag.ManaitaPlusLegacyTagData;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -43,7 +43,7 @@ public class ManaitaPlusLegacyFurnacePortabl extends Item {
 
     @Override
     public Component getName(ItemStack p_41458_) {
-        return Component.translatable("item.portableFurnace."+ p_41458_.getOrCreateTag().getInt(ManaitaPlusLegacyNBTData.ItemType) +".name");
+        return Component.translatable("item.portableFurnace."+ p_41458_.getOrCreateTag().getInt(ManaitaPlusLegacyTagData.ItemType) +".name");
     }
 
 

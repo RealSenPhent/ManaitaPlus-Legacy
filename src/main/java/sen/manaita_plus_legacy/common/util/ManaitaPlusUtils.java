@@ -1,24 +1,30 @@
 package sen.manaita_plus_legacy.common.util;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
+import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.ClassInstanceMultiMap;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.Arrow;
-import net.minecraft.world.entity.projectile.DragonFireball;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
@@ -28,90 +34,171 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.entity.*;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.entity.PartEntity;
+import org.jetbrains.annotations.NotNull;
 import sen.manaita_plus_legacy.common.config.ManaitaPlusLegacyConfig;
+import sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyItemCore;
+import sen.manaita_plus_legacy.common.item.ManaitaPlusLegacyGodSwordItem;
 import sen.manaita_plus_legacy.common.item.armor.ManaitaPlusLegacyArmor;
 import sen.manaita_plus_legacy.common.item.data.IManaitaPlusLegacyDestroy;
+import sen.manaita_plus_legacy.common.item.tool.base.ManaitaPlusLegacyToolBase;
 import sen.manaita_plus_legacy.common.network.Networking;
+import sen.manaita_plus_legacy.common.network.server.ChangeDeathDataPacket;
 import sen.manaita_plus_legacy.common.network.server.DestroyBlockPacket;
+import sen.manaita_plus_legacy.common.util.entity.ManaitaPlusLegacyEntityData;
 import sen.manaita_plus_legacy.common.util.wrapper.EntitiesWrapper;
 import sen.manaita_plus_legacy_core.util.Helper;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 public class ManaitaPlusUtils {
     public static final Minecraft mc = Minecraft.getInstance();
 
     public static Entity getEntity(Entity entity) {
-        if (entity instanceof Arrow arrow)
-            return arrow.getOwner();
-        if (entity instanceof DragonFireball fireball)
-            return fireball.getOwner();
+        if (entity instanceof TraceableEntity traceableEntity)
+            return traceableEntity.getOwner();
         return entity;
     }
 
     private static final ThreadLocal<EntitiesWrapper> ENTITY_CACHE =
             ThreadLocal.withInitial(EntitiesWrapper::new);
 
-    public static void godKill(Player player,boolean remove,boolean shiftKeyDown) {
+    public static void godKill(ItemStack stack,Player player) {
+        int type = ManaitaPlusLegacyToolBase.getType(stack);
+        boolean remove = ManaitaPlusLegacyGodSwordItem.isRemove(type);
+        boolean shiftKeyDown = player.isShiftKeyDown();
+        godKill(type,remove,shiftKeyDown,player);
+    }
+    public static void godKill(int type,boolean remove,boolean shiftKeyDown,Player player) {
         Level level = player.level();
-//        if (shiftKeyDown && level.isClientSide) {
-//            if (Minecraft.getInstance().isSameThread()) {
-//                mc.getSoundManager().stop();
-//                mc.particleEngine.setLevel(mc.level);
-//            }
-//        }
-
         if (level instanceof ClientLevel client) {
             EntitiesWrapper wrapper = ENTITY_CACHE.get();
             wrapper.addIterable(client.entitiesForRendering());
-            wrapper.addCollection(client.getPartEntities());
+            wrapper.addIterable(client.getPartEntities());
             Entity[] entities = wrapper.getEntities();
             for (int i = 0; i < wrapper.size(); i++) {
                 Entity entity = entities[i];
-                Entity target = getEntity(entity);
-                if (target == null || target instanceof ItemEntity || target instanceof ExperienceOrb) {
+                if (entity == null
+                        || (entity instanceof ItemEntity && ManaitaPlusLegacyToolBase.canPick(type,true))
+                        || (entity instanceof ExperienceOrb && ManaitaPlusLegacyToolBase.canPick(type,false))
+                ) {
                     continue;
                 }
-                if (!shiftKeyDown && target.getType().getCategory() != MobCategory.MONSTER) continue;
-                attack(target, player,remove);
+                if (!shiftKeyDown && entity.getType().getCategory() != MobCategory.MONSTER) continue;
+                attack(entity, player,remove);
             }
-            client.getPartEntities().clear();
             wrapper.reset();
+
+            TransientEntitySectionManager<Entity> entityStorage = client.entityStorage;
+            EntitySectionStorage<Entity> sectionStorage = entityStorage.sectionStorage;
+            ObjectIterator<Long2ObjectMap.Entry<EntitySection<Entity>>> iterator1 = sectionStorage.sections.long2ObjectEntrySet().iterator();
+            while (iterator1.hasNext()) {
+                EntitySection<Entity> entitySection = iterator1.next().getValue();
+                if (entitySection == null) {
+                    continue;
+                }
+                ClassInstanceMultiMap<Entity> storage = entitySection.storage;
+                for (Map.Entry<?, ?> entry : storage.byClass.entrySet()) {
+                    if (entry.getValue() instanceof List<?> list1) {
+                        list1.removeIf(o -> o instanceof Entity entity && ManaitaPlusLegacyEntityData.remove.acceptSide(entity));
+                    }
+                }
+                entitySection.storage.allInstances.removeIf(ManaitaPlusLegacyEntityData.remove::acceptSide);
+            }
+
+            ObjectIterator<Int2ObjectMap.Entry<Entity>> iterator = entityStorage.entityStorage.byId.int2ObjectEntrySet().iterator();
+            while (iterator.hasNext())
+                if (ManaitaPlusLegacyEntityData.remove.acceptSide(iterator.next().getValue()))
+                    iterator.remove();
+            iterator = client.tickingEntities.active.int2ObjectEntrySet().iterator();
+            while (iterator.hasNext())
+                if (ManaitaPlusLegacyEntityData.remove.acceptSide(iterator.next().getValue()))
+                    iterator.remove();
+            entityStorage.entityStorage.byUuid.entrySet().removeIf(uuidEntityEntry -> ManaitaPlusLegacyEntityData.remove.acceptSide(uuidEntityEntry.getValue()));
         } else if (level instanceof ServerLevel server) {
-            List<Entity> tntities = new ArrayList<>();
             EntitiesWrapper wrapper = ENTITY_CACHE.get();
             wrapper.addIterable(server.getAllEntities());
             wrapper.addIterable(server.getPartEntities());
             Entity[] entities = wrapper.getEntities();
             for (int i = 0; i < wrapper.size(); i++) {
                 Entity entity = entities[i];
-                Entity target = getEntity(entity);
-                if (target == null || target instanceof ItemEntity || target instanceof ExperienceOrb) {
-                    tntities.add(target);
+                if (entity == null) {
                     continue;
+                } else if (entity instanceof ItemEntity item) {
+                    if (ManaitaPlusLegacyToolBase.canPick(type,true)) {
+                        item.setNoPickUpDelay();
+                        item.playerTouch(player);
+                        continue;
+                    } else item.discard();
+                } else if (entity instanceof ExperienceOrb orb) {
+                    if (ManaitaPlusLegacyToolBase.canPick(type,false)) {
+                        player.takeXpDelay = 0;
+                        orb.playerTouch(player);
+                        continue;
+                    } else orb.discard();
                 }
-                if (!shiftKeyDown && target.getType().getCategory() != MobCategory.MONSTER) continue;
-                attack(target, player,remove);
+                if (!shiftKeyDown && entity.getType().getCategory() != MobCategory.MONSTER) continue;
+                attack(entity, player,remove);
             }
-            server.getPartEntities().clear();
             wrapper.reset();
-            for (Entity tntity : tntities) {
-                if (tntity instanceof ItemEntity item) {
-                    item.setNoPickUpDelay();
-                    item.playerTouch(player);
+
+            PersistentEntitySectionManager<Entity> entityManager = server.entityManager;
+            EntitySectionStorage<Entity> sectionStorage = entityManager.sectionStorage;
+            ObjectIterator<Long2ObjectMap.Entry<EntitySection<Entity>>> iterator1 = sectionStorage.sections.long2ObjectEntrySet().iterator();
+            while (iterator1.hasNext()) {
+                EntitySection<Entity> entitySection = iterator1.next().getValue();
+                if (entitySection == null) {
                     continue;
                 }
-                if (tntity instanceof ExperienceOrb xp) {
-                    player.takeXpDelay = 0;
-                    xp.playerTouch(player);
-                    continue;
+                ClassInstanceMultiMap<Entity> storage = entitySection.storage;
+                for (Map.Entry<?, ?> entry : storage.byClass.entrySet()) {
+                    if (entry.getValue() instanceof List<?> list1) {
+                        list1.removeIf(o -> o instanceof Entity entity && ManaitaPlusLegacyEntityData.remove.acceptSide(entity));
+                    }
+                }
+                entitySection.storage.allInstances.removeIf(ManaitaPlusLegacyEntityData.remove::acceptSide);
+            }
+            ObjectIterator<Int2ObjectMap.Entry<Entity>> iterator = entityManager.visibleEntityStorage.byId.int2ObjectEntrySet().iterator();
+            while (iterator.hasNext())
+                if (ManaitaPlusLegacyEntityData.remove.acceptSide(iterator.next().getValue()))
+                    iterator.remove();
+            iterator = server.entityTickList.active.int2ObjectEntrySet().iterator();
+            while (iterator.hasNext())
+                if (ManaitaPlusLegacyEntityData.remove.acceptSide(iterator.next().getValue()))
+                    iterator.remove();
+            entityManager.visibleEntityStorage.byUuid.entrySet().removeIf(uuidEntityEntry -> ManaitaPlusLegacyEntityData.remove.acceptSide(uuidEntityEntry.getValue()));
+            ObjectIterator<Int2ObjectMap.Entry<ChunkMap.TrackedEntity>> iteratored = server.getChunkSource().chunkMap.entityMap.int2ObjectEntrySet().iterator();
+            while (iteratored.hasNext()) {
+                ChunkMap.TrackedEntity trackedEntity = iteratored.next().getValue();
+                Entity entity = trackedEntity.entity;
+                if (ManaitaPlusLegacyEntityData.remove.acceptSide(entity)) {
+                    if (entity instanceof ServerPlayer serverplayer) {
+//                        server.getChunkSource().chunkMap.updatePlayerStatus(serverplayer, false);
+                        ObjectIterator<Int2ObjectMap.Entry<ChunkMap.TrackedEntity>> var3 = server.getChunkSource().chunkMap.entityMap.int2ObjectEntrySet().iterator();
+                        while(var3.hasNext()) {
+                            ChunkMap.TrackedEntity chunkmap$trackedentity = (ChunkMap.TrackedEntity)var3.next();
+                            chunkmap$trackedentity.removePlayer(serverplayer);
+                        }
+                    }
+                    iteratored.remove();
+                    trackedEntity.broadcastRemoved();
                 }
             }
         }
+        if (!shiftKeyDown) {
+            Iterator<PartEntity<?>> iterator = level.getPartEntities().iterator();
+            PartEntity<?> partEntity;
+            while (iterator.hasNext()) {
+                partEntity = iterator.next();
+                if (partEntity == null || partEntity.getParent().getType().getCategory() == MobCategory.MONSTER) {
+                    iterator.remove();
+                }
+            }
+        } else level.getPartEntities().clear();
     }
 
     public static void attack(Entity target, Player player, boolean remove) {
@@ -124,12 +211,11 @@ public class ManaitaPlusUtils {
                 }
             }
         }
-        ManaitaPlusLegacyEntityData.death.add(target);
-        if (target.level().isClientSide) {
+        if (target.level() instanceof ClientLevel) {
             if (Minecraft.getInstance().isSameThread()) {
                 if (remove) {
                     removeOnClient(target);
-                } else {
+                 } else {
                     killOnClient(target);
                 }
             }
@@ -138,30 +224,23 @@ public class ManaitaPlusUtils {
                 removeOnServer(target);
             } else {
                 if (target instanceof LivingEntity living) {
+                    AttributeInstance attribute = living.getAttribute(Attributes.MAX_HEALTH);
+                    if (attribute != null)
+                        attribute.setBaseValue(0.0F);
                     living.hurt(living.damageSources().playerAttack(player), Float.MAX_VALUE);
-
+                    living.setLastHurtByPlayer(player);
                     living.handleEntityEvent((byte) 2);
-                    living.handleEntityEvent((byte) 47);
-                    living.handleEntityEvent((byte) 48);
-                    living.handleEntityEvent((byte) 49);
-                    living.handleEntityEvent((byte) 50);
-                    living.handleEntityEvent((byte) 51);
-                    living.handleEntityEvent((byte) 52);
-
-                    living.die(living.damageSources().generic());
+                    living.die(living.damageSources().playerAttack(player));
                 }
-                killOnServer(target);
             }
         }
+        if (target instanceof ServerPlayer serverPlayer) {
+            Networking.sendToPlayer(serverPlayer, new ChangeDeathDataPacket(1));
+        }
+        ManaitaPlusLegacyEntityData.death.add(target);
     }
 
-    public static void killOnClient(Entity target) {
-
-    }
-
-    public static void killOnServer(Entity target) {
-
-    }
+    public static void killOnClient(Entity target) {}
 
     public static void removeOnClient(Entity target) {
         if (target.level() instanceof ClientLevel clientLevel) {
@@ -214,6 +293,7 @@ public class ManaitaPlusUtils {
 
             long sectionPos = SectionPos.asLong(target.blockPosition());
             EntitySectionStorage<Entity> sectionStorage = serverLevel.entityManager.sectionStorage;
+
             sectionStorage.getExistingSectionPositionsInChunk(sectionPos).forEach(sectionPos1 -> {
                 EntitySection<Entity> section = sectionStorage.sections.get(sectionPos1);
                 if (section == null) return;
@@ -225,7 +305,7 @@ public class ManaitaPlusUtils {
                 public void onMove() {
                 }
 
-                public void onRemove(Entity.RemovalReason removalReason) {
+                public void onRemove(Entity.@NotNull RemovalReason removalReason) {
                     if (!entitySection.remove(target)) {
                         serverLevel.entityManager.stopTicking(target);
                         serverLevel.entityManager.stopTracking(target);
@@ -258,6 +338,18 @@ public class ManaitaPlusUtils {
         popResource(p_49841_, () -> new ItemEntity(p_49841_, d1, d2, d3, p_49843_), p_49843_);
     }
 
+    public static void popResource(Level p_49841_, BlockPos p_49842_, ItemStack p_49843_,Vec3 vec3) {
+        double d0 = (double) EntityType.ITEM.getHeight() / 2.0D;
+        double d1 = (double)p_49842_.getX() + 0.5D + Mth.nextDouble(p_49841_.random, -0.25D, 0.25D);
+        double d2 = (double)p_49842_.getY() + 0.5D + Mth.nextDouble(p_49841_.random, -0.25D, 0.25D) - d0;
+        double d3 = (double)p_49842_.getZ() + 0.5D + Mth.nextDouble(p_49841_.random, -0.25D, 0.25D);
+        popResource(p_49841_, () -> {
+            ItemEntity itemEntity = new ItemEntity(p_49841_, d1, d2, d3, p_49843_);
+            itemEntity.setDeltaMovement(vec3);
+            return itemEntity;
+        }, p_49843_);
+    }
+
 
     private static void popResource(Level p_152441_, Supplier<ItemEntity> p_152442_, ItemStack p_152443_) {
         if (!p_152441_.isClientSide && !p_152443_.isEmpty()) {
@@ -284,57 +376,124 @@ public class ManaitaPlusUtils {
     }
 
     public static void destroyBlocks(ItemStack stack, Level level, BlockPos blockPos, Player player) {
-        if (stack.getItem() instanceof IManaitaPlusLegacyDestroy des) {
+        if (stack.getItem() instanceof ManaitaPlusLegacyToolBase des) {
             int range = des.getRange(stack) >> 1;
-            boolean doubling = stack.getTag() != null && stack.getTag().getBoolean("Doubling");
+            int type = ManaitaPlusLegacyToolBase.getType(stack);
+            boolean doubling = des.isDoubling(type);
             if (range == 0) {
                 destroyBlock(stack, level, blockPos, player,doubling);
                 return;
             }
             if (level instanceof ServerLevel serverLevel) {
+                boolean isDrop = !player.getAbilities().instabuild;
+                if (!isDrop && !ManaitaPlusLegacyConfig.creative_range_destroy_value) return;
                 Networking.sendToTrackBySeen(serverLevel,player,new DestroyBlockPacket(blockPos,range,stack.getItem()));
                 int xM = blockPos.getX() + range;
                 int yM = blockPos.getY() + range;
                 int zM = blockPos.getZ() + range;
                 BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
-                boolean isDrop = !player.getAbilities().instabuild;
-                if (!isDrop && !ManaitaPlusLegacyConfig.creative_range_destroy_value) return;
+                int exp = 0;
+                Map<Block, AtomicInteger> blocks = new HashMap<>();
+                Map<Integer,List<ItemStack>> itemDrops = new HashMap<>();
+                boolean pickItems = ManaitaPlusLegacyToolBase.canPick(type, true);
+                boolean pickExperience = ManaitaPlusLegacyToolBase.canPick(type, true);
                 for (int x = blockPos.getX() - range; x <= xM; x++) {
                     for (int y = blockPos.getY() - range; y <= yM; y++) {
                         for (int z = blockPos.getZ() - range; z <= zM; z++) {
                             BlockState blockState = level.getBlockState(mutableBlockPos.set(x, y, z));
-                            if (!des.accept(blockState))
+                            if (!des.accept(blockState)) {
                                 continue;
+                            }
 
                             Block block = blockState.getBlock();
                             BlockEntity blockEntity = serverLevel.getBlockEntity(mutableBlockPos);
 
-//                            boolean removed = blockState.onDestroyedByPlayer(level, pos, player, false, level.getFluidState(pos));
-//                            block.playerWillDestroy(level, mutableBlockPos, blockState, player);
-
                             boolean removed = setBlock(level, mutableBlockPos, level.getFluidState(mutableBlockPos).createLegacyBlock(), 2);
-                            if (removed)
+                            block.playerWillDestroy(level, mutableBlockPos, blockState, player);
+                            if (removed) {
                                 block.destroy(level, mutableBlockPos, blockState);
+                            }
                             player.awardStat(Stats.BLOCK_MINED.get(block));
                             player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
 
                             if (isDrop) {
                                 player.causeFoodExhaustion(0.005F);
                                 List<ItemStack> drops = Block.getDrops(blockState, serverLevel, mutableBlockPos, blockEntity, player, stack);
-                                if (drops.isEmpty())
-                                    popResource(serverLevel, mutableBlockPos, new ItemStack(block, doubling ? ManaitaPlusLegacyConfig.destroy_doubling_value : 1));
-                                else
-                                    drops.forEach((p_49859_) -> {
-                                        if (doubling)
-                                            p_49859_.setCount(p_49859_.getCount() * ManaitaPlusLegacyConfig.destroy_doubling_value);
-                                        popResource(serverLevel, mutableBlockPos, p_49859_);
-                                    });
-                                int exp = blockState.getExpDrop(serverLevel, serverLevel.random, mutableBlockPos, stack.getEnchantmentLevel(Enchantments.BLOCK_FORTUNE), stack.getEnchantmentLevel(Enchantments.SILK_TOUCH));
-                                if (doubling)
-                                    exp *= ManaitaPlusLegacyConfig.destroy_doubling_value;
-                                block.popExperience(serverLevel, mutableBlockPos, exp);
+                                if (pickItems) {
+                                    if (drops.isEmpty()) {
+                                        AtomicInteger atomicInteger = blocks.computeIfAbsent(block, (block1) -> new AtomicInteger(0));
+                                        atomicInteger.set(atomicInteger.get() + 1);
+                                    }
+                                    else
+                                        drops.forEach((p_49859_) -> {
+                                            List<ItemStack> itemStacks = itemDrops.computeIfAbsent(p_49859_.getItem().hashCode(), ys -> new ArrayList<>());
+                                            for (ItemStack itemStack : itemStacks) {
+                                                if (itemStack.areShareTagsEqual(p_49859_)) {
+                                                    itemStack.setCount(itemStack.getCount() + p_49859_.getCount());
+                                                    return;
+                                                }
+                                            }
+                                            itemStacks.add(p_49859_);
+                                        });
+                                } else {
+                                    if (drops.isEmpty())
+                                        popResource(serverLevel, mutableBlockPos, new ItemStack(block, doubling ? ManaitaPlusLegacyConfig.destroy_doubling_value : 1));
+                                    else
+                                        drops.forEach((p_49859_) -> {
+                                            if (doubling)
+                                                p_49859_.setCount(p_49859_.getCount() * ManaitaPlusLegacyConfig.destroy_doubling_value);
+                                            popResource(serverLevel, mutableBlockPos, p_49859_);
+                                        });
+                                }
+                                if (pickExperience) {
+                                    exp += blockState.getExpDrop(serverLevel, serverLevel.random, mutableBlockPos, stack.getEnchantmentLevel(Enchantments.BLOCK_FORTUNE), stack.getEnchantmentLevel(Enchantments.SILK_TOUCH));
+                                } else {
+                                    if (doubling) {
+                                        exp = blockState.getExpDrop(serverLevel, serverLevel.random, mutableBlockPos, stack.getEnchantmentLevel(Enchantments.BLOCK_FORTUNE), stack.getEnchantmentLevel(Enchantments.SILK_TOUCH)) * ManaitaPlusLegacyConfig.destroy_doubling_value;
+                                    }
+                                    block.popExperience(serverLevel, mutableBlockPos, exp);
+                                }
                             }
                         }
+                    }
+                }
+                if (isDrop) {
+                    if (pickItems) {
+                        ItemStack itemStack = new ItemStack(ManaitaPlusLegacyItemCore.ManaitaSource.get());
+                        CompoundTag orCreateTag = itemStack.getOrCreateTag();
+                        ListTag listtag = new ListTag();
+                        test : for (Map.Entry<Block, AtomicInteger> entry : blocks.entrySet()) {
+                            ItemStack itemStack1 = new ItemStack(entry.getKey(), entry.getValue().get());
+                            if (itemStack1.isEmpty()) continue;
+                            List<ItemStack> itemStacks = itemDrops.computeIfAbsent(itemStack1.getItem().hashCode(), ys -> new ArrayList<>());
+                            for (ItemStack stack1 : itemStacks) {
+                                if (stack1.areShareTagsEqual(itemStack1)) {
+                                    stack1.setCount(stack1.getCount() + itemStack1.getCount());
+                                    break test;
+                                }
+                            }
+                            itemStacks.add(itemStack1);
+                        }
+                        for (List<ItemStack> itemStacks : itemDrops.values()) {
+                            for (ItemStack itemStack1 : itemStacks) {
+                                if (itemStack1.isEmpty()) continue;
+                                CompoundTag compoundTag = new CompoundTag();
+                                if (doubling) {
+                                    compoundTag.putInt("RealCount",itemStack1.getCount() * ManaitaPlusLegacyConfig.destroy_doubling_value);
+                                }else {
+                                    compoundTag.putInt("RealCount",itemStack1.getCount());
+                                }
+                                itemStack1.setCount(1);
+                                listtag.add(itemStack1.save(compoundTag));
+                            }
+                        }
+                        orCreateTag.put("Items", listtag);
+                        popResource(serverLevel, predictPlayerPosition(player,10), itemStack, player.getDeltaMovement());
+                    }
+                    if (pickExperience) {
+                        if (doubling)
+                            exp *= ManaitaPlusLegacyConfig.destroy_doubling_value;
+                        player.giveExperiencePoints(exp);
                     }
                 }
             }/* else if (level instanceof ClientLevel clientLevel){
@@ -362,6 +521,36 @@ public class ManaitaPlusUtils {
         }
     }
 
+
+    public static BlockPos predictPlayerPosition(Player player, int ticksAhead) {
+        Vec3 currentPos = player.position();
+        Vec3 motion = player.getDeltaMovement();
+
+        // 线性预测加上速度衰减
+        double airResistance = player.onGround() ? 0.6 : 0.91;
+        double predictedX = currentPos.x;
+        double predictedY = currentPos.y;
+        double predictedZ = currentPos.z;
+
+        double currentMotionX = motion.x;
+        double currentMotionY = motion.y;
+        double currentMotionZ = motion.z;
+
+        for (int i = 0; i < ticksAhead; i++) {
+            predictedX += currentMotionX;
+            predictedY += currentMotionY;
+            predictedZ += currentMotionZ;
+
+            // 应用阻力
+            currentMotionX *= airResistance;
+            currentMotionZ *= airResistance;
+            currentMotionY *= 0.98; // 空气阻力
+        }
+
+        return new BlockPos((int) predictedX, (int) predictedY, (int) predictedZ);
+    }
+
+
     public static boolean setBlock(Level level,BlockPos p_46605_, BlockState p_46606_,int p_46607_ ) {
         if (level.isOutsideBuildHeight(p_46605_)) {
             return false;
@@ -371,9 +560,9 @@ public class ManaitaPlusUtils {
             LevelChunk levelchunk = level.getChunkAt(p_46605_);
 
             p_46605_ = p_46605_.immutable(); // Forge - prevent mutable BlockPos leaks
-            net.minecraftforge.common.util.BlockSnapshot blockSnapshot = null;
+            BlockSnapshot blockSnapshot = null;
             if (level.captureBlockSnapshots && !level.isClientSide) {
-                blockSnapshot = net.minecraftforge.common.util.BlockSnapshot.create(level.dimension(), level, p_46605_, p_46607_);
+                blockSnapshot = BlockSnapshot.create(level.dimension(), level, p_46605_, p_46607_);
                 level.capturedBlockSnapshots.add(blockSnapshot);
             }
 
@@ -405,6 +594,7 @@ public class ManaitaPlusUtils {
                 }
 
                 boolean removed = blockState.onDestroyedByPlayer(level, pos, player, false, level.getFluidState(pos));
+                block.playerWillDestroy(level, pos, blockState, player);
                 if (removed)
                     block.destroy(level, pos, blockState);
 
@@ -415,23 +605,43 @@ public class ManaitaPlusUtils {
                 if (isDrop) {
                     player.causeFoodExhaustion(0.005F);
                     List<ItemStack> drops = Block.getDrops(blockState, serverLevel, pos, blockEntity, player, stack);
-                    if (drops.isEmpty())
-                        popResource(serverLevel, pos, new ItemStack(block, doubling ? 4 : 1));
-                    else
-                        drops.forEach((p_49859_) -> {
-                            if (doubling)
-                                p_49859_.setCount(p_49859_.getCount() * 4);
-                            popResource(serverLevel, pos, p_49859_);
-                        });
+                    int type = ManaitaPlusLegacyToolBase.getType(stack);
+                    if (ManaitaPlusLegacyToolBase.canPick(type,true)) {
+                        if (drops.isEmpty())
+                            player.getInventory().add(new ItemStack(block, doubling ? ManaitaPlusLegacyConfig.destroy_doubling_value : 1));
+                        else
+                            drops.forEach((p_49859_) -> {
+                                if (doubling)
+                                    p_49859_.setCount(p_49859_.getCount() * ManaitaPlusLegacyConfig.destroy_doubling_value);
+                                player.getInventory().add(p_49859_);
+                            });
+                    } else {
+                        if (drops.isEmpty())
+                            popResource(serverLevel, pos, new ItemStack(block, doubling ? ManaitaPlusLegacyConfig.destroy_doubling_value : 1));
+                        else
+                            drops.forEach((p_49859_) -> {
+                                if (doubling)
+                                    p_49859_.setCount(p_49859_.getCount() * ManaitaPlusLegacyConfig.destroy_doubling_value);
+                                popResource(serverLevel, pos, p_49859_);
+                            });
+                    }
                     int exp = blockState.getExpDrop(serverLevel, serverLevel.random, pos, stack.getEnchantmentLevel(Enchantments.BLOCK_FORTUNE), stack.getEnchantmentLevel(Enchantments.SILK_TOUCH));
                     if (doubling)
-                        exp *= 4;
-                    block.popExperience(serverLevel, pos, exp);
+                        exp *= ManaitaPlusLegacyConfig.destroy_doubling_value;
+                    if (ManaitaPlusLegacyToolBase.canPick(type,false)) {
+                        player.giveExperiencePoints(exp);
+                    } else {
+                        block.popExperience(serverLevel, pos, exp);
+                    }
                 }
             } else if (level instanceof ClientLevel clientLevel) {
 
 //                            Networking.INSTANCE.sendToServer(new MessageDes(pos));
 //                mc.getTutorial().onDestroyBlock(clientLevel, pos, blockState, 1.0F);
+                block.playerWillDestroy(level, pos, blockState, mc.player);
+
+//                ManaitaPlusUtils.setBlock(level, mutableBlockPos, level.getFluidState(mutableBlockPos).createLegacyBlock(), 10);
+
                 SoundType soundtype = blockState.getSoundType(clientLevel, pos, player);
                 mc.getSoundManager().play(new SimpleSoundInstance(soundtype.getHitSound(), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 8.0F, soundtype.getPitch() * 0.5F, SoundInstance.createUnseededRandom(), pos));
 //                clientLevel.destroyBlockProgress(player.getId(), pos, 9);

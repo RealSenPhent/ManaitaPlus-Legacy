@@ -1,24 +1,31 @@
 package sen.manaita_plus_legacy.common.item;
 
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 import sen.manaita_plus_legacy.common.entity.ManaitaPlusLegacyEntityArrow;
+import sen.manaita_plus_legacy.common.item.data.IManaitaPlusLegacyDoubling;
 import sen.manaita_plus_legacy.common.item.data.IManaitaPlusLegacyKey;
-import sen.manaita_plus_legacy.common.util.ManaitaPlusText;
+import sen.manaita_plus_legacy.common.item.tool.base.ManaitaPlusLegacyToolBase;
+import sen.manaita_plus_legacy.common.util.ManaitaPlusUtils;
+import sen.manaita_plus_legacy.common.util.tag.ManaitaPlusLegacyTagData;
+import sen.manaita_plus_legacy.common.util.text.ManaitaPlusText;
 
 import java.util.List;
 
-public class ManaitaPlusLegacyBowItem extends Item implements IManaitaPlusLegacyKey {
+import static sen.manaita_plus_legacy.common.item.tool.base.ManaitaPlusLegacyToolBase.getPickDesc;
+import static sen.manaita_plus_legacy.common.item.tool.base.ManaitaPlusLegacyToolBase.getType;
+
+public class ManaitaPlusLegacyBowItem extends Item implements IManaitaPlusLegacyKey, IManaitaPlusLegacyDoubling {
     public ManaitaPlusLegacyBowItem() {
         super(new Properties().defaultDurability(-1).fireResistant());
     }
@@ -41,7 +48,8 @@ public class ManaitaPlusLegacyBowItem extends Item implements IManaitaPlusLegacy
 
     @Override
     public void appendHoverText(ItemStack p_41421_, @Nullable Level p_41422_, List<Component> p_41423_, TooltipFlag p_41424_) {
-        p_41423_.add(Component.literal(ManaitaPlusText.manaita_mode.formatting(I18n.get("mode.doubling") + ":" + (getDoubling(p_41421_) ? I18n.get("info.on") : I18n.get("info.off")))));
+        p_41423_.add(Component.literal(ManaitaPlusText.manaita_mode.formatting(I18n.get("mode.doubling.name") + ":" + (isDoubling(ManaitaPlusLegacyToolBase.getType(p_41421_)) ? I18n.get("info.on") : I18n.get("info.off")))));
+        p_41423_.add(Component.literal(ManaitaPlusText.manaita_mode.formatting(getPickDesc(ManaitaPlusLegacyToolBase.getType(p_41421_)))));
         p_41423_.add(Component.literal(ManaitaPlusText.manaita_infinity.formatting(I18n.get("info.attack"))));
     }
     @Override
@@ -49,28 +57,40 @@ public class ManaitaPlusLegacyBowItem extends Item implements IManaitaPlusLegacy
         return Component.literal(ManaitaPlusText.manaita_mode.formatting(I18n.get("item.manaita_bow.name")));
     }
 
-    public void onManaitaKeyPress(ItemStack itemStack, Player player) {
-        boolean doubling = !getDoubling(itemStack);
-        setDoubling(itemStack, doubling);
+    @Override
+    public void onManaitaKeyPress(ItemStack itemStack, Player paramEntityPlayer,int i) {
+        if (i == 0) {
+            int type = ManaitaPlusLegacyToolBase.getType(itemStack);
+            setDoubling(itemStack, type);
+        } else  if (i == 2) {
+            int type = ManaitaPlusLegacyToolBase.getType(itemStack);
+            ManaitaPlusLegacyToolBase.setPickMode(itemStack, paramEntityPlayer.isShiftKeyDown(), type);
+        }
     }
 
-    public void onManaitaKeyPressOnClient(ItemStack itemStack, Player player) {
-        boolean doubling = !getDoubling(itemStack);
-        setDoubling(itemStack, doubling);
-        Minecraft.getInstance().gui.setOverlayMessage(Component.literal(String.format("[%s%s] %s%s: %s", ManaitaPlusText.manaita_mode.formatting(I18n.get("item.manaita_bow.name")), ChatFormatting.RESET, ChatFormatting.RESET,I18n.get("mode.manaita_sword_god"), (doubling ? I18n.get("info.on") : I18n.get("info.off")))), false);
+    @Override
+    public void onManaitaKeyPressOnClient(ItemStack itemStack, Player paramEntityPlayer,int i) {
+        if (i == 0) {
+            ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + I18n.get("mode.doubling.name") + ": " + (setDoubling(itemStack, ManaitaPlusLegacyToolBase.getType(itemStack)) ? I18n.get("info.on") : I18n.get("info.off")))));
+        } else if (i == 2) {
+            ManaitaPlusLegacyToolBase.setPickMode(itemStack, paramEntityPlayer.isShiftKeyDown(), ManaitaPlusLegacyToolBase.getType(itemStack));
+            int type = ManaitaPlusLegacyToolBase.getType(itemStack);
+            StringBuilder sb = new StringBuilder(I18n.get("mode.pick.name") + ": ");
+            if (ManaitaPlusLegacyToolBase.canPick(type,true)) {
+                sb.append(I18n.get("info.pick_items.name"));
+                if (ManaitaPlusLegacyToolBase.canPick(type,false)) sb.append("&").append(I18n.get("info.pick_experience.name"));
+            } else if (ManaitaPlusLegacyToolBase.canPick(type,false)) {
+                sb.append(I18n.get("info.pick_experience.name"));
+            } else {
+                sb.append("None");
+            }
+            ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + sb)));
+        }
     }
 
-    public static boolean getDoubling(ItemStack itemStack) {
-        if (itemStack.getTag() == null)
-            itemStack.setTag(new CompoundTag());
-        return itemStack.getTag().getBoolean("Doubling");
+    @Override
+    public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
+        entity.hurt(entity.damageSources().playerAttack(player), 10000);
+        return super.onLeftClickEntity(stack, player, entity);
     }
-
-    public static void setDoubling(ItemStack itemStack, boolean invisibility) {
-        if (itemStack.getTag() == null)
-            itemStack.setTag(new CompoundTag());
-        itemStack.getTag().putBoolean("Doubling", invisibility);
-    }
-
-
 }

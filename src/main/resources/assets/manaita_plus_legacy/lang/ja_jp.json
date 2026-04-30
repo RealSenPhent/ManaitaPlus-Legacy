@@ -1,6 +1,4 @@
 {
-  "itemGroup.ManaitaPlusTab":"Manaita Plus",
-
   "container.crafting_manaita": "まな板",
   "container.furnace_manaita": "まな板",
   "container.brewing_manaita": "まな板",
@@ -107,18 +105,15 @@
   "info.on":"開ける",
   "info.off": "シャットダウン",
 
-  "mode.doubling": "倍化",
-  "mode.manaita_sword": "攻撃範囲",
-  "mode.manaita_tool": "掘削範囲",
+  "mode.doubling.name": "倍化",
+  "mode.manaita_sword.name": "攻撃範囲",
+  "mode.manaita_tool.name": "掘削範囲",
   "mode.range.name": "範囲",
   "mode.remove.name": "消去モード",
-  "mode.nightvision": "暗視",
-  "mode.invisibility": "透明化",
-  "mode.speed": "スピードレベル",
+  "mode.nightvision.name": "暗視",
+  "mode.invisibility.name": "透明化",
+  "mode.speed.name": "スピードレベル",
 
   "key.manaita":"まな板",
-  "key.manaita.armor":"まな板の防具",
-
-  "enchantments.fortune": "时运",
-  "enchantments.silktouch": "精准挖掘"
+  "key.manaita.armor":"まな板の防具"
 }

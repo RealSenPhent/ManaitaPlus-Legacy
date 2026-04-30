@@ -23,6 +23,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
@@ -35,7 +36,7 @@ import sen.manaita_plus_legacy.client.gui.FurnaceManaitaScreen;
 import sen.manaita_plus_legacy.common.config.ManaitaPlusLegacyConfig;
 import sen.manaita_plus_legacy.common.core.*;
 import sen.manaita_plus_legacy.common.network.Networking;
-import sen.manaita_plus_legacy.common.util.ManaitaPlusLegacyNBTData;
+import sen.manaita_plus_legacy.common.util.tag.ManaitaPlusLegacyTagData;
 
 import static sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyItemCore.*;
 
@@ -91,7 +92,7 @@ public class ManaitaPlusLegacy {
             ItemStack itemStack = new ItemStack(item);
             itemStack.setTag(new CompoundTag());
             assert itemStack.getTag() != null;
-            itemStack.getTag().putInt(ManaitaPlusLegacyNBTData.ItemType,i);
+            itemStack.getTag().putInt(ManaitaPlusLegacyTagData.ItemType,i);
             output.accept(itemStack);
         }
     }
@@ -100,6 +101,7 @@ public class ManaitaPlusLegacy {
     public ManaitaPlusLegacy() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         modEventBus.addListener(this::onFMLCommonSetup);
+        modEventBus.addListener(this::onFMLClientSetup);
 
         ManaitaPlusLegacyAttributeCore.init();
         ManaitaPlusLegacyItemCore.init();
@@ -144,11 +146,17 @@ public class ManaitaPlusLegacy {
         });
     }
 
+    private void onFMLClientSetup(final FMLClientSetupEvent event) {
+        event.enqueueWork(() -> {
+
+        });
+    }
+
     public static void acceptTypePropertyFunction(Item... items) {
-        ResourceLocation location = new ResourceLocation(ManaitaPlusLegacy.MODID, ManaitaPlusLegacyNBTData.Type);
+        ResourceLocation location = new ResourceLocation(ManaitaPlusLegacy.MODID, ManaitaPlusLegacyTagData.Type);
         ItemPropertyFunction typePropertyFunction = (stack, level, entity, seed) -> {
             if (stack.getTag() != null) {
-                return stack.hasTag() ? stack.getTag().getInt(ManaitaPlusLegacyNBTData.ItemType) : 0;
+                return stack.hasTag() ? stack.getTag().getInt(ManaitaPlusLegacyTagData.ItemType) : 0;
             }
             return 0;
         };

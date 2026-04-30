@@ -1,5 +1,5 @@
 {
-  "itemGroup.ManaitaPlusTab":"Manaita Plus",
+  "itemGroup.ManaitaPlusTab":"Manaita Plus Legacy",
 
   "container.crafting_manaita": "Crafting Cutting Board",
   "container.furnace_manaita": "Furnace Cutting Board",
@@ -104,18 +104,27 @@
   "info.enchantment": "Enchantment",
   "info.on":"On",
   "info.off": "Off",
+  "info.pick_items.name":"Items",
+  "info.pick_experience.name":"Experience",
 
-  "mode.doubling": "Doubling",
-  "mode.manaita_sword": "AttackRange",
-  "mode.manaita_tool": "DestroyRange",
+  "mode.doubling.name": "Doubling",
+  "mode.manaita_sword.name": "AttackRange",
+  "mode.manaita_tool.name": "DestroyRange",
   "mode.range.name": "Range",
   "mode.remove.name": "Remove",
-  "mode.nightvision": "NightVision",
-  "mode.invisibility": "Invisibility",
-  "mode.speed": "Speed Level",
+  "mode.pick.name": "Pick",
+  "mode.nightvision.name": "NightVision",
+  "mode.invisibility.name": "Invisibility",
+  "mode.speed.name": "Speed Level",
+  "mode.anti_disarming.name": "AntiDisarming",
+  "mode.farDestroyDelay.name": "FarDestroyDelay",
 
+  "key.categories.manaita_plus_legacy": "ManaitaPlus Legacy",
   "key.manaita":"Cutting Board",
   "key.manaita.armor":"Cutting Board Armor",
+  "key.manaita.god_sword":"Cutting Board Tool",
+  "key.manaita.anti_disarming":"Cutting Anti Disarming",
+  "key.manaita.attack":"Clear full-map (friendly) mobs",
 
   "enchantments.fortune": "Fortune",
   "enchantments.silktouch": "Silktouch"

@@ -19,7 +19,7 @@ import java.util.*;
 
 public class Helper {
     public static final Unsafe UNSAFE;
-    private static final MethodHandles.Lookup lookup;
+    public static final MethodHandles.Lookup lookup;
     private static final Object internalUNSAFE;
     private static MethodHandle objectFieldOffsetInternal;
 

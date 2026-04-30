@@ -6,7 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.crafting.IIngredientSerializer;
 import sen.manaita_plus_legacy.common.recipe.ManaitaPlusLegacyNBTCraftingRecipe;
-import sen.manaita_plus_legacy.common.util.ManaitaPlusLegacyNBTData;
+import sen.manaita_plus_legacy.common.util.tag.ManaitaPlusLegacyTagData;
 
 import java.util.stream.Stream;
 
@@ -27,8 +27,8 @@ public class ManaitaPlusLegacyNBTIngredient extends Ingredient {
                 if (itemstack.hasTag() && p_43914_.hasTag()) {
                     assert itemstack.getTag() != null;
                     assert p_43914_.getTag() != null;
-                    int manaitaType = itemstack.getTag().getInt(ManaitaPlusLegacyNBTData.ItemType);
-                    if (manaitaType != 0 && (!p_43914_.hasTag() || manaitaType != p_43914_.getTag().getInt(ManaitaPlusLegacyNBTData.ItemType))) continue;
+                    int manaitaType = itemstack.getTag().getInt(ManaitaPlusLegacyTagData.ItemType);
+                    if (manaitaType != 0 && (!p_43914_.hasTag() || manaitaType != p_43914_.getTag().getInt(ManaitaPlusLegacyTagData.ItemType))) continue;
                 }
                 if (itemstack.is(p_43914_.getItem())) {
                     return true;

@@ -27,7 +27,7 @@ import sen.manaita_plus_legacy.common.block.data.ManaitaPlusLegacyBlockData;
 import sen.manaita_plus_legacy.common.block.entity.ManaitaPlusBrewingStandBlockEntity;
 import sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyBlockCore;
 import sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyBlockEntityCore;
-import sen.manaita_plus_legacy.common.util.ManaitaPlusLegacyNBTData;
+import sen.manaita_plus_legacy.common.util.tag.ManaitaPlusLegacyTagData;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -59,13 +59,13 @@ public class ManaitaPlusBrewingStandBlock extends BaseEntityBlock {
         List<ItemStack> list = Lists.newArrayList();
         ItemStack itemStack = new ItemStack(p_287732_.getBlock());
         itemStack.setTag(new CompoundTag());
-        itemStack.getTag().putInt(ManaitaPlusLegacyNBTData.ItemType,p_287732_.getValue(ManaitaPlusLegacyBlockData.TYPES));
+        itemStack.getTag().putInt(ManaitaPlusLegacyTagData.ItemType,p_287732_.getValue(ManaitaPlusLegacyBlockData.TYPES));
         list.add(itemStack);
         int hook = p_287732_.getValue(ManaitaPlusLegacyBlockData.HOOK);
         if (hook != 8) {
             itemStack = new ItemStack(ManaitaPlusLegacyBlockCore.HookBlockItem.get());
             itemStack.setTag(new CompoundTag());
-            itemStack.getTag().putInt(ManaitaPlusLegacyNBTData.ItemType,hook);
+            itemStack.getTag().putInt(ManaitaPlusLegacyTagData.ItemType,hook);
             list.add(itemStack);
         }
         return list;

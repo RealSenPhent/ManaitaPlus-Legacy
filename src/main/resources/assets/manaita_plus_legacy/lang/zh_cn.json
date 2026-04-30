@@ -1,5 +1,5 @@
 {
-  "itemGroup.ManaitaPlusTab":"更好的砧板",
+  "itemGroup.ManaitaPlusTab":"砧板传承",
 
   "container.crafting_manaita": "砧板工作台",
   "container.furnace_manaita": "砧板熔炉",
@@ -14,7 +14,6 @@
   "block.crafting.emerald.name": "绿宝石制砧板工作台",
   "block.crafting.redstone.name": "红石制砧板工作台",
   "block.crafting.netherite.name": "下届合金制砧板工作台",
-
 
   "block.furnace.name": "砧板熔炉",
   "block.furnace.wooden.name": "木制砧板熔炉",
@@ -105,18 +104,27 @@
   "info.enchantment": "附魔",
   "info.on":"开启",
   "info.off": "关闭",
+  "info.pick_items.name": "物品",
+  "info.pick_experience.name":"经验",
 
-  "mode.doubling": "翻倍",
-  "mode.manaita_sword": "攻击范围",
-  "mode.manaita_tool": "挖掘范围",
+  "mode.doubling.name": "翻倍",
+  "mode.manaita_sword.name": "攻击范围",
+  "mode.manaita_tool.name": "挖掘范围",
   "mode.range.name": "范围",
   "mode.remove.name": "抹除模式",
-  "mode.nightvision": "夜视",
-  "mode.invisibility": "隐身",
-  "mode.speed": "速度等级",
+  "mode.pick.name": "拾取",
+  "mode.nightvision.name": "夜视",
+  "mode.invisibility.name": "隐身",
+  "mode.speed.name": "速度等级",
+  "mode.anti_disarming.name": "防缴械",
+  "mode.farDestroyDelay.name": "远距离挖掘延迟",
 
+  "key.categories.manaita_plus_legacy": "砧板传承",
   "key.manaita":"更改模式",
   "key.manaita.armor":"更改盔甲模式",
+  "key.manaita.god_sword":"更改拾取模式",
+  "key.manaita.anti_disarming":"更改砧板防缴械",
+  "key.manaita.attack":"清除全图(友好)生物",
 
   "enchantments.fortune": "时运",
   "enchantments.silktouch": "精准挖掘"
