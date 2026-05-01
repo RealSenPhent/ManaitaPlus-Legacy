@@ -12,10 +12,11 @@ import sen.manaita_plus_legacy_core.ManaitaPlusTransformationService;
 
 import java.util.Set;
 
+import static sen.manaita_plus_legacy_core.transform.ManaitaPlusLegacyLaunchPluginService.isDebug;
+
 
 public class ManaitaPlusLegacyLaunchTransformer implements ITransformer<ClassNode> {
     public static final TransformerHolder instance = new TransformerHolder<>(new ManaitaPlusLegacyLaunchTransformer(), new ManaitaPlusTransformationService());
-    public static final boolean isDebug = false;
     private static final String owner = "sen/manaita_plus_legacy_core/util/EventUtil";
 
     @NotNull

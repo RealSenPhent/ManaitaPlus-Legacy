@@ -27,7 +27,7 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import org.jetbrains.annotations.Nullable;
 import sen.manaita_plus_legacy.common.item.tool.base.ManaitaPlusLegacyToolBase;
 import sen.manaita_plus_legacy.common.network.Networking;
-import sen.manaita_plus_legacy.common.network.server.ChangeDeathDataPacket;
+import sen.manaita_plus_legacy.common.network.implement.ChangeDeathDataPacket;
 import sen.manaita_plus_legacy.common.util.entity.ManaitaPlusLegacyEntityData;
 import sen.manaita_plus_legacy.common.util.text.ManaitaPlusText;
 

@@ -14,7 +14,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.entity.PartEntity;
 import sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyEntityCore;
 import sen.manaita_plus_legacy.common.network.Networking;
-import sen.manaita_plus_legacy.common.network.server.ChangeDeathDataPacket;
+import sen.manaita_plus_legacy.common.network.implement.ChangeDeathDataPacket;
 import sen.manaita_plus_legacy.common.util.entity.ManaitaPlusLegacyEntityData;
 
 public class ManaitaPlusLegacyEntityArrow extends AbstractArrow {

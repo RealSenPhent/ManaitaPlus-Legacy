@@ -6,10 +6,11 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-public class ManaitaPlusLegacyLightningBolt extends Entity {
+public class ManaitaPlusLegacyLightningBolt extends LightningBolt {
     public float f;
     private int life;
     public long seed;

@@ -10,15 +10,16 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 import sen.manaita_plus_legacy.ManaitaPlusLegacy;
-import sen.manaita_plus_legacy.common.network.client.FarAttackEntityPacket;
-import sen.manaita_plus_legacy.common.network.client.KeyPressPacket;
-import sen.manaita_plus_legacy.common.network.client.PreventDropPacket;
-import sen.manaita_plus_legacy.common.network.server.*;
+import sen.manaita_plus_legacy.client.network.implement.FarAttackEntityPacket;
+import sen.manaita_plus_legacy.client.network.implement.KeyPressPacket;
+import sen.manaita_plus_legacy.client.network.implement.PreventDropPacket;
+import sen.manaita_plus_legacy.common.network.implement.*;
+
 
 public class Networking {
     public static SimpleChannel INSTANCE;
-    public static final String VERSION = "1.15";
-    private static int ID = 0;
+    public static final String VERSION = "1.16";
+    public static int ID = 0;
 
     public static int nextID() {
         return ++ID;
@@ -31,11 +32,8 @@ public class Networking {
                 (version) -> version.equals(VERSION),
                 (version) -> version.equals(VERSION)
         );
-        INSTANCE.messageBuilder(KeyPressPacket.class, nextID())
-                .encoder(KeyPressPacket::toBytes)
-                .decoder(KeyPressPacket::new)
-                .consumerNetworkThread(KeyPressPacket::handler)
-                .add();
+
+        // client receive
         INSTANCE.messageBuilder(DestroyBlockPacket.class, nextID())
                 .encoder(DestroyBlockPacket::toBytes)
                 .decoder(DestroyBlockPacket::new)
@@ -56,6 +54,18 @@ public class Networking {
                 .decoder(ChangeEntitiesUUIDDataPacket::new)
                 .consumerNetworkThread(ChangeEntitiesUUIDDataPacket::handler)
                 .add();
+        INSTANCE.messageBuilder(ChangeDeathDataPacket.class, nextID())
+                .encoder(ChangeDeathDataPacket::toBytes)
+                .decoder(ChangeDeathDataPacket::new)
+                .consumerNetworkThread(ChangeDeathDataPacket::handler)
+                .add();
+
+        // server receive
+        INSTANCE.messageBuilder(KeyPressPacket.class, nextID())
+                .encoder(KeyPressPacket::toBytes)
+                .decoder(KeyPressPacket::new)
+                .consumerNetworkThread(KeyPressPacket::handler)
+                .add();
         INSTANCE.messageBuilder(PreventDropPacket.class, nextID())
                 .encoder(PreventDropPacket::toBytes)
                 .decoder(PreventDropPacket::new)
@@ -65,11 +75,6 @@ public class Networking {
                 .encoder(FarAttackEntityPacket::toBytes)
                 .decoder(FarAttackEntityPacket::new)
                 .consumerNetworkThread(FarAttackEntityPacket::handler)
-                .add();
-        INSTANCE.messageBuilder(ChangeDeathDataPacket.class, nextID())
-                .encoder(ChangeDeathDataPacket::toBytes)
-                .decoder(ChangeDeathDataPacket::new)
-                .consumerNetworkThread(ChangeDeathDataPacket::handler)
                 .add();
     }
 

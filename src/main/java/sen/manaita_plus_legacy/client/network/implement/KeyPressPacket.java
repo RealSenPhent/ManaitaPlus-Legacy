@@ -1,11 +1,10 @@
-package sen.manaita_plus_legacy.common.network.client;
+package sen.manaita_plus_legacy.client.network.implement;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 import sen.manaita_plus_legacy.common.item.data.IManaitaPlusLegacyKey;
-import sen.manaita_plus_legacy.common.network.Networking;
 import sen.manaita_plus_legacy.common.util.ManaitaPlusUtils;
 import sen.manaita_plus_legacy.common.util.entity.ManaitaPlusLegacyEntityData;
 

@@ -1,6 +1,8 @@
 package sen.manaita_plus_legacy_core.transform;
 
 import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
+import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.Opcodes;
@@ -14,7 +16,7 @@ import java.util.EnumSet;
 
 public class ManaitaPlusLegacyLaunchPluginService implements ILaunchPluginService {
     public static final ManaitaPlusLegacyLaunchPluginService instance = new ManaitaPlusLegacyLaunchPluginService();
-    public static final boolean isDebug = true;
+    public static final boolean isDebug = !FMLEnvironment.production;
     public static final Logger LOGGER = LogManager.getLogger("ManaitaPlusCore");
     private static final String owner = "sen/manaita_plus_legacy_core/util/EventUtil";
     @Override
@@ -452,6 +454,42 @@ public class ManaitaPlusLegacyLaunchPluginService implements ILaunchPluginServic
                 }
             }
         }
+//        else if ("net/minecraft/client/renderer/entity/layers/ItemInHandLayer".equals(classNode.name)) {
+//            for (MethodNode method : classNode.methods) {
+//                if ((method.name.equals("m_117184_") || method.name.equals("renderArmWithItem")) && method.desc.equals("(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemDisplayContext;Lnet/minecraft/world/entity/HumanoidArm;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V")) {
+//                    for (AbstractInsnNode instruction : method.instructions) {
+//                        if (instruction instanceof MethodInsnNode methodInsnNode) {
+//                            if (methodInsnNode.getOpcode() == 185 && methodInsnNode.owner.equals("net/minecraft/client/model/ArmedModel") && (methodInsnNode.name.equals("m_6002_") || methodInsnNode.name.equals("translateToHand")) && methodInsnNode.desc.equals("(Lnet/minecraft/world/entity/HumanoidArm;Lcom/mojang/blaze3d/vertex/PoseStack;)V")) {
+//                                InsnList insnNodes8 = new InsnList();
+//                                LabelNode labelNode = new LabelNode();
+//                                insnNodes8.add(new VarInsnNode(25, 1));
+//                                insnNodes8.add(new VarInsnNode(25, 2));
+//                                insnNodes8.add(new VarInsnNode(25, 4));
+//                                insnNodes8.add(new MethodInsnNode(184, owner, "shouldRenderHeldItemBlocking", "(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/HumanoidArm;)Z"));
+//                                insnNodes8.add(new JumpInsnNode(153, labelNode));
+//                                insnNodes8.add(new VarInsnNode(25, 1));
+//                                insnNodes8.add(new VarInsnNode(25, 2));
+//                                insnNodes8.add(new VarInsnNode(25, 3));
+//                                insnNodes8.add(new VarInsnNode(25, 4));
+//                                insnNodes8.add(new VarInsnNode(25, 5));
+//                                insnNodes8.add(new VarInsnNode(25, 6));
+//                                insnNodes8.add(new VarInsnNode(21, 7));
+//                                insnNodes8.add(new VarInsnNode(25, 0));
+//                                insnNodes8.add(new FieldInsnNode(180, classNode.name, isDebug ? "itemInHandRenderer" : "f_234844_", "Lnet/minecraft/client/renderer/ItemInHandRenderer;"));
+//                                insnNodes8.add(new MethodInsnNode(184, owner, "renderArmWithItem", "(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemDisplayContext;Lnet/minecraft/world/entity/HumanoidArm;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/renderer/ItemInHandRenderer;)V"));
+//                                insnNodes8.add(new InsnNode(177));
+//                                insnNodes8.add(labelNode);
+//                                insnNodes8.add(new FrameNode(3, 0,null, 0,null));
+//                                method.instructions.insert(methodInsnNode, insnNodes8);
+//                                flag = true;
+//                                System.err.println("add block poseStack to layer");
+//                                break;
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
         return flag;
     }
 

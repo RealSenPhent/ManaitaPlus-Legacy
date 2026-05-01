@@ -45,8 +45,8 @@ import sen.manaita_plus_legacy.common.item.armor.ManaitaPlusLegacyArmor;
 import sen.manaita_plus_legacy.common.item.data.IManaitaPlusLegacyDestroy;
 import sen.manaita_plus_legacy.common.item.tool.base.ManaitaPlusLegacyToolBase;
 import sen.manaita_plus_legacy.common.network.Networking;
-import sen.manaita_plus_legacy.common.network.server.ChangeDeathDataPacket;
-import sen.manaita_plus_legacy.common.network.server.DestroyBlockPacket;
+import sen.manaita_plus_legacy.common.network.implement.ChangeDeathDataPacket;
+import sen.manaita_plus_legacy.common.network.implement.DestroyBlockPacket;
 import sen.manaita_plus_legacy.common.util.entity.ManaitaPlusLegacyEntityData;
 import sen.manaita_plus_legacy.common.util.wrapper.EntitiesWrapper;
 import sen.manaita_plus_legacy_core.util.Helper;
@@ -332,17 +332,29 @@ public class ManaitaPlusUtils {
 
     public static void popResource(Level p_49841_, BlockPos p_49842_, ItemStack p_49843_) {
         double d0 = (double) EntityType.ITEM.getHeight() / 2.0D;
-        double d1 = (double)p_49842_.getX() + 0.5D + Mth.nextDouble(p_49841_.random, -0.25D, 0.25D);
-        double d2 = (double)p_49842_.getY() + 0.5D + Mth.nextDouble(p_49841_.random, -0.25D, 0.25D) - d0;
-        double d3 = (double)p_49842_.getZ() + 0.5D + Mth.nextDouble(p_49841_.random, -0.25D, 0.25D);
+        double d1 = (double)p_49842_.getX();
+        double d2 = (double)p_49842_.getY() - d0;
+        double d3 = (double)p_49842_.getZ();
         popResource(p_49841_, () -> new ItemEntity(p_49841_, d1, d2, d3, p_49843_), p_49843_);
     }
 
     public static void popResource(Level p_49841_, BlockPos p_49842_, ItemStack p_49843_,Vec3 vec3) {
         double d0 = (double) EntityType.ITEM.getHeight() / 2.0D;
-        double d1 = (double)p_49842_.getX() + 0.5D + Mth.nextDouble(p_49841_.random, -0.25D, 0.25D);
-        double d2 = (double)p_49842_.getY() + 0.5D + Mth.nextDouble(p_49841_.random, -0.25D, 0.25D) - d0;
-        double d3 = (double)p_49842_.getZ() + 0.5D + Mth.nextDouble(p_49841_.random, -0.25D, 0.25D);
+        double d1 = (double)p_49842_.getX();
+        double d2 = (double)p_49842_.getY() - d0;
+        double d3 = (double)p_49842_.getZ();
+        popResource(p_49841_, () -> {
+            ItemEntity itemEntity = new ItemEntity(p_49841_, d1, d2, d3, p_49843_);
+            itemEntity.setDeltaMovement(vec3);
+            return itemEntity;
+        }, p_49843_);
+    }
+    
+    public static void popResource(Level p_49841_, Vec3 p_49842_, ItemStack p_49843_,Vec3 vec3) {
+        double d0 = (double) EntityType.ITEM.getHeight() / 2.0D;
+        double d1 = p_49842_.x();
+        double d2 = p_49842_.y() - d0;
+        double d3 = p_49842_.z();
         popResource(p_49841_, () -> {
             ItemEntity itemEntity = new ItemEntity(p_49841_, d1, d2, d3, p_49843_);
             itemEntity.setDeltaMovement(vec3);
@@ -480,7 +492,7 @@ public class ManaitaPlusUtils {
                                 CompoundTag compoundTag = new CompoundTag();
                                 if (doubling) {
                                     compoundTag.putInt("RealCount",itemStack1.getCount() * ManaitaPlusLegacyConfig.destroy_doubling_value);
-                                }else {
+                                } else {
                                     compoundTag.putInt("RealCount",itemStack1.getCount());
                                 }
                                 itemStack1.setCount(1);
@@ -522,14 +534,13 @@ public class ManaitaPlusUtils {
     }
 
 
-    public static BlockPos predictPlayerPosition(Player player, int ticksAhead) {
+    public static Vec3 predictPlayerPosition(Player player, int ticksAhead) {
         Vec3 currentPos = player.position();
         Vec3 motion = player.getDeltaMovement();
 
-        // 线性预测加上速度衰减
         double airResistance = player.onGround() ? 0.6 : 0.91;
         double predictedX = currentPos.x;
-        double predictedY = currentPos.y;
+        double predictedY = currentPos.y + 0.5;
         double predictedZ = currentPos.z;
 
         double currentMotionX = motion.x;
@@ -541,13 +552,13 @@ public class ManaitaPlusUtils {
             predictedY += currentMotionY;
             predictedZ += currentMotionZ;
 
-            // 应用阻力
+
             currentMotionX *= airResistance;
             currentMotionZ *= airResistance;
-            currentMotionY *= 0.98; // 空气阻力
+            currentMotionY *= 0.98;
         }
 
-        return new BlockPos((int) predictedX, (int) predictedY, (int) predictedZ);
+        return new Vec3(predictedX,predictedY,predictedZ);
     }
 
 

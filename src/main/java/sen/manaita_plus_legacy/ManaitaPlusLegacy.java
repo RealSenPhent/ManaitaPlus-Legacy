@@ -147,9 +147,7 @@ public class ManaitaPlusLegacy {
     }
 
     private void onFMLClientSetup(final FMLClientSetupEvent event) {
-        event.enqueueWork(() -> {
-
-        });
+//        event.enqueueWork(() -> {});
     }
 
     public static void acceptTypePropertyFunction(Item... items) {

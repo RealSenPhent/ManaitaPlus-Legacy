@@ -8,12 +8,14 @@ import net.minecraft.world.entity.Entity;
 
 import java.lang.reflect.Field;
 
+import static sen.manaita_plus_legacy_core.transform.ManaitaPlusLegacyLaunchPluginService.isDebug;
+
 public class ManaitaPlusLegacySynchedDataCore {
     public static int i = -1;
 
     public static void init() {
         try {
-            Field declaredField = SynchedEntityData.class.getDeclaredField("f_135343_");
+            Field declaredField = SynchedEntityData.class.getDeclaredField(isDebug ? "ENTITY_ID_POOL" :"f_135343_");
             declaredField.setAccessible(true);
             Object2IntMap<Class<? extends Entity>> classObject2IntMap = (Object2IntMap<Class<? extends Entity>>) declaredField.get(SynchedEntityData.class);
             if (classObject2IntMap.isEmpty()) {

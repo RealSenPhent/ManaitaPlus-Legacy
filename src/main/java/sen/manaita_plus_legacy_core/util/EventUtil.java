@@ -1,23 +1,25 @@
 package sen.manaita_plus_legacy_core.util;
 
-import com.mojang.blaze3d.vertex.BufferUploader;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import com.mojang.math.MatrixUtil;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import net.minecraft.client.Camera;
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.DeathScreen;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
@@ -28,14 +30,20 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.material.FogType;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.HalfTransparentBlock;
+import net.minecraft.world.level.block.StainedGlassPaneBlock;
 import org.joml.Quaternionf;
+import org.lwjgl.opengl.GL11;
 import sen.manaita_plus_legacy.common.item.ManaitaPlusLegacyGodSwordItem;
 import sen.manaita_plus_legacy.common.item.tool.base.ManaitaPlusLegacyToolBase;
 import sen.manaita_plus_legacy.common.network.Networking;
-import sen.manaita_plus_legacy.common.network.client.PreventDropPacket;
+import sen.manaita_plus_legacy.client.network.implement.PreventDropPacket;
 import sen.manaita_plus_legacy.common.util.entity.ManaitaPlusLegacyEntityData;
 import sen.manaita_plus_legacy.common.util.item.ManaitaPlusItemData;
 import sen.manaita_plus_legacy.common.util.item.ManaitaPlusLegacyItemStack;
@@ -45,6 +53,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import static net.minecraft.client.renderer.entity.ItemRenderer.*;
 import static net.minecraft.world.entity.LivingEntity.DATA_HEALTH_ID;
 
 public class EventUtil {
@@ -59,19 +68,6 @@ public class EventUtil {
 //        return player.getEntityData().get(DATA_HEALTH_ID);
 //    }
 
-    public static float getHealth(LivingEntity entity) {
-//        ManaitaTransformationService.LOGGER.error(o);
-        if (entity instanceof Player player && (ManaitaPlusLegacyEntityData.manaita.accept(player))) {
-            float max = Math.max(player.getMaxHealth(), 20.0F);
-            entity.getEntityData().set(DATA_HEALTH_ID, max);
-
-            return max;
-        }
-        if (ManaitaPlusLegacyEntityData.death.accept(entity)) {
-            return 0.0F;
-        }
-        return entity.getEntityData().get(DATA_HEALTH_ID);
-    }
 
 //    public static EntityTickList getTickingEntities(ClientLevel level) {
 //        ObjectIterator<Int2ObjectMap.Entry<Entity>> iterator = level.tickingEntities.active.int2ObjectEntrySet().iterator();
@@ -238,24 +234,26 @@ public class EventUtil {
 
     public static void renderArmWithItem(LivingEntity p_117185_, ItemStack p_117186_, ItemDisplayContext p_270970_, HumanoidArm p_117188_, PoseStack p_117189_, MultiBufferSource p_117190_, int p_117191_, ItemInHandRenderer itemInHandRenderer) {
         boolean leftHand = p_117188_ == HumanoidArm.LEFT;
+
         p_117189_.translate((leftHand ? 1 : -1) / 16.0F, 0.4375F, 0.0625F);
         p_117189_.translate(leftHand ? -0.035F : 0.05F, leftHand ? 0.045F : 0.0F, leftHand ? -0.135F : -0.1F);
         p_117189_.mulPose(Axis.YP.rotationDegrees((leftHand ? -1 : 1) * -50.0F));
         p_117189_.mulPose(Axis.XP.rotationDegrees(-10.0F));
         p_117189_.mulPose(Axis.ZP.rotationDegrees((leftHand ? -1 : 1) * -60.0F));
         p_117189_.translate(0.0F, 0.1875F, 0.0F);
-        p_117189_.scale(0.625F, 0.625F, 0.625F);
+        p_117189_.scale(0.625F, -0.625F, 0.625F);
         p_117189_.mulPose(Axis.XP.rotationDegrees(-100.0F));
         p_117189_.mulPose(Axis.YP.rotationDegrees(leftHand ? 35.0F : 45.0F));
         p_117189_.translate(0.0F, -0.3F, 0.0F);
-        p_117189_.scale(1.7F, 1.7F, 1.7F);
+        p_117189_.scale(1.5F, 1.5F, 1.5F);
         p_117189_.mulPose(Axis.YP.rotationDegrees(50.0F));
         p_117189_.mulPose(Axis.ZP.rotationDegrees(335.0F));
         p_117189_.translate(-0.9375F, -0.0625F, 0.0F);
         p_117189_.translate(0.5F, 0.5F, 0.25F);
         p_117189_.mulPose(Axis.YP.rotationDegrees(180.0F));
         p_117189_.translate(0.0F, 0.0F, 0.28125F);
-
+        float scale = 1.0F / 0.85F;
+        p_117189_.scale(scale, scale, scale);
         float f = 0;
         float f1 = -90.0F * 0.008726646F;
         float f2 = 55.0F * 0.008726646F;
@@ -268,9 +266,10 @@ public class EventUtil {
         Quaternionf quat = new Quaternionf(-(f3 * f6 * f8 + f4 * f5 * f7), -(f4 * f5 * f8 - f3 * f6 * f7), -(f3 * f5 * f8 + f4 * f6 * f7), f4 * f6 * f8 - f3 * f5 * f7);
         p_117189_.mulPose(quat);
         p_117189_.translate(0.0F, -0.27573525F, -0.0344669F);
-        itemInHandRenderer.renderItem(p_117185_, p_117186_, p_270970_, leftHand, p_117189_, p_117190_, p_117191_);
+        InvokeMethod.renderItem(p_117185_, p_117186_, p_270970_, leftHand, p_117189_, p_117190_, p_117191_);
         p_117189_.popPose();
     }
+
 
     public static int htaedTime = 20;
     public static void runTickBefore(Minecraft mc) {

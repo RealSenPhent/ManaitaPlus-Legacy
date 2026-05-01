@@ -1,18 +1,21 @@
-package sen.manaita_plus_legacy.common.network.server;
+package sen.manaita_plus_legacy.common.network.implement;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
+import sen.manaita_plus_legacy.client.network.ClientPacketHandlers;
 import sen.manaita_plus_legacy.common.util.entity.ManaitaPlusLegacyEntityData;
 
 import java.util.Set;
 import java.util.function.Supplier;
 
 public class ChangeEntitiesIDDataPacket {
-    private final int flag;
-    private final int[] ids;
+    public final int flag;
+    public final int[] ids;
     public ChangeEntitiesIDDataPacket(FriendlyByteBuf buffer) {
         this.flag = buffer.readVarInt();
         this.ids = new int[buffer.readVarInt()];
@@ -44,30 +47,7 @@ public class ChangeEntitiesIDDataPacket {
     public void handler(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             if (!ctx.get().getDirection().getReceptionSide().isClient()) return;
-            ClientLevel level = Minecraft.getInstance().level;
-            if (level == null) {
-                for (ManaitaPlusLegacyEntityData value : ManaitaPlusLegacyEntityData.values()) {
-                    if (value.getFlag() == flag) {
-                        for (int id : ids) {
-                            value.getIdBooleanMap().put(id, Boolean.TRUE);
-                        }
-                    }
-                }
-                return;
-            }
-            for (ManaitaPlusLegacyEntityData value : ManaitaPlusLegacyEntityData.values()) {
-                if (value.getFlag() == flag) {
-                    for (int id : ids) {
-                        Entity entity = level.getEntity(id);
-                        if (entity == null) {
-                            value.getIdBooleanMap().put(id, Boolean.TRUE);
-                            continue;
-                        }
-                        value.add(entity);
-                    }
-                    break;
-                }
-            }
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientPacketHandlers.handler(this));
         });
         ctx.get().setPacketHandled(true);
     }

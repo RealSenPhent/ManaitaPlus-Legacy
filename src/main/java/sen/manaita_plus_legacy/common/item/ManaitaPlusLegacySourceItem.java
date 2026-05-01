@@ -13,6 +13,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Nullable;
 import sen.manaita_plus_legacy.common.util.ManaitaPlusUtils;
@@ -63,7 +64,7 @@ public class ManaitaPlusLegacySourceItem extends Item {
             CompoundTag tag = itemInHand.getTag();
             assert tag != null;
             ListTag listtag = tag.getList("Items", 10);
-            BlockPos blockPos = ManaitaPlusUtils.predictPlayerPosition(p_41433_, 10);
+            Vec3 blockPos = ManaitaPlusUtils.predictPlayerPosition(p_41433_, 10);
             for(int i = 0; i < listtag.size(); ++i) {
                 CompoundTag compoundtag = listtag.getCompound(i);
                 ItemStack itemStack = ItemStack.of(compoundtag);

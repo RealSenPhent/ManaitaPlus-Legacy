@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.LightningBoltRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -78,12 +79,6 @@ public class ManaitaPlusLightningBoltRenderer extends EntityRenderer<ManaitaPlus
                     if (k == 0) {
                         f11 *= ((float)j1 - 1.0F) * 0.1F + 1.0F;
                     }
-
-//                    Random random = new Random(p_115266_.seed);
-//                    int r = (int) Math.min(random.nextFloat() * 255,255);
-//                    int g = (int) Math.min(random.nextFloat() * 255,255);
-//                    int b = (int) Math.min(random.nextFloat() * 255,255);
-//                    float[] colors = Color.RGBtoHSB(r,g,b, null);
 
                     float r = random.nextFloat();
                     float g = random.nextFloat();

@@ -33,10 +33,7 @@ import sen.manaita_plus_legacy.common.item.data.IManaitaPlusLegacyDoubling;
 import sen.manaita_plus_legacy.common.item.data.IManaitaPlusLegacyKey;
 import sen.manaita_plus_legacy.common.item.tool.base.ManaitaPlusLegacyToolBase;
 import sen.manaita_plus_legacy.common.network.Networking;
-import sen.manaita_plus_legacy.common.network.server.ChangeDeathDataPacket;
-import sen.manaita_plus_legacy.common.network.server.ChangeEntitiesIDDataPacket;
-import sen.manaita_plus_legacy.common.network.server.ChangeEntitiesUUIDDataPacket;
-import sen.manaita_plus_legacy.common.network.server.ChangeEntityDataPacket;
+import sen.manaita_plus_legacy.common.network.implement.ChangeDeathDataPacket;
 import sen.manaita_plus_legacy.common.trades.ManaitaPlusLegacyBowVillagerTrade;
 import sen.manaita_plus_legacy.common.trades.ManaitaPlusLegacySwordGodVillagerTrade;
 import sen.manaita_plus_legacy.common.util.ManaitaPlusUtils;
@@ -136,7 +133,7 @@ public class EventHandler {
         ManaitaPlusLegacyEntityData.death.remove(event.getEntity());
         ManaitaPlusLegacyEntityData.remove.remove(event.getEntity());
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-            Networking.sendToPlayer(serverPlayer, new ChangeDeathDataPacket(1));
+            Networking.sendToPlayer(serverPlayer,new ChangeDeathDataPacket(0));
         }
         ManaitaPlusLegacyEntityData.death.putInt(event.getEntity(), 0);
         EventUtil.htaedTime = 20;

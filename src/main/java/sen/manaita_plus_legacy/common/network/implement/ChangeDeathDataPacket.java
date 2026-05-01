@@ -1,17 +1,15 @@
-package sen.manaita_plus_legacy.common.network.server;
+package sen.manaita_plus_legacy.common.network.implement;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.network.NetworkEvent;
 import sen.manaita_plus_legacy.common.util.entity.ManaitaPlusLegacyEntityData;
 
-import java.util.UUID;
 import java.util.function.Supplier;
 
 public class ChangeDeathDataPacket {
-    private final int flag;
+    public final int flag;
 
     public ChangeDeathDataPacket(FriendlyByteBuf buffer) {
         this.flag = buffer.readInt();

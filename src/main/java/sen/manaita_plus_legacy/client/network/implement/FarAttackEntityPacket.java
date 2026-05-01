@@ -1,17 +1,16 @@
-package sen.manaita_plus_legacy.common.network.client;
+package sen.manaita_plus_legacy.client.network.implement;
 
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 import sen.manaita_plus_legacy.common.item.data.IManaitaPlusLegacyDoubling;
 import sen.manaita_plus_legacy.common.util.entity.ManaitaPlusLegacyEntityData;
-import sen.manaita_plus_legacy.common.util.item.ManaitaPlusLegacyItemStack;
 
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -40,20 +39,22 @@ public class FarAttackEntityPacket {
     public void handler(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             if (ctx.get().getDirection().getReceptionSide().isClient()) return;
-            ServerPlayer sender = ctx.get().getSender();
-            if (!ManaitaPlusLegacyEntityData.anti.accept(sender)) return;
-            ItemStack itemInHand = sender.getItemInHand(InteractionHand.MAIN_HAND);
-            if (itemInHand.getItem() instanceof IManaitaPlusLegacyDoubling) {
-                Entity entity = sender.level().getEntity(targetId);
-                if (entity == null) {
-                    if (sender.level() instanceof ServerLevel serverLevel) {
-                        Entity entity1 = serverLevel.entityManager.visibleEntityStorage.byUuid.get(targetUuid);
-                        itemInHand.getItem().onLeftClickEntity(itemInHand,sender,entity1);
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT,() -> {
+                ServerPlayer sender = ctx.get().getSender();
+                ItemStack itemInHand = sender.getItemInHand(InteractionHand.MAIN_HAND);
+                if (itemInHand.getItem() instanceof IManaitaPlusLegacyDoubling) {
+                    Entity entity = sender.level().getEntity(targetId);
+                    if (entity == null) {
+                        if (sender.level() instanceof ServerLevel serverLevel) {
+                            Entity entity1 = serverLevel.entityManager.visibleEntityStorage.byUuid.get(targetUuid);
+                            itemInHand.getItem().onLeftClickEntity(itemInHand,sender,entity1);
+                        }
+                    } else {
+                        itemInHand.getItem().onLeftClickEntity(itemInHand,sender,entity);
                     }
-                } else {
-                    itemInHand.getItem().onLeftClickEntity(itemInHand,sender,entity);
                 }
-            }
+                return null;
+            });
         });
         ctx.get().setPacketHandled(true);
     }

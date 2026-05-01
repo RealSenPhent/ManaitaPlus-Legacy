@@ -271,7 +271,7 @@ public abstract class ManaitaPlusLegacyArmor extends ArmorItem implements IManai
         @Override
         public void onManaitaKeyPress(ItemStack paramItemStack, Player paramEntityPlayer,int i) {
             if (!paramEntityPlayer.isShiftKeyDown()) {
-                int speed = Math.max(1,paramItemStack.getOrCreateTag().getInt(ManaitaPlusLegacyTagData.Speed) + 1) % 10;
+                int speed = Math.max(1,(paramItemStack.getOrCreateTag().getInt(ManaitaPlusLegacyTagData.Speed) + 1) % 10);
                 paramItemStack.getOrCreateTag().putInt(ManaitaPlusLegacyTagData.Speed, speed);
             }
         }
@@ -279,7 +279,7 @@ public abstract class ManaitaPlusLegacyArmor extends ArmorItem implements IManai
         @Override
         public void onManaitaKeyPressOnClient(ItemStack paramItemStack, Player paramEntityPlayer,int i) {
             if (!paramEntityPlayer.isShiftKeyDown()) {
-                int speed = Math.max(1,paramItemStack.getOrCreateTag().getInt(ManaitaPlusLegacyTagData.Speed) + 1) % 10;
+                int speed = Math.max(1,(paramItemStack.getOrCreateTag().getInt(ManaitaPlusLegacyTagData.Speed) + 1) % 10);
                 ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(paramItemStack.getDisplayName().getString() + " " + I18n.get("mode.speed.name") + ": " + speed)));
             }
         }
