@@ -95,6 +95,36 @@
   "item.portableBrewing.7.name": "Redstone Portable Brewing Cutting Board",
   "item.portableBrewing.8.name": "Netherite Portable Brewing Cutting Board",
 
+  "item.ring_crafting_manaita.0.name": "Crafting Cutting Board Ring",
+  "item.ring_crafting_manaita.1.name": "Wooden Crafting Cutting Board Ring",
+  "item.ring_crafting_manaita.2.name": "Stone Crafting Cutting Board Ring",
+  "item.ring_crafting_manaita.3.name": "Iron Crafting Cutting Board Ring",
+  "item.ring_crafting_manaita.4.name": "Gold Crafting Cutting Board Ring",
+  "item.ring_crafting_manaita.5.name": "Diamond Crafting Cutting Board Ring",
+  "item.ring_crafting_manaita.6.name": "Emerald Crafting Cutting Board Ring",
+  "item.ring_crafting_manaita.7.name": "Redstone Crafting Cutting Board Ring",
+  "item.ring_crafting_manaita.8.name": "Netherite Crafting Cutting Board Ring",
+
+  "item.ring_furnace_manaita.0.name": "Furnace Cutting Board Ring",
+  "item.ring_furnace_manaita.1.name": "Wooden Furnace Cutting Board Ring",
+  "item.ring_furnace_manaita.2.name": "Stone Furnace Cutting Board Ring",
+  "item.ring_furnace_manaita.3.name": "Iron Furnace Cutting Board Ring",
+  "item.ring_furnace_manaita.4.name": "Gold Furnace Cutting Board Ring",
+  "item.ring_furnace_manaita.5.name": "Diamond Furnace Cutting Board Ring",
+  "item.ring_furnace_manaita.6.name": "Emerald Furnace Cutting Board Ring",
+  "item.ring_furnace_manaita.7.name": "Redstone Furnace Cutting Board Ring",
+  "item.ring_furnace_manaita.8.name": "Netherite Furnace Cutting Board Ring",
+
+  "item.ring_brewing_manaita.0.name": "Brewing Cutting Board Ring",
+  "item.ring_brewing_manaita.1.name": "Wooden Brewing Cutting Board Ring",
+  "item.ring_brewing_manaita.2.name": "Stone Brewing Cutting Board Ring",
+  "item.ring_brewing_manaita.3.name": "Iron Brewing Cutting Board Ring",
+  "item.ring_brewing_manaita.4.name": "Gold Brewing Cutting Board Ring",
+  "item.ring_brewing_manaita.5.name": "Diamond Brewing Cutting Board Ring",
+  "item.ring_brewing_manaita.6.name": "Emerald Brewing Cutting Board Ring",
+  "item.ring_brewing_manaita.7.name": "Redstone Brewing Cutting Board Ring",
+  "item.ring_brewing_manaita.8.name": "Netherite Brewing Cutting Board Ring",
+
   "item.manaita_plus_legacy.manaita_hook": "Cutting Board Hook",
 
   "info.item.manaita_sword_god.1": "The Power of God -God's Judgment and God's Levy-",
@@ -125,6 +155,7 @@
   "key.manaita.god_sword":"Cutting Board Tool",
   "key.manaita.anti_disarming":"Cutting Anti Disarming",
   "key.manaita.attack":"Clear full-map (friendly) mobs",
+  "key.manaita.open": "Wear Ring画面を開く",
 
   "enchantments.fortune": "Fortune",
   "enchantments.silktouch": "Silktouch"

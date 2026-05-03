@@ -10,6 +10,7 @@ import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import sen.manaita_plus_legacy.ManaitaPlusLegacy;
 import sen.manaita_plus_legacy.client.render.block.RenderBrewingManaitaBlockEntity;
@@ -57,6 +58,10 @@ public class RegisterEventHandler {
         event.register(ManaitaPlusLegacyKeyBoardCore.MESSAGE_GOD_KEY);
         event.register(ManaitaPlusLegacyKeyBoardCore.MESSAGE_ANTI_DISARMING_KEY);
         event.register(ManaitaPlusLegacyKeyBoardCore.MESSAGE_ATTACK_KEY);
+        ManaitaPlusLegacyKeyBoardCore.MESSAGE_OPEN_KEY = new KeyMapping("key.manaita.open", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, 71, ManaitaPlusLegacyKeyBoardCore.CATEGORY);
+        if (ModList.get().isLoaded("curios")) {
+            event.register(ManaitaPlusLegacyKeyBoardCore.MESSAGE_OPEN_KEY);
+        }
     }
 }
 

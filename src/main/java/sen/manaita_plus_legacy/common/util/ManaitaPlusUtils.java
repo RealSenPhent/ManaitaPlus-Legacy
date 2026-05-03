@@ -35,8 +35,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.entity.*;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.entity.PartEntity;
+import net.minecraftforge.event.level.BlockEvent;
 import org.jetbrains.annotations.NotNull;
 import sen.manaita_plus_legacy.common.config.ManaitaPlusLegacyConfig;
 import sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyItemCore;
@@ -332,17 +334,17 @@ public class ManaitaPlusUtils {
 
     public static void popResource(Level p_49841_, BlockPos p_49842_, ItemStack p_49843_) {
         double d0 = (double) EntityType.ITEM.getHeight() / 2.0D;
-        double d1 = (double)p_49842_.getX();
-        double d2 = (double)p_49842_.getY() - d0;
-        double d3 = (double)p_49842_.getZ();
+        double d1 = (double)p_49842_.getX() + 0.5D;
+        double d2 = (double)p_49842_.getY() - d0 + 0.5D;
+        double d3 = (double)p_49842_.getZ() + 0.5D;
         popResource(p_49841_, () -> new ItemEntity(p_49841_, d1, d2, d3, p_49843_), p_49843_);
     }
 
     public static void popResource(Level p_49841_, BlockPos p_49842_, ItemStack p_49843_,Vec3 vec3) {
         double d0 = (double) EntityType.ITEM.getHeight() / 2.0D;
-        double d1 = (double)p_49842_.getX();
-        double d2 = (double)p_49842_.getY() - d0;
-        double d3 = (double)p_49842_.getZ();
+        double d1 = (double)p_49842_.getX() + 0.5D;
+        double d2 = (double)p_49842_.getY() - d0 + 0.5D;
+        double d3 = (double)p_49842_.getZ() + 0.5D;
         popResource(p_49841_, () -> {
             ItemEntity itemEntity = new ItemEntity(p_49841_, d1, d2, d3, p_49843_);
             itemEntity.setDeltaMovement(vec3);
@@ -352,9 +354,9 @@ public class ManaitaPlusUtils {
     
     public static void popResource(Level p_49841_, Vec3 p_49842_, ItemStack p_49843_,Vec3 vec3) {
         double d0 = (double) EntityType.ITEM.getHeight() / 2.0D;
-        double d1 = p_49842_.x();
-        double d2 = p_49842_.y() - d0;
-        double d3 = p_49842_.z();
+        double d1 = p_49842_.x() + 0.5D;
+        double d2 = p_49842_.y() - d0 + 0.5D;
+        double d3 = p_49842_.z() + 0.5D;
         popResource(p_49841_, () -> {
             ItemEntity itemEntity = new ItemEntity(p_49841_, d1, d2, d3, p_49843_);
             itemEntity.setDeltaMovement(vec3);
@@ -392,6 +394,9 @@ public class ManaitaPlusUtils {
             int range = des.getRange(stack) >> 1;
             int type = ManaitaPlusLegacyToolBase.getType(stack);
             boolean doubling = des.isDoubling(type);
+            BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(level,blockPos,level.getBlockState(blockPos),player);
+            if (doubling) breakEvent.setExpToDrop(breakEvent.getExpToDrop() * ManaitaPlusLegacyConfig.destroy_doubling_value);
+            MinecraftForge.EVENT_BUS.post(breakEvent);
             if (range == 0) {
                 destroyBlock(stack, level, blockPos, player,doubling);
                 return;
@@ -405,7 +410,6 @@ public class ManaitaPlusUtils {
                 int zM = blockPos.getZ() + range;
                 BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
                 int exp = 0;
-                Map<Block, AtomicInteger> blocks = new HashMap<>();
                 Map<Integer,List<ItemStack>> itemDrops = new HashMap<>();
                 boolean pickItems = ManaitaPlusLegacyToolBase.canPick(type, true);
                 boolean pickExperience = ManaitaPlusLegacyToolBase.canPick(type, true);
@@ -431,32 +435,30 @@ public class ManaitaPlusUtils {
                             if (isDrop) {
                                 player.causeFoodExhaustion(0.005F);
                                 List<ItemStack> drops = Block.getDrops(blockState, serverLevel, mutableBlockPos, blockEntity, player, stack);
-                                if (pickItems) {
-                                    if (drops.isEmpty()) {
-                                        AtomicInteger atomicInteger = blocks.computeIfAbsent(block, (block1) -> new AtomicInteger(0));
-                                        atomicInteger.set(atomicInteger.get() + 1);
+                                if (drops.isEmpty()) {
+                                    ItemStack itemStack = new ItemStack(block,1);
+                                    List<ItemStack> itemStacks = itemDrops.computeIfAbsent(itemStack.getItem().hashCode(), ys -> new ArrayList<>());
+                                    boolean flag = false;
+                                    for (ItemStack itemStack1 : itemStacks) {
+                                        if (itemStack1.areShareTagsEqual(itemStack)) {
+                                            itemStack1.setCount(itemStack1.getCount() + 1);
+                                            flag = true;
+                                            break;
+                                        }
                                     }
-                                    else
-                                        drops.forEach((p_49859_) -> {
-                                            List<ItemStack> itemStacks = itemDrops.computeIfAbsent(p_49859_.getItem().hashCode(), ys -> new ArrayList<>());
-                                            for (ItemStack itemStack : itemStacks) {
-                                                if (itemStack.areShareTagsEqual(p_49859_)) {
-                                                    itemStack.setCount(itemStack.getCount() + p_49859_.getCount());
-                                                    return;
-                                                }
+                                    if (!flag) itemStacks.add(itemStack);
+                                } else
+                                    drops.forEach((p_49859_) -> {
+                                        List<ItemStack> itemStacks = itemDrops.computeIfAbsent(p_49859_.getItem().hashCode(), ys -> new ArrayList<>());
+                                        for (ItemStack itemStack : itemStacks) {
+                                            if (itemStack.areShareTagsEqual(p_49859_)) {
+                                                itemStack.setCount(itemStack.getCount() + p_49859_.getCount());
+                                                return;
                                             }
-                                            itemStacks.add(p_49859_);
-                                        });
-                                } else {
-                                    if (drops.isEmpty())
-                                        popResource(serverLevel, mutableBlockPos, new ItemStack(block, doubling ? ManaitaPlusLegacyConfig.destroy_doubling_value : 1));
-                                    else
-                                        drops.forEach((p_49859_) -> {
-                                            if (doubling)
-                                                p_49859_.setCount(p_49859_.getCount() * ManaitaPlusLegacyConfig.destroy_doubling_value);
-                                            popResource(serverLevel, mutableBlockPos, p_49859_);
-                                        });
-                                }
+                                        }
+                                        itemStacks.add(p_49859_);
+                                    });
+
                                 if (pickExperience) {
                                     exp += blockState.getExpDrop(serverLevel, serverLevel.random, mutableBlockPos, stack.getEnchantmentLevel(Enchantments.BLOCK_FORTUNE), stack.getEnchantmentLevel(Enchantments.SILK_TOUCH));
                                 } else {
@@ -474,18 +476,6 @@ public class ManaitaPlusUtils {
                         ItemStack itemStack = new ItemStack(ManaitaPlusLegacyItemCore.ManaitaSource.get());
                         CompoundTag orCreateTag = itemStack.getOrCreateTag();
                         ListTag listtag = new ListTag();
-                        test : for (Map.Entry<Block, AtomicInteger> entry : blocks.entrySet()) {
-                            ItemStack itemStack1 = new ItemStack(entry.getKey(), entry.getValue().get());
-                            if (itemStack1.isEmpty()) continue;
-                            List<ItemStack> itemStacks = itemDrops.computeIfAbsent(itemStack1.getItem().hashCode(), ys -> new ArrayList<>());
-                            for (ItemStack stack1 : itemStacks) {
-                                if (stack1.areShareTagsEqual(itemStack1)) {
-                                    stack1.setCount(stack1.getCount() + itemStack1.getCount());
-                                    break test;
-                                }
-                            }
-                            itemStacks.add(itemStack1);
-                        }
                         for (List<ItemStack> itemStacks : itemDrops.values()) {
                             for (ItemStack itemStack1 : itemStacks) {
                                 if (itemStack1.isEmpty()) continue;
@@ -500,7 +490,15 @@ public class ManaitaPlusUtils {
                             }
                         }
                         orCreateTag.put("Items", listtag);
-                        popResource(serverLevel, predictPlayerPosition(player,10), itemStack, player.getDeltaMovement());
+                        popResource(serverLevel, blockPos, itemStack, player.getDeltaMovement());
+                    } else {
+                        for (List<ItemStack> itemStacks : itemDrops.values()) {
+                            for (ItemStack itemStack1 : itemStacks) {
+                                if (itemStack1.isEmpty()) continue;
+                                itemStack1.setCount(itemStack1.getCount() * ManaitaPlusLegacyConfig.destroy_doubling_value);
+                                ManaitaPlusUtils.popResource(serverLevel, blockPos, itemStack1);
+                            }
+                        }
                     }
                     if (pickExperience) {
                         if (doubling)

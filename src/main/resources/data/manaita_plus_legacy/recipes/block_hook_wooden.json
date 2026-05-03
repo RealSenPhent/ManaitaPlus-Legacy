@@ -17,7 +17,7 @@
   "result": {
     "item": "manaita_plus_legacy:block_hook_manaita",
     "nbt": {
-      "ManaitaType": 0
+      "ManaitaPlusLegacyType": 0
     },
     "count": 1
   }

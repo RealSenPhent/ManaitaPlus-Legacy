@@ -69,11 +69,11 @@ public class ManaitaPlusLegacyFurnacePortabl extends Item {
     }
 
 
-    public class ManaitaPlusFurnaceBlockEntity extends AbstractFurnaceBlockEntity {
+    public static class ManaitaPlusFurnaceBlockEntity extends AbstractFurnaceBlockEntity {
         private final Object2IntOpenHashMap<ResourceLocation> recipesUsed = new Object2IntOpenHashMap<>();
         private final RecipeManager.CachedCheck<Container, ? extends AbstractCookingRecipe> quickCheck;
         private final Player player;
-        private final ItemStack stack;
+        public final ItemStack stack;
         protected NonNullList<ItemStack> items = NonNullList.withSize(3, ItemStack.EMPTY);
 
         public ManaitaPlusFurnaceBlockEntity(Player player,ItemStack stack) {
@@ -114,8 +114,6 @@ public class ManaitaPlusLegacyFurnacePortabl extends Item {
             this.recipesUsed.forEach((p_187449_, p_187450_) -> compoundtag.putInt(p_187449_.toString(), p_187450_));
             p_187452_.put("RecipesUsed", compoundtag);
         }
-
-
 
         private boolean canBurn(RegistryAccess p_266924_, @Nullable Recipe<?> p_155006_, NonNullList<ItemStack> p_155007_, int p_155008_) {
             if (!p_155007_.get(0).isEmpty() && p_155006_ != null) {

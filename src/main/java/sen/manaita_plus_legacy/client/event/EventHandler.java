@@ -11,9 +11,11 @@ import net.minecraft.world.phys.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import sen.manaita_plus_legacy.ManaitaPlusLegacy;
 import sen.manaita_plus_legacy.client.core.ManaitaPlusLegacyKeyBoardCore;
+import sen.manaita_plus_legacy.common.curios.CuriosUtil;
 import sen.manaita_plus_legacy.common.item.data.IManaitaPlusLegacyDoubling;
 import sen.manaita_plus_legacy.common.item.data.IManaitaPlusLegacyKey;
 import sen.manaita_plus_legacy.common.network.Networking;
@@ -32,8 +34,8 @@ public class EventHandler {
         if (ManaitaPlusLegacyKeyBoardCore.MESSAGE_KEY.isDown()) {
             ItemStack mainHandItem = mc.player.getMainHandItem();
             if (!mainHandItem.isEmpty() && mainHandItem.getItem() instanceof IManaitaPlusLegacyKey iManaitaPlusLegacyKey) {
-               iManaitaPlusLegacyKey.onManaitaKeyPressOnClient(mainHandItem, mc.player, 0);
-                Networking.sendToServer(new KeyPressPacket((byte)0));
+                iManaitaPlusLegacyKey.onManaitaKeyPressOnClient(mainHandItem, mc.player, 0);
+                Networking.sendToServer(new KeyPressPacket((byte) 0));
             }
         }
         if (ManaitaPlusLegacyKeyBoardCore.MESSAGE_ARMOR_KEY.isDown()) {
@@ -42,26 +44,31 @@ public class EventHandler {
                     key.onManaitaKeyPressOnClient(itemStack, mc.player, 1);
                 }
             }
-            Networking.sendToServer(new KeyPressPacket((byte)1));
+            Networking.sendToServer(new KeyPressPacket((byte) 1));
         }
         if (ManaitaPlusLegacyKeyBoardCore.MESSAGE_GOD_KEY.isDown()) {
             ItemStack mainHandItem = mc.player.getMainHandItem();
             if (!mainHandItem.isEmpty() && mainHandItem.getItem() instanceof IManaitaPlusLegacyKey iManaitaPlusLegacyKey) {
                 iManaitaPlusLegacyKey.onManaitaKeyPressOnClient(mainHandItem, mc.player, 2);
-                Networking.sendToServer(new KeyPressPacket((byte)2));
+                Networking.sendToServer(new KeyPressPacket((byte) 2));
             }
         }
         if (ManaitaPlusLegacyKeyBoardCore.MESSAGE_ANTI_DISARMING_KEY.isDown()) {
             ItemStack mainHandItem = mc.player.getMainHandItem();
             if (!mainHandItem.isEmpty() && mainHandItem.getItem() instanceof IManaitaPlusLegacyKey iManaitaPlusLegacyKey) {
                 iManaitaPlusLegacyKey.onManaitaKeyPressOnClient(mainHandItem, mc.player, 3);
-                Networking.sendToServer(new KeyPressPacket((byte)3));
+                Networking.sendToServer(new KeyPressPacket((byte) 3));
             }
         }
         if (ManaitaPlusLegacyKeyBoardCore.MESSAGE_ATTACK_KEY.isDown()) {
             if (ManaitaPlusLegacyEntityData.manaita.accept(mc.player)) {
-                ManaitaPlusUtils.godKill(0,true,mc.player.isShiftKeyDown(),mc.player);
-                Networking.sendToServer(new KeyPressPacket((byte)4));
+                ManaitaPlusUtils.godKill(0, true, mc.player.isShiftKeyDown(), mc.player);
+                Networking.sendToServer(new KeyPressPacket((byte) 4));
+            }
+        }
+        if (ModList.get().isLoaded("curios")) {
+            if (ManaitaPlusLegacyKeyBoardCore.MESSAGE_OPEN_KEY.isDown()) {
+                CuriosUtil.onKeyPress();
             }
         }
     }

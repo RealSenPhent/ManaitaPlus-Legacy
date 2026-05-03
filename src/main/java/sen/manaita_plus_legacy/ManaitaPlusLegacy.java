@@ -20,6 +20,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -37,6 +38,7 @@ import sen.manaita_plus_legacy.common.config.ManaitaPlusLegacyConfig;
 import sen.manaita_plus_legacy.common.core.*;
 import sen.manaita_plus_legacy.common.network.Networking;
 import sen.manaita_plus_legacy.common.util.tag.ManaitaPlusLegacyTagData;
+import top.theillusivec4.curios.api.CuriosApi;
 
 import static sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyItemCore.*;
 
@@ -69,6 +71,11 @@ public class ManaitaPlusLegacy {
                 acceptManaitaPlusLegacyType(ManaitaCraftingPortable.get(), output,8);
                 acceptManaitaPlusLegacyType(ManaitaFurnacePortable.get(), output,8);
                 acceptManaitaPlusLegacyType(ManaitaBrewingPortable.get(), output,8);
+                if (ModList.get().isLoaded("curios")) {
+                    acceptManaitaPlusLegacyType(ManaitaPlusLegacyItemCurioCore.ManaitaCreateCurio.get(), output,8);
+                    acceptManaitaPlusLegacyType(ManaitaPlusLegacyItemCurioCore.ManaitaFurnaceCurio.get(), output,8);
+                    acceptManaitaPlusLegacyType(ManaitaPlusLegacyItemCurioCore.ManaitaBrewingCurio.get(), output,8);
+                }
 
                 output.accept(ManaitaSwordGod.get());
                 output.accept(ManaitaSword.get());
@@ -111,6 +118,9 @@ public class ManaitaPlusLegacy {
         ManaitaPlusLegacyBlockEntityCore.init();
         ManaitaPlusLegacyRecipeSerializerCore.init();
         ManaitaPlusLegacySynchedDataCore.init();
+        if (ModList.get().isLoaded("curios")) {
+            ManaitaPlusLegacyItemCurioCore.init();
+        }
 
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
@@ -143,6 +153,11 @@ public class ManaitaPlusLegacy {
                     ManaitaPlusLegacyItemCore.ManaitaFurnacePortable.get(),
                     ManaitaPlusLegacyItemCore.ManaitaBrewingPortable.get()
             );
+            if (ModList.get().isLoaded("curios")) {
+                acceptTypePropertyFunction(ManaitaPlusLegacyItemCurioCore.ManaitaCreateCurio.get());
+                acceptTypePropertyFunction(ManaitaPlusLegacyItemCurioCore.ManaitaFurnaceCurio.get());
+                acceptTypePropertyFunction(ManaitaPlusLegacyItemCurioCore.ManaitaBrewingCurio.get());
+            }
         });
     }
 

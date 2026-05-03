@@ -10,7 +10,7 @@ import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-public class ManaitaPlusLegacyLightningBolt extends LightningBolt {
+public class ManaitaPlusLegacyLightningBolt extends Entity {
     public float f;
     private int life;
     public long seed;

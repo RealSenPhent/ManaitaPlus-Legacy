@@ -31,7 +31,7 @@ public class ManaitaPlusLegacyBrewingPortabl extends Item {
 
     @Override
     public Component getName(ItemStack p_41458_) {
-        return Component.translatable("item.portableBrewing."+ p_41458_.getOrCreateTag().getInt(ManaitaPlusLegacyTagData.ItemType) +".name");
+        return Component.translatable("item.portableBrewing." + p_41458_.getOrCreateTag().getInt(ManaitaPlusLegacyTagData.ItemType) +".name");
     }
 
 
@@ -57,12 +57,12 @@ public class ManaitaPlusLegacyBrewingPortabl extends Item {
     }
 
 
-    public class ManaitaPlusBrewingStandBlockEntity extends BaseContainerBlockEntity  {
+    public static class ManaitaPlusBrewingStandBlockEntity extends BaseContainerBlockEntity  {
         private static final int[] SLOTS_FOR_SIDES = new int[]{0, 1, 2, 4};
         private NonNullList<ItemStack> items = NonNullList.withSize(5, ItemStack.EMPTY);
         private boolean[] lastPotionCount;
         private final Player player;
-        private final ItemStack stack;
+        public final ItemStack stack;
 
         protected final ContainerData dataAccess = new ContainerData() {
             public int get(int p_59038_) {

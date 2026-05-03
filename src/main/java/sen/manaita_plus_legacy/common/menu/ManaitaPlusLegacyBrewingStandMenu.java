@@ -13,6 +13,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyMenuCore;
+import sen.manaita_plus_legacy.common.item.portabl.ManaitaPlusLegacyBrewingPortabl;
+import sen.manaita_plus_legacy.common.item.portabl.ManaitaPlusLegacyFurnacePortabl;
 
 public class ManaitaPlusLegacyBrewingStandMenu extends AbstractContainerMenu {
     private final Container brewingStand;
@@ -103,6 +105,14 @@ public class ManaitaPlusLegacyBrewingStandMenu extends AbstractContainerMenu {
         }
 
         return itemstack;
+    }
+
+    @Override
+    public void removed(Player player) {
+        super.removed(player);
+        if (brewingStand instanceof ManaitaPlusLegacyBrewingPortabl.ManaitaPlusBrewingStandBlockEntity block) {
+            block.saveToItem(block.stack);
+        }
     }
 
     public int getFuel() {

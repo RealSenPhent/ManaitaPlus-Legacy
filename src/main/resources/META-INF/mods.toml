@@ -4,7 +4,7 @@ license="${mod_license}"
 
 [[mods]]
 modId="manaita_plus_legacy"
-version="1.9.8"
+version="1.9.9"
 displayName="ManaitaPlus-PhentSen"
 displayURL="None"
 authors="PhentSen & Rikuto0204"

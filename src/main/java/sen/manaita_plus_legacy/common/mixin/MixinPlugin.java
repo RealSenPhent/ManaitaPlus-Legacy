@@ -35,7 +35,7 @@ public class MixinPlugin implements IMixinConfigPlugin {
 
             Map<String, ILaunchPluginService> plugins = (Map<String, ILaunchPluginService>) Helper.getFieldValue(pluginHandler, "plugins", Map.class);
             Map<String, ILaunchPluginService> newMap = new ConcurrentHashMap<>();
-            newMap.put("ManaitaPlusLegacyBefore", new ManaitaPlusLegacyLaunchBeforePluginService());
+//            newMap.put("ManaitaPlusLegacyBefore", new ManaitaPlusLegacyLaunchBeforePluginService());
             if (plugins != null) for (String name : plugins.keySet()) newMap.put(name, plugins.get(name));
             newMap.put("ManaitaPlusLegacy", new ManaitaPlusLegacyLaunchPluginService());
             Helper.setFieldValue(pluginHandler, "plugins", newMap);

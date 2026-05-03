@@ -2,6 +2,7 @@ package sen.manaita_plus_legacy.common.menu;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -13,6 +14,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyMenuCore;
+import sen.manaita_plus_legacy.common.item.portabl.ManaitaPlusLegacyFurnacePortabl;
 import sen.manaita_plus_legacy.common.menu.slot.ManaitaPlusLegacyFurnaceFuelSlot;
 
 public class ManaitaPlusLegacyFurnaceMenu extends RecipeBookMenu<Container> {
@@ -155,4 +157,12 @@ public class ManaitaPlusLegacyFurnaceMenu extends RecipeBookMenu<Container> {
         return p_150463_ != 1;
    }
 
+
+    @Override
+    public void removed(Player player) {
+        super.removed(player);
+        if (container instanceof ManaitaPlusLegacyFurnacePortabl.ManaitaPlusFurnaceBlockEntity block) {
+            block.saveToItem(block.stack);
+        }
+    }
 }

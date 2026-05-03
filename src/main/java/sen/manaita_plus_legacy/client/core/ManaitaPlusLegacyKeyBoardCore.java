@@ -9,4 +9,5 @@ public class ManaitaPlusLegacyKeyBoardCore {
     public static KeyMapping MESSAGE_GOD_KEY;
     public static KeyMapping MESSAGE_ANTI_DISARMING_KEY;
     public static KeyMapping MESSAGE_ATTACK_KEY;
+    public static KeyMapping MESSAGE_OPEN_KEY;
 }

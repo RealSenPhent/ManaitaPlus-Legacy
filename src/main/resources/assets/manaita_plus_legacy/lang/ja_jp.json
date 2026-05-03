@@ -74,7 +74,6 @@
   "item.portableCrafting.7.name": "レッドストーンの携帯作業まな板",
   "item.portableCrafting.8.name": "ネザライトの携帯作業まな板",
 
-
   "item.portableFurnace.0.name": "携帯調理まな板",
   "item.portableFurnace.1.name": "木の携帯調理まな板",
   "item.portableFurnace.2.name": "石の携帯調理まな板",
@@ -94,6 +93,36 @@
   "item.portableBrewing.6.name": "エメラルドの携帯醸造まな板",
   "item.portableBrewing.7.name": "レッドストーンの携帯醸造まな板",
   "item.portableBrewing.8.name": "ネザライトの携帯醸造まな板",
+
+  "item.ring_crafting_manaita.0.name": "作業まな板リング",
+  "item.ring_crafting_manaita.1.name": "木の作業まな板リング",
+  "item.ring_crafting_manaita.2.name": "石の作業まな板リング",
+  "item.ring_crafting_manaita.3.name": "鉄の作業まな板リング",
+  "item.ring_crafting_manaita.4.name": "金の作業まな板リング",
+  "item.ring_crafting_manaita.5.name": "ダイヤの作業まな板リング",
+  "item.ring_crafting_manaita.6.name": "エメラルドの作業まな板リング",
+  "item.ring_crafting_manaita.7.name": "レッドストーンの作業まな板リング",
+  "item.ring_crafting_manaita.7.name": "ネザライトの作業まな板リング",
+
+  "item.ring_furnace_manaita.0.name": "調理まな板リング",
+  "item.ring_furnace_manaita.1.name": "木の調理まな板リング",
+  "item.ring_furnace_manaita.2.name": "石の調理まな板リング",
+  "item.ring_furnace_manaita.3.name": "鉄の調理まな板リング",
+  "item.ring_furnace_manaita.4.name": "金の調理まな板リング",
+  "item.ring_furnace_manaita.5.name": "ダイヤの調理まな板リング",
+  "item.ring_furnace_manaita.6.name": "エメラルドの調理まな板リング",
+  "item.ring_furnace_manaita.7.name": "レッドストーンの調理まな板リング",
+  "item.ring_furnace_manaita.8.name": "ネザライトの調理まな板リング",
+
+  "item.ring_brewing_manaita.0.name": "醸造まな板リング",
+  "item.ring_brewing_manaita.1.name": "木の醸造まな板リング",
+  "item.ring_brewing_manaita.2.name": "石の醸造まな板リング",
+  "item.ring_brewing_manaita.3.name": "鉄の醸造まな板リング",
+  "item.ring_brewing_manaita.4.name": "金の醸造まな板リング",
+  "item.ring_brewing_manaita.5.name": "ダイヤの醸造まな板リング",
+  "item.ring_brewing_manaita.6.name": "エメラルドの醸造まな板リング",
+  "item.ring_brewing_manaita.7.name": "レッドストーンの醸造まな板リング",
+  "item.ring_brewing_manaita.8.name": "ネザライトの醸造まな板リング",
 
   "item.manaita_plus_legacy.manaita_hook": "まな板用フック",
 

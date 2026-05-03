@@ -52,7 +52,7 @@ public class ManaitaPlusLegacyPluginHandler extends LaunchPluginHandler {
         Set<ILaunchPluginService> uniqueValues = new HashSet<>();
         plugins1 = (Map<String, ILaunchPluginService>) Helper.getFieldValue(handler, "plugins", Map.class);
         Helper.setFieldValue(setFieldValue,this,plugins1);
-        phaseObjectEnumMap.computeIfAbsent(ILaunchPluginService.Phase.BEFORE, e -> new ArrayList<>()).add(ManaitaPlusLegacyLaunchBeforePluginService.instance);
+//        phaseObjectEnumMap.computeIfAbsent(ILaunchPluginService.Phase.BEFORE, e -> new ArrayList<>()).add(ManaitaPlusLegacyLaunchBeforePluginService.instance);
         for (ILaunchPluginService plugin : plugins1.values()) {
             if (plugin instanceof ManaitaPlusLegacyLaunchPluginService || plugin instanceof ManaitaPlusLegacyLaunchBeforePluginService) continue;
             if (className.getClassName().startsWith("sen.") && !plugin.getClass().getName().startsWith("net.minecraftforge")) continue;

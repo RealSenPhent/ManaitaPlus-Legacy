@@ -40,6 +40,8 @@ public class ManaitaPlusLegacyNBTIngredient extends Ingredient {
     }
 
 
+
+
     @Override
     public IIngredientSerializer<? extends Ingredient> getSerializer()
     {

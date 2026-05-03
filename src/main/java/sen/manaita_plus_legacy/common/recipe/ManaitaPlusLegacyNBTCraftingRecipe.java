@@ -17,6 +17,7 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeHooks;
 import sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyRecipeSerializerCore;
 import sen.manaita_plus_legacy.common.recipe.ingredient.ManaitaPlusLegacyNBTIngredient;
+import sen.manaita_plus_legacy.common.util.tag.ManaitaPlusLegacyTagData;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -351,7 +352,7 @@ public class ManaitaPlusLegacyNBTCraftingRecipe implements CraftingRecipe, net.m
                 ItemStack p43953 = new ItemStack(item);
                 if (p_289797_.has("type")) {
                     int type = GsonHelper.getAsInt(p_289797_, "type");
-                    p43953.getOrCreateTag().putInt("ManaitaType", type);
+                    p43953.getOrCreateTag().putInt(ManaitaPlusLegacyTagData.ItemType, type);
                 }
                 return new Ingredient.ItemValue(p43953);
             }

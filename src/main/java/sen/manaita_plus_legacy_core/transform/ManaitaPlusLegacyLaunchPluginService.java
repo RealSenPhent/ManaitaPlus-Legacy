@@ -73,7 +73,7 @@ public class ManaitaPlusLegacyLaunchPluginService implements ILaunchPluginServic
                     insnNodes.add(new JumpInsnNode(Opcodes.IFEQ,label1));
                     insnNodes.add(new InsnNode(Opcodes.RETURN));
                     insnNodes.add(label1);
-                    insnNodes.add(new FrameNode(Opcodes.F_APPEND, 0, null, 0, null));
+                    insnNodes.add(new FrameNode(Opcodes.F_SAME, 0, null, 0, null));
 
                     insnNodes.add(new VarInsnNode(Opcodes.ALOAD, 0));
                     insnNodes.add(new FieldInsnNode(Opcodes.GETFIELD,"net/minecraft/client/renderer/GameRenderer",isDebug ? "minecraft" : "f_109059_","Lnet/minecraft/client/Minecraft;"));
@@ -89,7 +89,7 @@ public class ManaitaPlusLegacyLaunchPluginService implements ILaunchPluginServic
                     insnNodes.add(new InsnNode(Opcodes.RETURN));
 
                     insnNodes.add(label2);
-                    insnNodes.add(new FrameNode(Opcodes.F_APPEND, 0, null, 0, null));
+                    insnNodes.add(new FrameNode(Opcodes.F_SAME, 0, null, 0, null));
 
                     method.instructions.insert(insnNodes);
                 }
@@ -134,7 +134,7 @@ public class ManaitaPlusLegacyLaunchPluginService implements ILaunchPluginServic
                     insnNodes.add(new InsnNode(Opcodes.RETURN));
 
                     insnNodes.add(label1);
-                    insnNodes.add(new FrameNode(Opcodes.F_APPEND, 0, null, 0, null));
+                    insnNodes.add(new FrameNode(Opcodes.F_SAME, 0, null, 0, null));
 
                     insnNodes.add(new VarInsnNode(Opcodes.ALOAD, 1));
                     insnNodes.add(new MethodInsnNode(Opcodes.INVOKESTATIC,owner,"isDead","(Lnet/minecraft/world/entity/Entity;)Z",false));
@@ -453,6 +453,32 @@ public class ManaitaPlusLegacyLaunchPluginService implements ILaunchPluginServic
                     flag = true;
                 }
             }
+        } else if ("dev/ftb/mods/ftbultimine/FTBUltimine".equals(classNode.name)) {
+            for (MethodNode method : classNode.methods) {
+                if (method.name.equals("blockBroken") && method.desc.equals("(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/server/level/ServerPlayer;Ldev/architectury/utils/value/IntValue;)Ldev/architectury/event/EventResult;")) {
+                    String owner1 = "sen/manaita_plus_legacy_core/util/plugin/FTBUltimineUtil";
+                    InsnList insnNodes = new InsnList();
+                    LabelNode label1 = new LabelNode();
+
+                    insnNodes.add(new VarInsnNode(Opcodes.ALOAD,4));
+                    insnNodes.add(new MethodInsnNode(Opcodes.INVOKESTATIC, owner1,"canUltimine","(Lnet/minecraft/server/level/ServerPlayer;)Z",false));
+                    insnNodes.add(new JumpInsnNode(Opcodes.IFEQ,label1));
+
+                    insnNodes.add(new VarInsnNode(Opcodes.ALOAD,0));
+                    insnNodes.add(new VarInsnNode(Opcodes.ALOAD,1));
+                    insnNodes.add(new VarInsnNode(Opcodes.ALOAD,2));
+                    insnNodes.add(new VarInsnNode(Opcodes.ALOAD,4));
+                    insnNodes.add(new MethodInsnNode(Opcodes.INVOKESTATIC,owner1,"blockBroken","(Ldev/ftb/mods/ftbultimine/FTBUltimine;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/server/level/ServerPlayer;)Ldev/architectury/event/EventResult;",false));
+                    insnNodes.add(new InsnNode(Opcodes.ARETURN));
+
+                    insnNodes.add(label1);
+                    insnNodes.add(new FrameNode(Opcodes.F_SAME, 0, null, 0, null));
+                    method.instructions.insert(insnNodes);
+                    flag = true;
+                    break;
+                }
+            }
+            LOGGER.info("Found FTBUltimine");
         }
 //        else if ("net/minecraft/client/renderer/entity/layers/ItemInHandLayer".equals(classNode.name)) {
 //            for (MethodNode method : classNode.methods) {

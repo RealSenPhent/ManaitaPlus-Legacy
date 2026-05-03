@@ -95,6 +95,36 @@
   "item.portableBrewing.7.name": "红石制便携式砧板酿造台",
   "item.portableBrewing.8.name": "下届合金制便携式砧板酿造台",
 
+  "item.ring_crafting_manaita.0.name": "砧板工作台戒指",
+  "item.ring_crafting_manaita.1.name": "木质砧板工作台戒指",
+  "item.ring_crafting_manaita.2.name": "石质砧板工作台戒指",
+  "item.ring_crafting_manaita.3.name": "铁质砧板工作台戒指",
+  "item.ring_crafting_manaita.4.name": "金质砧板工作台戒指",
+  "item.ring_crafting_manaita.5.name": "钻石砧板工作台戒指",
+  "item.ring_crafting_manaita.6.name": "绿宝石砧板工作台戒指",
+  "item.ring_crafting_manaita.7.name": "红石砧板工作台戒指",
+  "item.ring_crafting_manaita.7.name": "下届合金制砧板工作台戒指",
+
+  "item.ring_furnace_manaita.0.name": "砧板熔炉戒指",
+  "item.ring_furnace_manaita.1.name": "木质砧板熔炉戒指",
+  "item.ring_furnace_manaita.2.name": "石质砧板熔炉戒指",
+  "item.ring_furnace_manaita.3.name": "铁质砧板熔炉戒指",
+  "item.ring_furnace_manaita.4.name": "金质砧板熔炉戒指",
+  "item.ring_furnace_manaita.5.name": "钻石砧板熔炉戒指",
+  "item.ring_furnace_manaita.6.name": "绿宝石砧板熔炉戒指",
+  "item.ring_furnace_manaita.7.name": "红石砧板熔炉戒指",
+  "item.ring_furnace_manaita.8.name": "下届合金制砧板熔炉戒指",
+
+  "item.ring_brewing_manaita.0.name": "砧板酿造台戒指",
+  "item.ring_brewing_manaita.1.name": "木质砧板酿造台戒指",
+  "item.ring_brewing_manaita.2.name": "石质砧板酿造台戒指",
+  "item.ring_brewing_manaita.3.name": "铁质砧板酿造台戒指",
+  "item.ring_brewing_manaita.4.name": "金质砧板酿造台戒指",
+  "item.ring_brewing_manaita.5.name": "钻石砧板酿造台戒指",
+  "item.ring_brewing_manaita.6.name": "绿宝石砧板酿造台戒指",
+  "item.ring_brewing_manaita.7.name": "红石砧板酿造台戒指",
+  "item.ring_brewing_manaita.8.name": "下届合金制砧板酿造台戒指",
+
   "item.manaita_plus_legacy.manaita_hook": "砧板钩",
 
   "info.item.manaita_sword_god.1": "神の力 -神の裁きと神の徴収-",
@@ -125,6 +155,7 @@
   "key.manaita.god_sword":"更改拾取模式",
   "key.manaita.anti_disarming":"更改砧板防缴械",
   "key.manaita.attack":"清除全图(友好)生物",
+  "key.manaita.open": "打开佩戴戒指界面",
 
   "enchantments.fortune": "时运",
   "enchantments.silktouch": "精准挖掘"

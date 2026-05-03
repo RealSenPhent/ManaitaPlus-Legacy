@@ -2,6 +2,7 @@ package sen.manaita_plus_legacy.common.util;
 
 import cpw.mods.modlauncher.Launcher;
 import cpw.mods.modlauncher.TransformingClassLoader;
+import dev.ftb.mods.ftbultimine.client.FTBUltimineClient;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.eventbus.LockHelper;
