@@ -49,95 +49,23 @@ public class ManaitaPlusLegacyCraftingRecipe implements CraftingRecipe {
             ++item;
         }
         if (item == 2) {
-            if (source) return true;
-        } else {
-            return false;
+            return source;
         }
-        boolean source1 = false;
-        for (ItemStack itemStack : p_44002_.getItems()) {
-            Item item1 = itemStack.getItem();
-            if (item1 instanceof ManaitaPlusCraftingBlockItem || item1 instanceof ManaitaPlusFurnaceBlockItem || item1 instanceof ManaitaPlusBrewingBlockItem) {
-                source=true;
-            } else if (item1 == Items.OAK_PLANKS ||
-                    item1 == Items.COBBLESTONE ||
-                    item1 == Items.IRON_BLOCK ||
-                    item1 == Items.REDSTONE_BLOCK ||
-                    item1 == Items.GOLD_BLOCK ||
-                    item1 == Items.DIAMOND_BLOCK ||
-                    item1 == Items.EMERALD_BLOCK || item1 == Items.NETHERITE_BLOCK || item1 instanceof ManaitaPlusHookBlockItem) {
-                source1=true;
-            }
-        }
-
-        return source & source1;
+        return false;
     }
 
     @Override
     public ItemStack assemble(CraftingContainer p_44001_, RegistryAccess p_267165_) {
-        ItemStack itemStack = null;
-        ItemStack itemStack1 = null;
-        ItemStack itemStack3 = null;
-        Item typeBlock;
-        boolean source = false;;
+        ItemStack itemStack;
+        boolean source = false;
         for (ItemStack itemStack2 : p_44001_.getItems()) {
             Item item1 = itemStack2.getItem();
-            if ((itemStack1 != null && item1 instanceof ManaitaPlusHookBlockItem) || (itemStack3 != null && (item1 instanceof ManaitaPlusCraftingBlockItem || item1 instanceof ManaitaPlusFurnaceBlockItem || item1 instanceof ManaitaPlusBrewingBlockItem))) {
-                if (itemStack3 == null) itemStack3 = itemStack2;
-                if (itemStack1 == null) itemStack1 = itemStack2;
-                if (itemStack1.getTag() != null && itemStack1.getTag().getInt(ManaitaPlusLegacyTagData.ItemType) != 0) continue;
-                ItemStack itemStack4;
-                Item item = itemStack1.getItem();
-                if (item instanceof ManaitaPlusCraftingBlockItem) {
-                    itemStack4 = new ItemStack(ManaitaPlusLegacyItemCore.ManaitaCraftingPortable.get());
-                } else if (item instanceof ManaitaPlusFurnaceBlockItem) {
-                    itemStack4 = new ItemStack(ManaitaPlusLegacyItemCore.ManaitaFurnacePortable.get());
-                } else if (item instanceof ManaitaPlusBrewingBlockItem) {
-                    itemStack4 = new ItemStack(ManaitaPlusLegacyItemCore.ManaitaBrewingPortable.get());
-                } else continue;
-                if (itemStack3.hasTag()) itemStack4.getOrCreateTag().putInt(ManaitaPlusLegacyTagData.ItemType, itemStack3.getTag().getInt(ManaitaPlusLegacyTagData.ItemType) + 1);
-                return itemStack4;
-            }
-            if ((source && itemStack2 != ItemStack.EMPTY) || (itemStack != null && item1 instanceof ManaitaPlusLegacySourceItem)) {
-                if (source) itemStack = itemStack2;
-                itemStack = itemStack.copy();
+            if (source && itemStack2 != ItemStack.EMPTY) {
+                itemStack = itemStack2.copy();
                 itemStack.setCount(ManaitaPlusLegacyConfig.source_doubling_value);
                 return itemStack;
             }
             if (item1 instanceof ManaitaPlusLegacySourceItem) source = true;
-            else if (item1 instanceof ManaitaPlusHookBlockItem) itemStack3 = itemStack2;
-            else if (item1 instanceof ManaitaPlusCraftingBlockItem) {
-                if (itemStack2.getTag() != null && itemStack2.getTag().getInt(ManaitaPlusLegacyTagData.ItemType) != 0) continue;
-                itemStack1 = new ItemStack(ManaitaPlusLegacyBlockCore.CraftingBlockItem.get());
-            } else if (item1 instanceof ManaitaPlusFurnaceBlockItem) {
-                if (itemStack2.getTag() != null && itemStack2.getTag().getInt(ManaitaPlusLegacyTagData.ItemType) != 0)  continue;
-                itemStack1 = new ItemStack(ManaitaPlusLegacyBlockCore.FurnaceBlockItem.get());
-            } else if (item1 instanceof ManaitaPlusBrewingBlockItem) {
-                if (itemStack2.getTag() != null && itemStack2.getTag().getInt(ManaitaPlusLegacyTagData.ItemType) != 0)  continue;
-                itemStack1 = new ItemStack(ManaitaPlusLegacyBlockCore.BrewingBlockItem.get());
-            } else if (itemStack2 != ItemStack.EMPTY) itemStack = itemStack2;
-        }
-        if (itemStack != null && itemStack1 != null) {
-            int types;
-            typeBlock = itemStack.getItem();
-            if (typeBlock == Items.OAK_PLANKS)
-                types = 1;
-            else if (typeBlock == Items.COBBLESTONE)
-                types = 2;
-            else if (typeBlock == Items.IRON_BLOCK)
-                types = 3;
-            else if (typeBlock == Items.REDSTONE_BLOCK)
-                types = 7;
-            else if (typeBlock == Items.GOLD_BLOCK)
-                types = 4;
-            else if (typeBlock == Items.DIAMOND_BLOCK)
-                types = 5;
-            else if (typeBlock == Items.EMERALD_BLOCK)
-                types = 6;
-            else if (typeBlock == Items.NETHERITE_BLOCK)
-                types = 8;
-            else return ItemStack.EMPTY;
-            itemStack1.getOrCreateTag().putInt(ManaitaPlusLegacyTagData.ItemType, types);
-            return itemStack1;
         }
         return ItemStack.EMPTY;
     }

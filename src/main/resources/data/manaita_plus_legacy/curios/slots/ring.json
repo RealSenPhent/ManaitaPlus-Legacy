@@ -1,0 +1,6 @@
+{
+  "size": 2,
+  "icon": "curios:slot/empty_ring_slot",
+  "order": 20,
+  "drop_rule": "DEFAULT"
+}

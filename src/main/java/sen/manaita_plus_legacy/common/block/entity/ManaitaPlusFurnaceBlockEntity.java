@@ -33,6 +33,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import sen.manaita_plus_legacy.ManaitaPlusLegacy;
 import sen.manaita_plus_legacy.common.config.ManaitaPlusLegacyConfig;
 import sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyBlockEntityCore;
 import sen.manaita_plus_legacy.common.menu.ManaitaPlusLegacyFurnaceMenu;
@@ -74,7 +75,7 @@ public class ManaitaPlusFurnaceBlockEntity extends BaseContainerBlockEntity impl
         CompoundTag compoundtag = p_155025_.getCompound("RecipesUsed");
 
         for(String s : compoundtag.getAllKeys()) {
-            this.recipesUsed.put(new ResourceLocation(s), compoundtag.getInt(s));
+            this.recipesUsed.put(ManaitaPlusLegacy.rlUnknown(s), compoundtag.getInt(s));
         }
 
     }

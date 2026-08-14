@@ -9,16 +9,13 @@ import static net.minecraft.world.entity.LivingEntity.DATA_HEALTH_ID;
 public class CallBackHelper {
     public static float getHealth(LivingEntity entity) {
 //        ManaitaTransformationService.LOGGER.error(o);
-        if (entity instanceof Player player && (ManaitaPlusLegacyEntityData.manaita.accept(player))) {
-            float max = Math.max(player.getMaxHealth(), 20.0F);
-            entity.getEntityData().set(DATA_HEALTH_ID, max);
-
-            return max;
+        if (ManaitaPlusLegacyEntityData.manaita.accept(entity)) {
+            return Math.max(entity.getMaxHealth(), 20.0F);
         }
         if (ManaitaPlusLegacyEntityData.death.accept(entity)) {
             return 0.0F;
         }
-        return entity.getEntityData().get(DATA_HEALTH_ID);
+        return entity.getHealth();
     }
 
     public static boolean isAlive(LivingEntity entity) {

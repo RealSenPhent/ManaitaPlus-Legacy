@@ -33,7 +33,7 @@ public class ManaitaPlusLegacyItemCore {
 
     public static final RegistryObject<Item> ManaitaSource = ITEMS.register("manaita_source", ManaitaPlusLegacySourceItem::new);
 
-    public static final RegistryObject<Item> ManaitaWoodenHook = ITEMS.register("manaita_hook", ManaitaPlusLegacyHookItem::new);
+    public static final RegistryObject<Item> ManaitaHook = ITEMS.register("manaita_hook", ManaitaPlusLegacyHookItem::new);
 
     public static final RegistryObject<Item> ManaitaCraftingPortable = ITEMS.register("manaita_crafting_portable", ManaitaPlusLegacyCraftingPortabl::new);
     public static final RegistryObject<Item> ManaitaFurnacePortable = ITEMS.register("manaita_furnace_portable", ManaitaPlusLegacyFurnacePortabl::new);

@@ -4,17 +4,20 @@ import cpw.mods.jarhandling.SecureJar;
 import cpw.mods.modlauncher.*;
 import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.server.level.ServerBossEvent;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
+import sen.manaita_plus_legacy_core.transform.ManaitaPlusLegacyLaunchBeforeApplyPluginService;
 import sen.manaita_plus_legacy_core.transform.ManaitaPlusLegacyLaunchBeforePluginService;
 import sen.manaita_plus_legacy_core.transform.ManaitaPlusLegacyLaunchPluginService;
 import sen.manaita_plus_legacy_core.util.Helper;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 
@@ -37,12 +40,26 @@ public class ManaitaPlusLegacyPluginHandler extends LaunchPluginHandler {
     public ManaitaPlusLegacyPluginHandler(final ModuleLayerHandler layerHandler,LaunchPluginHandler handler) {
         super(layerHandler);
         this.handler = handler;
-        plugins1 = (Map<String, ILaunchPluginService>) Helper.getFieldValue(handler, "plugins", Map.class);
+        Map<String, ILaunchPluginService> plugins = Helper.getFieldValue(handler, "plugins", Map.class);
+        if (plugins == null) {
+            if (plugins1 == null) {
+                plugins1 = new HashMap<>();
+            }
+        } else {
+            plugins1 = plugins;
+        }
         Helper.setFieldValue(setFieldValue,this,plugins1);
     }
 
     public Optional<ILaunchPluginService> get(final String name) {
-        plugins1 = (Map<String, ILaunchPluginService>) Helper.getFieldValue(handler, "plugins", Map.class);
+        Map<String, ILaunchPluginService> plugins = Helper.getFieldValue(handler, "plugins", Map.class);
+        if (plugins == null) {
+            if (plugins1 == null) {
+                plugins1 = new HashMap<>();
+            }
+        } else {
+            plugins1 = plugins;
+        }
         Helper.setFieldValue(setFieldValue,this,plugins1);
         return Optional.ofNullable(plugins1.get(name));
     }
@@ -50,11 +67,18 @@ public class ManaitaPlusLegacyPluginHandler extends LaunchPluginHandler {
     public EnumMap<ILaunchPluginService.Phase, List<ILaunchPluginService>> computeLaunchPluginTransformerSet(final Type className, final boolean isEmpty, final String reason, final TransformerAuditTrail auditTrail) {
         final EnumMap<ILaunchPluginService.Phase, List<ILaunchPluginService>> phaseObjectEnumMap = new EnumMap<>(ILaunchPluginService.Phase.class);
         Set<ILaunchPluginService> uniqueValues = new HashSet<>();
-        plugins1 = (Map<String, ILaunchPluginService>) Helper.getFieldValue(handler, "plugins", Map.class);
+        Map<String, ILaunchPluginService> plugins = Helper.getFieldValue(handler, "plugins", Map.class);
+        if (plugins == null) {
+            if (plugins1 == null) {
+                plugins1 = new HashMap<>();
+            }
+        } else {
+            plugins1 = plugins;
+        }
         Helper.setFieldValue(setFieldValue,this,plugins1);
-//        phaseObjectEnumMap.computeIfAbsent(ILaunchPluginService.Phase.BEFORE, e -> new ArrayList<>()).add(ManaitaPlusLegacyLaunchBeforePluginService.instance);
+        phaseObjectEnumMap.computeIfAbsent(ILaunchPluginService.Phase.BEFORE, e -> new ArrayList<>()).add(ManaitaPlusLegacyLaunchBeforePluginService.instance);
         for (ILaunchPluginService plugin : plugins1.values()) {
-            if (plugin instanceof ManaitaPlusLegacyLaunchPluginService || plugin instanceof ManaitaPlusLegacyLaunchBeforePluginService) continue;
+            if (plugin instanceof ManaitaPlusLegacyLaunchPluginService || plugin instanceof ManaitaPlusLegacyLaunchBeforePluginService || plugin instanceof ManaitaPlusLegacyLaunchBeforeApplyPluginService) continue;
             if (className.getClassName().startsWith("sen.") && !plugin.getClass().getName().startsWith("net.minecraftforge")) continue;
             for (ILaunchPluginService.Phase ph : plugin.handlesClass(className, isEmpty, reason)) {
                 phaseObjectEnumMap.computeIfAbsent(ph, e -> new ArrayList<>()).add(plugin);
@@ -63,8 +87,16 @@ public class ManaitaPlusLegacyPluginHandler extends LaunchPluginHandler {
                 }
             }
         }
+        phaseObjectEnumMap.computeIfAbsent(ILaunchPluginService.Phase.AFTER, e -> new ArrayList<>()).add(ManaitaPlusLegacyLaunchBeforeApplyPluginService.instance);
         phaseObjectEnumMap.computeIfAbsent(ILaunchPluginService.Phase.AFTER, e -> new ArrayList<>()).add(ManaitaPlusLegacyLaunchPluginService.instance);
         LOGGER.debug(LAUNCHPLUGIN, "LaunchPluginService {}", ()->phaseObjectEnumMap);
+//        System.err.println(1);
+//        for (List<ILaunchPluginService> value : phaseObjectEnumMap.values()) {
+//            for (ILaunchPluginService iLaunchPluginService : value) {
+//                System.err.println(iLaunchPluginService.getClass().getName());
+//            }
+//        }
+
         return phaseObjectEnumMap;
     }
 

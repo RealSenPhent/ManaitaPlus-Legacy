@@ -39,22 +39,19 @@ public class FarAttackEntityPacket {
     public void handler(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             if (ctx.get().getDirection().getReceptionSide().isClient()) return;
-            DistExecutor.unsafeRunWhenOn(Dist.CLIENT,() -> {
-                ServerPlayer sender = ctx.get().getSender();
-                ItemStack itemInHand = sender.getItemInHand(InteractionHand.MAIN_HAND);
-                if (itemInHand.getItem() instanceof IManaitaPlusLegacyDoubling) {
-                    Entity entity = sender.level().getEntity(targetId);
-                    if (entity == null) {
-                        if (sender.level() instanceof ServerLevel serverLevel) {
-                            Entity entity1 = serverLevel.entityManager.visibleEntityStorage.byUuid.get(targetUuid);
-                            itemInHand.getItem().onLeftClickEntity(itemInHand,sender,entity1);
-                        }
-                    } else {
-                        itemInHand.getItem().onLeftClickEntity(itemInHand,sender,entity);
+            ServerPlayer sender = ctx.get().getSender();
+            ItemStack itemInHand = sender.getItemInHand(InteractionHand.MAIN_HAND);
+            if (itemInHand.getItem() instanceof IManaitaPlusLegacyDoubling) {
+                Entity entity = sender.level().getEntity(targetId);
+                if (entity == null) {
+                    if (sender.level() instanceof ServerLevel serverLevel) {
+                        Entity entity1 = serverLevel.entityManager.visibleEntityStorage.byUuid.get(targetUuid);
+                        itemInHand.getItem().onLeftClickEntity(itemInHand, sender, entity1);
                     }
+                } else {
+                    itemInHand.getItem().onLeftClickEntity(itemInHand, sender, entity);
                 }
-                return null;
-            });
+            }
         });
         ctx.get().setPacketHandled(true);
     }

@@ -55,6 +55,7 @@
   "item.manaita_plus_legacy.manaita_paxel": "Cutting Board Paxel",
   "item.manaita_plus_legacy.manaita_shears": "Cutting Board Shears",
   "item.manaita_plus_legacy.manaita_shovel": "Cutting Board Shovel",
+  "item.projecte.manaita_plus_legacy_katar": "Cutting Board Katar",
 
   "tile.fixed_hook.0.name": "Wooden Cutting Board Hook",
   "tile.fixed_hook.1.name": "Stone Cutting Board Hook",
@@ -137,11 +138,15 @@
   "info.pick_items.name":"Items",
   "info.pick_experience.name":"Experience",
 
+  "mode.base.name": "Mode",
   "mode.doubling.name": "Doubling",
   "mode.manaita_sword.name": "AttackRange",
   "mode.manaita_tool.name": "DestroyRange",
   "mode.range.name": "Range",
+  "mode.normal.name": "Normal",
   "mode.remove.name": "Remove",
+  "mode.down.name": "Down(ResetToDown)",
+  "mode.fall.name": "Fall(Extinction,Archives may be destroyed)",
   "mode.pick.name": "Pick",
   "mode.nightvision.name": "NightVision",
   "mode.invisibility.name": "Invisibility",
@@ -155,8 +160,14 @@
   "key.manaita.god_sword":"Cutting Board Tool",
   "key.manaita.anti_disarming":"Cutting Anti Disarming",
   "key.manaita.attack":"Clear full-map (friendly) mobs",
-  "key.manaita.open": "Wear Ring画面を開く",
+  "key.manaita.open": "Open Ring Screen",
 
   "enchantments.fortune": "Fortune",
-  "enchantments.silktouch": "Silktouch"
+  "enchantments.silktouch": "Silktouch",
+
+  "resourcepack.manaita_plus_legacy.desc": "Better resources for the 1.12.2 mod on the cutting board",
+
+  "advancements.who_is_he.title": "he is who",
+  "advancements.who_is_he.description": "Hidden Easter eggs, unrelated to mods or former creators",
+  "key.manaita.tp.armor": "Armor TP"
 }

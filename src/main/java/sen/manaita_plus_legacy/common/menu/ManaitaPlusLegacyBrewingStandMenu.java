@@ -128,10 +128,9 @@ public class ManaitaPlusLegacyBrewingStandMenu extends AbstractContainerMenu {
             super(p_39105_, p_39106_, p_39107_, p_39108_);
         }
 
-        public boolean mayPlace(ItemStack p_39111_) {
-            return mayPlaceItem(p_39111_);
+        public boolean mayPlace(ItemStack p_39121_) {
+            return true;
         }
-
         public static boolean mayPlaceItem(ItemStack p_39113_) {
             return p_39113_.is(Items.BLAZE_POWDER);
         }
@@ -147,15 +146,17 @@ public class ManaitaPlusLegacyBrewingStandMenu extends AbstractContainerMenu {
         }
 
         public boolean mayPlace(ItemStack p_39121_) {
-            return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidIngredient(p_39121_);
+            return true;
         }
 
         public int getMaxStackSize() {
             return 64;
         }
+
+
     }
 
-    static class PotionSlot extends Slot {
+    public static class PotionSlot extends Slot {
         public PotionSlot(Container p_39123_, int p_39124_, int p_39125_, int p_39126_) {
             super(p_39123_, p_39124_, p_39125_, p_39126_);
         }
@@ -178,8 +179,8 @@ public class ManaitaPlusLegacyBrewingStandMenu extends AbstractContainerMenu {
             super.onTake(p_150499_, p_150500_);
         }
 
-        public static boolean mayPlaceItem(ItemStack p_39134_) {
-            return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidInput(p_39134_);
+        public static boolean mayPlaceItem(ItemStack stack) {
+            return true;
         }
     }
 }

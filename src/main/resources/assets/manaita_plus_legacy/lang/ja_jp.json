@@ -102,7 +102,7 @@
   "item.ring_crafting_manaita.5.name": "ダイヤの作業まな板リング",
   "item.ring_crafting_manaita.6.name": "エメラルドの作業まな板リング",
   "item.ring_crafting_manaita.7.name": "レッドストーンの作業まな板リング",
-  "item.ring_crafting_manaita.7.name": "ネザライトの作業まな板リング",
+  "item.ring_crafting_manaita.8.name": "ネザライトの作業まな板リング",
 
   "item.ring_furnace_manaita.0.name": "調理まな板リング",
   "item.ring_furnace_manaita.1.name": "木の調理まな板リング",
@@ -139,10 +139,13 @@
   "mode.manaita_tool.name": "掘削範囲",
   "mode.range.name": "範囲",
   "mode.remove.name": "消去モード",
+  "mode.down.name": "隕",
+  "mode.fall.name": "滅(アーカイブは破棄される可能性があります）",
   "mode.nightvision.name": "暗視",
   "mode.invisibility.name": "透明化",
   "mode.speed.name": "スピードレベル",
 
+  "key.manaita.open": "Wear Ring画面を開く",
   "key.manaita":"まな板",
   "key.manaita.armor":"まな板の防具"
 }

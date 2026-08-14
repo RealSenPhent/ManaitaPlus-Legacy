@@ -25,6 +25,7 @@ import net.minecraft.world.level.block.GrowingPlantHeadBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import org.jetbrains.annotations.Nullable;
+import sen.manaita_plus_legacy.ManaitaPlusLegacy;
 import sen.manaita_plus_legacy.common.item.tool.base.ManaitaPlusLegacyToolBase;
 import sen.manaita_plus_legacy.common.network.Networking;
 import sen.manaita_plus_legacy.common.network.implement.ChangeDeathDataPacket;
@@ -35,7 +36,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class ManaitaPlusLegacyPaxelItem extends ManaitaPlusLegacyToolBase {
-    public static final TagKey<Block> MINEABLE = BlockTags.create(new ResourceLocation("mineable"));
+    public static final TagKey<Block> MINEABLE = BlockTags.create(ManaitaPlusLegacy.rl("mineable"));
     public ManaitaPlusLegacyPaxelItem() {
         super(MINEABLE);
     }
@@ -59,7 +60,7 @@ public class ManaitaPlusLegacyPaxelItem extends ManaitaPlusLegacyToolBase {
                 living.setLastHurtByPlayer(player);
                 living.setHealth(0F);
                 living.handleEntityEvent((byte) 2);
-                living.die(living.damageSources().playerAttack(player));
+                if (living.captureDrops() != null) living.die(living.damageSources().playerAttack(player));
             }
             if (entity instanceof ServerPlayer serverPlayer) {
                 Networking.sendToPlayer(serverPlayer, new ChangeDeathDataPacket(1));

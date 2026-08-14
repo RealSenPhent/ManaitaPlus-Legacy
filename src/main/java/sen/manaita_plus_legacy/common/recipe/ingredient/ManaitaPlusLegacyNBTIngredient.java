@@ -5,6 +5,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.crafting.IIngredientSerializer;
+import sen.manaita_plus_legacy.common.block.item.ManaitaPlusHookBlockItem;
 import sen.manaita_plus_legacy.common.recipe.ManaitaPlusLegacyNBTCraftingRecipe;
 import sen.manaita_plus_legacy.common.util.tag.ManaitaPlusLegacyTagData;
 
@@ -24,11 +25,12 @@ public class ManaitaPlusLegacyNBTIngredient extends Ingredient {
             return p_43914_.isEmpty();
         } else {
             for(ItemStack itemstack : this.getItems()) {
-                if (itemstack.hasTag() && p_43914_.hasTag()) {
+                if (itemstack.hasTag() && p_43914_.hasTag() && itemstack.is(p_43914_.getItem())) {
                     assert itemstack.getTag() != null;
                     assert p_43914_.getTag() != null;
-                    int manaitaType = itemstack.getTag().getInt(ManaitaPlusLegacyTagData.ItemType);
-                    if (manaitaType != 0 && (!p_43914_.hasTag() || manaitaType != p_43914_.getTag().getInt(ManaitaPlusLegacyTagData.ItemType))) continue;
+                    if (itemstack.getTag().getInt(ManaitaPlusLegacyTagData.ItemType) != p_43914_.getTag().getInt(ManaitaPlusLegacyTagData.ItemType)) {
+                        continue;
+                    }
                 }
                 if (itemstack.is(p_43914_.getItem())) {
                     return true;

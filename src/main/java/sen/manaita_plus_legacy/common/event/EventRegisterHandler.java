@@ -7,20 +7,34 @@ import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 import sen.manaita_plus_legacy.ManaitaPlusLegacy;
 import sen.manaita_plus_legacy.client.datagen.ManaitaPlusBlockStateProvider;
 import sen.manaita_plus_legacy.client.datagen.ManaitaPlusItemModelProvider;
 import sen.manaita_plus_legacy.client.datagen.ManaitaPlusItemRecipeProvider;
+import sen.manaita_plus_legacy.common.item.curios.CuriosSourceItem;
+import sen.manaita_plus_legacy.common.network.Networking;
+import sen.manaita_plus_legacy.common.proxy.CommomProxy;
 import sen.manaita_plus_legacy.common.recipe.ingredient.ManaitaPlusLegacyNBTIngredient;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = ManaitaPlusLegacy.MODID)
 public class EventRegisterHandler {
+
+    @SubscribeEvent
+    public static void onFMLCommonSetup(final FMLCommonSetupEvent event) {
+        event.enqueueWork(() -> {
+            Networking.registerMessage();
+            if (CommomProxy.curios) {
+                CuriosSourceItem.init();
+            }
+        });
+    }
     @SubscribeEvent
     public static void onRegisters(RegisterEvent event) {
         if (event.getRegistryKey().equals(ForgeRegistries.Keys.RECIPE_SERIALIZERS)) {
-            CraftingHelper.register(new ResourceLocation("manaita_plus_legacy", "nbt"), ManaitaPlusLegacyNBTIngredient.Serializer.INSTANCE);
+            CraftingHelper.register(ManaitaPlusLegacy.rl("nbt"), ManaitaPlusLegacyNBTIngredient.Serializer.INSTANCE);
         }
     }
 

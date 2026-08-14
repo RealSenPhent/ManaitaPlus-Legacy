@@ -55,6 +55,7 @@
   "item.manaita_plus_legacy.manaita_paxel": "砧板多功能工具",
   "item.manaita_plus_legacy.manaita_shears": "砧板剪",
   "item.manaita_plus_legacy.manaita_shovel": "砧板铲",
+  "item.projecte.manaita_plus_legacy_katar": "砧板拳剑",
 
   "tile.fixed_hook.0.name": "木制砧板挂钩",
   "tile.fixed_hook.1.name": "石制砧板挂钩",
@@ -103,7 +104,7 @@
   "item.ring_crafting_manaita.5.name": "钻石砧板工作台戒指",
   "item.ring_crafting_manaita.6.name": "绿宝石砧板工作台戒指",
   "item.ring_crafting_manaita.7.name": "红石砧板工作台戒指",
-  "item.ring_crafting_manaita.7.name": "下届合金制砧板工作台戒指",
+  "item.ring_crafting_manaita.8.name": "下届合金制砧板工作台戒指",
 
   "item.ring_furnace_manaita.0.name": "砧板熔炉戒指",
   "item.ring_furnace_manaita.1.name": "木质砧板熔炉戒指",
@@ -128,7 +129,8 @@
   "item.manaita_plus_legacy.manaita_hook": "砧板钩",
 
   "info.item.manaita_sword_god.1": "神の力 -神の裁きと神の徴収-",
-  "info.source.1": "万物之源",
+  "info.source.1": "修复背包物品",
+  "info.source.2": "万物之源",
   "info.armor": "无限保护",
   "info.attack": "无限之力 & 无限之源",
   "info.enchantment": "附魔",
@@ -137,11 +139,15 @@
   "info.pick_items.name": "物品",
   "info.pick_experience.name":"经验",
 
+  "mode.base.name": "模式",
   "mode.doubling.name": "翻倍",
   "mode.manaita_sword.name": "攻击范围",
   "mode.manaita_tool.name": "挖掘范围",
   "mode.range.name": "范围",
-  "mode.remove.name": "抹除模式",
+  "mode.normal.name": "普通",
+  "mode.remove.name": "抹除",
+  "mode.down.name": "陨(归零)",
+  "mode.fall.name": "灭(灭绝,存档有可能被摧毁)",
   "mode.pick.name": "拾取",
   "mode.nightvision.name": "夜视",
   "mode.invisibility.name": "隐身",

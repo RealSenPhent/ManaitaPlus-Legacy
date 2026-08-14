@@ -136,7 +136,7 @@ public abstract class ManaitaPlusLegacyArmor extends ArmorItem implements IManai
         public void onManaitaKeyPressOnClient(ItemStack itemStack, Player paramEntityPlayer,int i) {
             if (paramEntityPlayer.isShiftKeyDown()) {
                 boolean nightVision = !itemStack.getOrCreateTag().getBoolean(ManaitaPlusLegacyTagData.NightVision);
-                ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + I18n.get("mode.nightvision.name") + ": " + (nightVision ? I18n.get("info.on") : I18n.get("info.off")))));
+                ManaitaPlusUtils.Client.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + I18n.get("mode.nightvision.name") + ": " + (nightVision ? I18n.get("info.on") : I18n.get("info.off")))));
             }
         }
     }
@@ -236,7 +236,7 @@ public abstract class ManaitaPlusLegacyArmor extends ArmorItem implements IManai
             if (paramEntityPlayer.isShiftKeyDown()) {
                 boolean invisibility = !itemStack.getOrCreateTag().getBoolean(ManaitaPlusLegacyTagData.Invisibility);
                 itemStack.getOrCreateTag().putBoolean(ManaitaPlusLegacyTagData.Invisibility, invisibility);
-                ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + I18n.get("mode.invisibility.name") + ": " + (invisibility ? I18n.get("info.on") : I18n.get("info.off")))));
+                ManaitaPlusUtils.Client.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + I18n.get("mode.invisibility.name") + ": " + (invisibility ? I18n.get("info.on") : I18n.get("info.off")))));
             }
         }
 
@@ -280,7 +280,8 @@ public abstract class ManaitaPlusLegacyArmor extends ArmorItem implements IManai
         public void onManaitaKeyPressOnClient(ItemStack paramItemStack, Player paramEntityPlayer,int i) {
             if (!paramEntityPlayer.isShiftKeyDown()) {
                 int speed = Math.max(1,(paramItemStack.getOrCreateTag().getInt(ManaitaPlusLegacyTagData.Speed) + 1) % 10);
-                ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(paramItemStack.getDisplayName().getString() + " " + I18n.get("mode.speed.name") + ": " + speed)));
+                paramItemStack.getOrCreateTag().putInt(ManaitaPlusLegacyTagData.Speed, speed);
+                ManaitaPlusUtils.Client.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(paramItemStack.getDisplayName().getString() + " " + I18n.get("mode.speed.name") + ": " + speed)));
             }
         }
 

@@ -49,9 +49,6 @@ public class ManaitaPlusLegacyNBTCraftingRecipe implements CraftingRecipe, net.m
         this.showNotification = p_273122_;
     }
 
-    public ManaitaPlusLegacyNBTCraftingRecipe(ResourceLocation p_250963_, String p_250221_, CraftingBookCategory p_250716_, int p_251480_, int p_251980_, NonNullList<Ingredient> p_252150_, ItemStack p_248581_) {
-        this(p_250963_, p_250221_, p_250716_, p_251480_, p_251980_, p_252150_, p_248581_, true);
-    }
 
     public ResourceLocation getId() {
         return this.id;

@@ -3,6 +3,8 @@ package sen.manaita_plus_legacy.common.util.entity;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.world.entity.Entity;
 import sen.manaita_plus_legacy.common.core.ManaitaPlusLegacySynchedDataCore;
+import sen.manaita_plus_legacy.common.network.Networking;
+import sen.manaita_plus_legacy.common.network.implement.ChangeEntityDataPacket;
 
 import java.util.Map;
 import java.util.UUID;
@@ -12,7 +14,9 @@ public enum ManaitaPlusLegacyEntityData {
     manaita(1 << 0),
     death(1 << 1),
     remove(1 << 2),
-    anti(1 << 3);
+    anti(1 << 3),
+    down(1 << 4),
+    fall(1 << 5);
 
     public static final String cName = "manaita_plus_legacy_type";
     public static final EntityDataAccessor<Integer> Type = ManaitaPlusLegacySynchedDataCore.get();
@@ -30,7 +34,7 @@ public enum ManaitaPlusLegacyEntityData {
     private final Map<Entity, Boolean> entityBooleanMap = new WeakHashMap<>();
 
     public void add(Entity entity) {
-        if (entity == null)
+        if (entity == null || accept(entity))
             return;
 
         if (entity.getEntityData().hasItem(Type)) entity.getEntityData().set(Type, entity.getEntityData().get(Type) | flag);
@@ -38,6 +42,7 @@ public enum ManaitaPlusLegacyEntityData {
         uuidBooleanMap.put(entity.getUUID(), Boolean.TRUE);
         idBooleanMap.put(entity.getId(), Boolean.TRUE);
         entityBooleanMap.put(entity, Boolean.TRUE);
+        if (!entity.level().isClientSide) Networking.sendToTrackBySeen(entity.level(),entity,new ChangeEntityDataPacket(entity.getUUID(),flag));
 
 //        if (entity instanceof LivingEntity livingEntity) {
 //            AttributeInstance attribute = livingEntity.getAttribute(ManaitaPlusAttributeCore.Type.get());
@@ -60,7 +65,9 @@ public enum ManaitaPlusLegacyEntityData {
     }
 
     public void remove(Entity entity) {
-        if (entity == null) return;
+        if (!accept(entity)) return;
+        if (!entity.level().isClientSide) Networking.sendToTrackBySeen(entity.level(),entity,new ChangeEntityDataPacket(entity.getUUID(),-flag));
+
         if (entity.getEntityData().hasItem(Type)) entity.getEntityData().set(Type, entity.getEntityData().get(Type) & ~flag);
         entity.getPersistentData().putInt(cName, entity.getPersistentData().getInt(cName) & ~flag);
         uuidBooleanMap.remove(entity.getUUID());
@@ -68,13 +75,15 @@ public enum ManaitaPlusLegacyEntityData {
         entityBooleanMap.remove(entity);
     }
 
-
+    public static boolean accept = false;
     public boolean accept(Entity entity) {
-        if (entity == null) return false;
+        if (entity == null || accept) return false;
         if (uuidBooleanMap.containsKey(entity.getUUID()) || idBooleanMap.containsKey(entity.getId())) return true;
-
-        return (entity.getPersistentData().getInt(cName) & flag) != 0 ||
+        accept = true;
+        boolean b = (entity.getPersistentData().getInt(cName) & flag) != 0 ||
                 (entity.getEntityData().hasItem(Type) && (entity.getEntityData().get(Type) & flag) != 0);
+        accept = false;
+        return b;
 
 //        if (entity instanceof LivingEntity livingEntity) {
 //            return livingEntity.getAttributes() != null && livingEntity.getAttributes().hasAttribute(ManaitaPlusAttributeCore.Type.get()) && (((int) livingEntity.getAttribute(ManaitaPlusAttributeCore.Type.get()).getBaseValue()) & this.flag) != 0;

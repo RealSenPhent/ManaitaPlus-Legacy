@@ -8,12 +8,13 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import sen.manaita_plus_legacy.ManaitaPlusLegacy;
 import sen.manaita_plus_legacy.common.config.ManaitaPlusLegacyConfig;
 import sen.manaita_plus_legacy.common.menu.ManaitaPlusLegacyBrewingStandMenu;
 
 @OnlyIn(Dist.CLIENT)
 public class BrewingStandScreen extends AbstractContainerScreen<ManaitaPlusLegacyBrewingStandMenu> {
-    private static final ResourceLocation BREWING_STAND_LOCATION = new ResourceLocation("textures/gui/container/brewing_stand.png");
+    private static final ResourceLocation BREWING_STAND_LOCATION = ManaitaPlusLegacy.rl("minecraft","textures/gui/container/brewing_stand.png");
     private static final int[] BUBBLELENGTHS = new int[]{29, 24, 20, 16, 11, 6, 0};
     private final String doubling_text;
 
@@ -37,7 +38,7 @@ public class BrewingStandScreen extends AbstractContainerScreen<ManaitaPlusLegac
     protected void renderLabels(GuiGraphics p_281635_, int p_282681_, int p_283686_) {
         p_281635_.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, 4210752, false);
         p_281635_.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 4210752, false);
-        p_281635_.drawString(this.font, doubling_text,titleLabelX + font.width(title), titleLabelY, 4210752);
+        p_281635_.drawString(this.font, doubling_text,titleLabelX - font.width(doubling_text) / 2, titleLabelY, 4210752,false);
     }
 
     protected void renderBg(GuiGraphics p_282963_, float p_282080_, int p_283365_, int p_283150_) {

@@ -28,30 +28,13 @@ public class CuriosUtil {
                 if (!stackInSlot.isEmpty()) {
                     if (stackInSlot.getItem() instanceof CraftingCurio) {
                         Networking.sendToServer(new KeyPressPacket((byte) 5));
-                    }  else if (stackInSlot.getItem() instanceof BrewingCurio) {
+                    }  else if (stackInSlot.getItem() instanceof FurnaceCurio) {
                         Networking.sendToServer(new KeyPressPacket((byte) 6));
-                    } else if (stackInSlot.getItem() instanceof FurnaceCurio) {
+                    } else if (stackInSlot.getItem() instanceof BrewingCurio) {
                         Networking.sendToServer(new KeyPressPacket((byte) 7));
                     }
                 }
             }
         });
-    }
-
-    public static ItemStack getCurios() {
-        LazyOptional<ICuriosItemHandler> curiosInventory = CuriosApi.getCuriosInventory(Minecraft.getInstance().player);
-        AtomicReference<ItemStack> stack = new AtomicReference<>();
-        curiosInventory.ifPresent(inventory -> {
-            Map<String, ICurioStacksHandler> curios = inventory.getCurios();
-            ICurioStacksHandler ring = curios.get("ring");
-            IDynamicStackHandler stacks = ring.getStacks();
-            for (int i = 0; i < stacks.getSlots(); i++) {
-                stack.set(stacks.getStackInSlot(i));
-                if (stack.get() != null && !stack.get().isEmpty() && (stack.get().getItem() instanceof CraftingCurio || stack.get().getItem() instanceof FurnaceCurio || stack.get().getItem() instanceof BrewingCurio)) {
-                    return;
-                }
-            }
-        });
-        return stack.get();
     }
 }

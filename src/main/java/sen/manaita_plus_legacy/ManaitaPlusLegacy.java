@@ -1,9 +1,8 @@
 package sen.manaita_plus_legacy;
 
 import com.mojang.logging.LogUtils;
-import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.client.renderer.item.ItemPropertyFunction;
+import moze_intel.projecte.PECore;
+import moze_intel.projecte.gameObjs.registration.impl.ItemDeferredRegister;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -19,26 +18,27 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
-import sen.manaita_plus_legacy.client.gui.BrewingStandScreen;
-import sen.manaita_plus_legacy.client.gui.CraftingManaitaScreen;
-import sen.manaita_plus_legacy.client.gui.FurnaceManaitaScreen;
+import sen.manaita_plus_legacy.client.proxy.ClientProxy;
 import sen.manaita_plus_legacy.common.config.ManaitaPlusLegacyConfig;
 import sen.manaita_plus_legacy.common.core.*;
 import sen.manaita_plus_legacy.common.network.Networking;
+import sen.manaita_plus_legacy.common.proxy.CommomProxy;
 import sen.manaita_plus_legacy.common.util.tag.ManaitaPlusLegacyTagData;
-import top.theillusivec4.curios.api.CuriosApi;
+
+import java.util.function.Supplier;
 
 import static sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyItemCore.*;
 
@@ -54,7 +54,9 @@ public class ManaitaPlusLegacy {
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MODID);
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, MODID);
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
+
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TAB_TYPES = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
+    public static CommomProxy proxy;
 
     public static final RegistryObject<CreativeModeTab> MANAITA_PLUS_TAB = CREATIVE_MODE_TAB_TYPES.register("manaita_plus_tab", () -> CreativeModeTab.builder()
             .withTabsBefore(CreativeModeTabs.COMBAT)
@@ -65,13 +67,13 @@ public class ManaitaPlusLegacy {
                 acceptManaitaPlusLegacyType(ManaitaPlusLegacyBlockCore.FurnaceBlockItem.get(), output,8);
                 acceptManaitaPlusLegacyType(ManaitaPlusLegacyBlockCore.BrewingBlockItem.get(), output,8);
 
-                output.accept(ManaitaWoodenHook.get());
+                output.accept(ManaitaHook.get());
                 acceptManaitaPlusLegacyType(ManaitaPlusLegacyBlockCore.HookBlockItem.get(), output,7);
 
                 acceptManaitaPlusLegacyType(ManaitaCraftingPortable.get(), output,8);
                 acceptManaitaPlusLegacyType(ManaitaFurnacePortable.get(), output,8);
                 acceptManaitaPlusLegacyType(ManaitaBrewingPortable.get(), output,8);
-                if (ModList.get().isLoaded("curios")) {
+                if (CommomProxy.curios) {
                     acceptManaitaPlusLegacyType(ManaitaPlusLegacyItemCurioCore.ManaitaCreateCurio.get(), output,8);
                     acceptManaitaPlusLegacyType(ManaitaPlusLegacyItemCurioCore.ManaitaFurnaceCurio.get(), output,8);
                     acceptManaitaPlusLegacyType(ManaitaPlusLegacyItemCurioCore.ManaitaBrewingCurio.get(), output,8);
@@ -86,6 +88,9 @@ public class ManaitaPlusLegacy {
                 output.accept(ManaitaPaxel.get());
                 output.accept(ManaitaHoe.get());
                 output.accept(ManaitaShears.get());
+                if (CommomProxy.projecte) {
+                    output.accept(ManaitaPlusLegacyItemProjecteCore.KATAR.get());
+                }
 
                 output.accept(ManaitaHelmet.get());
                 output.accept(ManaitaChestplate.get());
@@ -99,7 +104,7 @@ public class ManaitaPlusLegacy {
             ItemStack itemStack = new ItemStack(item);
             itemStack.setTag(new CompoundTag());
             assert itemStack.getTag() != null;
-            itemStack.getTag().putInt(ManaitaPlusLegacyTagData.ItemType,i);
+            if (i != 0) itemStack.getTag().putInt(ManaitaPlusLegacyTagData.ItemType,i);
             output.accept(itemStack);
         }
     }
@@ -107,8 +112,8 @@ public class ManaitaPlusLegacy {
 
     public ManaitaPlusLegacy() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        modEventBus.addListener(this::onFMLCommonSetup);
-        modEventBus.addListener(this::onFMLClientSetup);
+
+        proxy = getEnvSpecific(() -> ClientProxy::new, () -> CommomProxy::new);
 
         ManaitaPlusLegacyAttributeCore.init();
         ManaitaPlusLegacyItemCore.init();
@@ -118,8 +123,11 @@ public class ManaitaPlusLegacy {
         ManaitaPlusLegacyBlockEntityCore.init();
         ManaitaPlusLegacyRecipeSerializerCore.init();
         ManaitaPlusLegacySynchedDataCore.init();
-        if (ModList.get().isLoaded("curios")) {
+        if (CommomProxy.curios) {
             ManaitaPlusLegacyItemCurioCore.init();
+        }
+        if (CommomProxy.projecte) {
+            ManaitaPlusLegacyItemProjecteCore.init();
         }
 
         BLOCKS.register(modEventBus);
@@ -136,47 +144,23 @@ public class ManaitaPlusLegacy {
 
 
 
-    private void onFMLCommonSetup(final FMLCommonSetupEvent event) {
-        event.enqueueWork(() -> {
-            Networking.registerMessage();
-
-            MenuScreens.register(ManaitaPlusLegacyMenuCore.CraftingManaita.get(), CraftingManaitaScreen::new);
-            MenuScreens.register(ManaitaPlusLegacyMenuCore.FurnaceManaita.get(), FurnaceManaitaScreen::new);
-            MenuScreens.register(ManaitaPlusLegacyMenuCore.BrewingStandManaita.get(), BrewingStandScreen::new);
-
-            acceptTypePropertyFunction(
-                    ManaitaPlusLegacyBlockCore.CraftingBlockItem.get(),
-                    ManaitaPlusLegacyBlockCore.FurnaceBlockItem.get(),
-                    ManaitaPlusLegacyBlockCore.BrewingBlockItem.get(),
-                    ManaitaPlusLegacyBlockCore.HookBlockItem.get(),
-                    ManaitaPlusLegacyItemCore.ManaitaCraftingPortable.get(),
-                    ManaitaPlusLegacyItemCore.ManaitaFurnacePortable.get(),
-                    ManaitaPlusLegacyItemCore.ManaitaBrewingPortable.get()
-            );
-            if (ModList.get().isLoaded("curios")) {
-                acceptTypePropertyFunction(ManaitaPlusLegacyItemCurioCore.ManaitaCreateCurio.get());
-                acceptTypePropertyFunction(ManaitaPlusLegacyItemCurioCore.ManaitaFurnaceCurio.get());
-                acceptTypePropertyFunction(ManaitaPlusLegacyItemCurioCore.ManaitaBrewingCurio.get());
-            }
-        });
-    }
-
-    private void onFMLClientSetup(final FMLClientSetupEvent event) {
-//        event.enqueueWork(() -> {});
-    }
-
-    public static void acceptTypePropertyFunction(Item... items) {
-        ResourceLocation location = new ResourceLocation(ManaitaPlusLegacy.MODID, ManaitaPlusLegacyTagData.Type);
-        ItemPropertyFunction typePropertyFunction = (stack, level, entity, seed) -> {
-            if (stack.getTag() != null) {
-                return stack.hasTag() ? stack.getTag().getInt(ManaitaPlusLegacyTagData.ItemType) : 0;
-            }
-            return 0;
-        };
-        for (Item item : items) {
-            ItemProperties.register(item,location,typePropertyFunction);
+    public static <T> T getEnvSpecific(Supplier<Supplier<T>> client, Supplier<Supplier<T>> server) {
+        if (FMLEnvironment.dist == Dist.CLIENT) {
+            return client.get().get();
+        } else {
+            return server.get().get();
         }
     }
 
+    public static ResourceLocation rl(String path) {
+        return ResourceLocation.fromNamespaceAndPath(MODID,path);
+    }
 
+    public static ResourceLocation rlUnknown(String path) {
+        return ResourceLocation.bySeparator(path,':');
+    }
+
+    public static ResourceLocation rl(String namespace,String path) {
+        return ResourceLocation.fromNamespaceAndPath(namespace, path);
+    }
 }

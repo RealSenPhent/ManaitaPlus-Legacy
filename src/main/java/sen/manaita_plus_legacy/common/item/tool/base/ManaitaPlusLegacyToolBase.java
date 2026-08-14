@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.TagKey;
@@ -14,6 +16,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.ItemStack;
@@ -45,10 +48,12 @@ public abstract class ManaitaPlusLegacyToolBase extends DiggerItem implements IM
 
     private final Multimap<Attribute, AttributeModifier> defaultModifiers;
     public ManaitaPlusLegacyToolBase(TagKey<Block> tagKey) {
-        super(Float.MAX_VALUE, Float.MAX_VALUE, new ManaitaPlusLegacyToolTier(), tagKey, new Properties().fireResistant());
+        super(Float.MAX_VALUE, Float.MAX_VALUE,ManaitaPlusLegacyToolTier.INSTANCE, tagKey, new Properties().fireResistant());
         ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
-        builder.put(ForgeMod.ENTITY_REACH.get(), new AttributeModifier(BASE_ENTITY_REACH_UUID, "Tool modifier", Double.POSITIVE_INFINITY, AttributeModifier.Operation.ADDITION));
-        builder.put(ForgeMod.BLOCK_REACH.get(), new AttributeModifier(BASE_BLOCK_REACH_UUID, "Tool modifier", Double.POSITIVE_INFINITY, AttributeModifier.Operation.ADDITION));
+        builder.put(ForgeMod.ENTITY_REACH.get(), new AttributeModifier(BASE_ENTITY_REACH_UUID, "Tool modifier", 1024, AttributeModifier.Operation.ADDITION));
+        builder.put(ForgeMod.BLOCK_REACH.get(), new AttributeModifier(BASE_BLOCK_REACH_UUID, "Tool modifier", 1024, AttributeModifier.Operation.ADDITION));
+        builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", Double.POSITIVE_INFINITY, AttributeModifier.Operation.ADDITION));
+        builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier", Double.POSITIVE_INFINITY, AttributeModifier.Operation.ADDITION));
         this.defaultModifiers = builder.build();
     }
 
@@ -61,28 +66,40 @@ public abstract class ManaitaPlusLegacyToolBase extends DiggerItem implements IM
         String range = String.valueOf(getRange(p_41421_));
         p_41423_.add(Component.literal(ManaitaPlusText.manaita_mode.formatting(I18n.get("mode.manaita_tool.name") + ": " + range + "x" + range + "x" + range)));
         p_41423_.add(Component.literal(ManaitaPlusText.manaita_mode.formatting(I18n.get("mode.doubling.name") + ":" + (isDoubling(getType(p_41421_)) ? I18n.get("info.on") : I18n.get("info.off")))));
-        p_41423_.add(Component.literal(ManaitaPlusText.manaita_mode.formatting(I18n.get("mode.farDestroyDelay.name") + ":" + (isFarDestroyDelay(getType(p_41421_)) ? I18n.get("info.on") : I18n.get("info.off")))));
+        p_41423_.add(Component.literal(ManaitaPlusText.manaita_mode.formatting(I18n.get("mode.farDestroyDelay.name") + ":" + (isFarDestroy(getType(p_41421_)) ? I18n.get("info.on") : I18n.get("info.off")))));
         p_41423_.add(Component.literal(ManaitaPlusText.manaita_mode.formatting(getPickDesc(ManaitaPlusLegacyToolBase.getType(p_41421_)))));
     }
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level p_41432_, Player p_41433_, InteractionHand p_41434_) {
         ItemStack itemInHand = p_41433_.getItemInHand(p_41434_);
-        if (!p_41432_.isClientSide) {
-            if (p_41433_.isShiftKeyDown()) {
-                setRange(itemInHand,((getRange(itemInHand) + 2) % 21) | 1);
-            } else {
-                Map<Enchantment, Integer> enchantmentMap = new HashMap<>();
-                enchantmentMap.put(Enchantments.BLOCK_FORTUNE, 10);
-                String s =  I18n.get("enchantments.fortune");
-                if (!EnchantmentHelper.hasSilkTouch(itemInHand)) {
-                    enchantmentMap.put(Enchantments.SILK_TOUCH, 1);
-                    s = I18n.get("enchantments.silktouch");
-                }
+
+        if (p_41433_.isShiftKeyDown()) {
+            int range = ((getRange(itemInHand) + 2) % 21) | 1;
+            setRange(itemInHand, range);
+            if (!p_41432_.isClientSide) {
+                ManaitaPlusUtils.Client.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemInHand.getDisplayName().getString() + " " + I18n.get("mode.range.name") + ": " + range + "x" + range + "x" + range)));
+            }
+        } else {
+            Map<Enchantment, Integer> enchantmentMap = new HashMap<>();
+            enchantmentMap.put(Enchantments.BLOCK_FORTUNE, 10);
+            boolean hasSilkTouch = EnchantmentHelper.hasSilkTouch(itemInHand);
+            if (!hasSilkTouch) {
+                enchantmentMap.put(Enchantments.SILK_TOUCH, 1);
+            }
+
+            if (!p_41432_.isClientSide) {
                 EnchantmentHelper.setEnchantments(enchantmentMap, itemInHand);
-                ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_enchantment.formatting(itemInHand.getDisplayName().getString() + I18n.get("info.enchantment") + ": " + s)));
+            } else {
+                String enchantName = I18n.get("enchantments.fortune");
+                if (hasSilkTouch) {
+                    enchantName = I18n.get("enchantments.silktouch");
+                }
+                ManaitaPlusUtils.Client.chat(Component.literal(ManaitaPlusText.manaita_enchantment.formatting(itemInHand.getDisplayName().getString() + I18n.get("info.enchantment") + ": " + enchantName)));
             }
         }
+
+
         return InteractionResultHolder.pass(itemInHand);
     }
 
@@ -111,10 +128,10 @@ public abstract class ManaitaPlusLegacyToolBase extends DiggerItem implements IM
     public void onManaitaKeyPress(ItemStack itemStack, Player player,int i) {
         if (i == 0) {
             int type = ManaitaPlusLegacyToolBase.getType(itemStack);
-            if (player.isShiftKeyDown()) {
+            if (!player.isShiftKeyDown()) {
                 setDoubling(itemStack, type);
             } else {
-                setFarDestroyDelay(itemStack,type);
+                setFarDestroy(itemStack,type);
             }
         } else if (i == 2) {
             int type = ManaitaPlusLegacyToolBase.getType(itemStack);
@@ -125,10 +142,10 @@ public abstract class ManaitaPlusLegacyToolBase extends DiggerItem implements IM
     @Override
     public void onManaitaKeyPressOnClient(ItemStack itemStack, Player player,int i) {
         if (i == 0) {
-            if (player.isShiftKeyDown()) {
-                ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + I18n.get("mode.doubling.name") + ": " + (setDoubling(itemStack, ManaitaPlusLegacyToolBase.getType(itemStack)) ? I18n.get("info.on") : I18n.get("info.off")))));
+            if (!player.isShiftKeyDown()) {
+                ManaitaPlusUtils.Client.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + I18n.get("mode.doubling.name") + ": " + (setDoubling(itemStack, ManaitaPlusLegacyToolBase.getType(itemStack)) ? I18n.get("info.on") : I18n.get("info.off")))));
             } else {
-                ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + I18n.get("mode.farDestroyDelay.name") + ": " + (setFarDestroyDelay(itemStack, ManaitaPlusLegacyToolBase.getType(itemStack)) ? I18n.get("info.on") : I18n.get("info.off")))));
+                ManaitaPlusUtils.Client.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + I18n.get("mode.farDestroyDelay.name") + ": " + (setFarDestroy(itemStack, ManaitaPlusLegacyToolBase.getType(itemStack)) ? I18n.get("info.on") : I18n.get("info.off")))));
             }
         } else if (i == 2) {
             ManaitaPlusLegacyToolBase.setPickMode(itemStack, player.isShiftKeyDown(), ManaitaPlusLegacyToolBase.getType(itemStack));
@@ -142,7 +159,7 @@ public abstract class ManaitaPlusLegacyToolBase extends DiggerItem implements IM
             } else {
                 sb.append("None");
             }
-            ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + sb)));
+            ManaitaPlusUtils.Client.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + sb)));
         }
     }
 
@@ -195,11 +212,11 @@ public abstract class ManaitaPlusLegacyToolBase extends DiggerItem implements IM
         return sb.toString();
     }
 
-    public static boolean isFarDestroyDelay(int type) {
+    public static boolean isFarDestroy(int type) {
         return (type & ManaitaPlusLegacyTagData.farDestroyDelay) != 0;
     }
 
-    public static boolean setFarDestroyDelay(ItemStack itemStack, int type) {
+    public static boolean setFarDestroy(ItemStack itemStack, int type) {
         CompoundTag orCreateTag = itemStack.getOrCreateTag();
         if ((type & ManaitaPlusLegacyTagData.farDestroyDelay) == 0) {
             orCreateTag.putInt(ManaitaPlusLegacyTagData.Type, type | ManaitaPlusLegacyTagData.farDestroyDelay);

@@ -18,6 +18,5 @@ public interface IManaitaPlusLegacyDestroy {
 
     default void setRange(ItemStack itemStack,int range) {
         itemStack.getOrCreateTag().putInt(ManaitaPlusLegacyTagData.Range, range);
-        ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + I18n.get("mode.range.name") + ": " + range + "x" + range + "x" + range)));
     }
 }

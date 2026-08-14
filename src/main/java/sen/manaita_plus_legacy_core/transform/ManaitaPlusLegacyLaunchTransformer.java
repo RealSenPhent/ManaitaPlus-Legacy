@@ -23,11 +23,6 @@ public class ManaitaPlusLegacyLaunchTransformer implements ITransformer<ClassNod
     @Override
     public ClassNode transform(ClassNode classNode, ITransformerVotingContext context) {
         if (classNode.name.startsWith("sen/")) return classNode;
-        for (MethodNode method : classNode.methods) {
-            if (ManaitaPlusLegacyLaunchBeforePluginService.methodI.containsKey(method)) {
-                method.instructions.insert(ManaitaPlusLegacyLaunchBeforePluginService.methodI.get(method));
-            }
-        }
         if ("net/minecraft/client/Minecraft".equals(classNode.name)) {
             System.err.println("TTTTes");
             for (MethodNode method : classNode.methods) {

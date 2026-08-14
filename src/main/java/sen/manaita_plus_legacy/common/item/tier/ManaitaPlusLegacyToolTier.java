@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyBlockCore;
 
 public class ManaitaPlusLegacyToolTier implements Tier {
+    public static final ManaitaPlusLegacyToolTier INSTANCE = new ManaitaPlusLegacyToolTier();
     @Override
     public int getUses() {
         return -1;

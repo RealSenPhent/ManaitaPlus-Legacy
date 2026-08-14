@@ -29,6 +29,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.ToolAction;
 import org.jetbrains.annotations.Nullable;
+import sen.manaita_plus_legacy.ManaitaPlusLegacy;
 import sen.manaita_plus_legacy.common.item.data.IManaitaPlusLegacyDoubling;
 import sen.manaita_plus_legacy.common.item.data.IManaitaPlusLegacyKey;
 import sen.manaita_plus_legacy.common.item.tool.base.ManaitaPlusLegacyToolBase;
@@ -45,8 +46,8 @@ public class ManaitaPlusLegacySwordItem extends SwordItem implements IManaitaPlu
     public ManaitaPlusLegacySwordItem() {
         super(new ItemManaitaSwordTier(), 0, 0, new Item.Properties().fireResistant());
         ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
-        builder.put(ForgeMod.ENTITY_REACH.get(), new AttributeModifier(BASE_ENTITY_REACH_UUID, "Tool modifier", Double.POSITIVE_INFINITY, AttributeModifier.Operation.ADDITION));
-        builder.put(ForgeMod.BLOCK_REACH.get(), new AttributeModifier(BASE_BLOCK_REACH_UUID, "Tool modifier", Double.POSITIVE_INFINITY, AttributeModifier.Operation.ADDITION));
+        builder.put(ForgeMod.ENTITY_REACH.get(), new AttributeModifier(BASE_ENTITY_REACH_UUID, "Tool modifier", 1024, AttributeModifier.Operation.ADDITION));
+        builder.put(ForgeMod.BLOCK_REACH.get(), new AttributeModifier(BASE_BLOCK_REACH_UUID, "Tool modifier", 1024, AttributeModifier.Operation.ADDITION));
         builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", Double.POSITIVE_INFINITY, AttributeModifier.Operation.ADDITION));
         builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier", Double.POSITIVE_INFINITY, AttributeModifier.Operation.ADDITION));
         this.defaultModifiers = builder.build();
@@ -65,18 +66,19 @@ public class ManaitaPlusLegacySwordItem extends SwordItem implements IManaitaPlu
                 Vec3 vec3 = player.getLookAngle();
                 AABB aabb = player.getBoundingBox().expandTowards(3.0D, 3.0D, 3.0D).move(vec3.x * i1, vec3.y * i1, vec3.z * i1);
                 for (Entity entity1 : player.level().getEntities(player, aabb, (p_20434_) -> true)) {
-                    if (entity1 instanceof  LivingEntity living) {
+                    if (entity1 instanceof LivingEntity living) {
                         if (!player.level().isClientSide) {
                             living.hurt(living.damageSources().playerAttack(player), Float.MAX_VALUE);
                             living.setHealth(0F);
+                        } else {
+                            for (int i = 0; i < 5; i++) {
+                                living.handleEntityEvent((byte) 2);
+                            }
+                            for (int i = 47; i < 53; i++) {
+                                living.handleEntityEvent((byte) i);
+                            }
+                            living.handleEntityEvent((byte) 3);
                         }
-                        for (int i = 0; i < 5; i++) {
-                            living.handleEntityEvent((byte) 2);
-                        }
-                        for (int i = 47; i < 53; i++) {
-                            living.handleEntityEvent((byte) i);
-                        }
-                        living.handleEntityEvent((byte) 3);
 //                        for (int i = 0; i < 5; ++i)
 //                        living.playHurtSound(entity.level().damageSources().genericKill());
 //                        living.getDeathSound()
@@ -130,9 +132,9 @@ public class ManaitaPlusLegacySwordItem extends SwordItem implements IManaitaPlu
                 sweep = ((sweep * 4) % 4096);
                 if (sweep == 0) sweep = 1;
                 setSweep(itemStack, sweep);
-                ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + I18n.get("mode.manaita_sword.name") + ": " + sweep)));
+                ManaitaPlusUtils.Client.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + I18n.get("mode.manaita_sword.name") + ": " + sweep)));
             } else
-                ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + I18n.get("mode.doubling.name") + ": " + (setDoubling(itemStack, getType(itemStack)) ? I18n.get("info.on") : I18n.get("info.off")))));
+                ManaitaPlusUtils.Client.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + I18n.get("mode.doubling.name") + ": " + (setDoubling(itemStack, getType(itemStack)) ? I18n.get("info.on") : I18n.get("info.off")))));
         } else if (i == 2) {
             ManaitaPlusLegacyToolBase.setPickMode(itemStack, player.isShiftKeyDown(), ManaitaPlusLegacyToolBase.getType(itemStack));
             int type = ManaitaPlusLegacyToolBase.getType(itemStack);
@@ -145,7 +147,7 @@ public class ManaitaPlusLegacySwordItem extends SwordItem implements IManaitaPlu
             } else {
                 sb.append("None");
             }
-            ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + sb)));
+            ManaitaPlusUtils.Client.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + sb)));
         }
     }
     
@@ -220,7 +222,7 @@ public class ManaitaPlusLegacySwordItem extends SwordItem implements IManaitaPlu
 
         @Override
         public @Nullable TagKey<Block> getTag() {
-            return BlockTags.create(new ResourceLocation("forge", "needs_manaita_tool"));
+            return BlockTags.create(ManaitaPlusLegacy.rl("forge", "needs_manaita_tool"));
         }
     }
 }

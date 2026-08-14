@@ -6,7 +6,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.LightningBoltRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -14,7 +13,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
+import sen.manaita_plus_legacy.client.render.ManaitaPlusLegacyRenderStateShard;
 import sen.manaita_plus_legacy.common.entity.ManaitaPlusLegacyLightningBolt;
+import sen.manaita_plus_legacy_core.transform.ManaitaPlusLegacyLaunchPluginService;
 
 import java.util.Random;
 
@@ -24,13 +25,14 @@ public class ManaitaPlusLightningBoltRenderer extends EntityRenderer<ManaitaPlus
         super(p_174286_);
     }
 
+
     public void render(ManaitaPlusLegacyLightningBolt p_115266_, float p_115267_, float p_115268_, PoseStack p_115269_, MultiBufferSource p_115270_, int p_115271_) {
         float[] afloat = new float[8];
         float[] afloat1 = new float[8];
         float f = 0.0F;
         float f1 = 0.0F;
-        RandomSource randomsource = RandomSource.create(p_115266_.seed);
 
+        RandomSource randomsource = RandomSource.create(p_115266_.seed);
         for(int i = 7; i >= 0; --i) {
             afloat[i] = f;
             afloat1[i] = f1;
@@ -38,9 +40,13 @@ public class ManaitaPlusLightningBoltRenderer extends EntityRenderer<ManaitaPlus
             f1 += (float)(randomsource.nextInt(11) - 5);
         }
 
-        VertexConsumer vertexconsumer = p_115270_.getBuffer(RenderType.lightning());
+        VertexConsumer vertexconsumer = p_115270_.getBuffer(ManaitaPlusLegacyLaunchPluginService.renderLevelRenderer ? ManaitaPlusLegacyRenderStateShard.createCosmicRenderType(1) : RenderType.lightning());
         Matrix4f matrix4f = p_115269_.last().pose();
         Random random = new Random(p_115266_.seed);
+        float r = random.nextFloat();
+        float g = random.nextFloat();
+        float b = random.nextFloat();
+        float a = 0.07F;
         for(int j = 0; j < 4; ++j) {
             RandomSource randomsource1 = RandomSource.create(p_115266_.seed);
 
@@ -80,10 +86,6 @@ public class ManaitaPlusLightningBoltRenderer extends EntityRenderer<ManaitaPlus
                         f11 *= ((float)j1 - 1.0F) * 0.1F + 1.0F;
                     }
 
-                    float r = random.nextFloat();
-                    float g = random.nextFloat();
-                    float b = random.nextFloat();
-                    float a = 0.375F;
 
                     quad(matrix4f, vertexconsumer, f2, f3, j1, f4, f5, r, g, b, a, f10, f11, false, false, true, false);
                     quad(matrix4f, vertexconsumer, f2, f3, j1, f4, f5, r, g, b, a, f10, f11, true, false, true, true);
@@ -96,14 +98,32 @@ public class ManaitaPlusLightningBoltRenderer extends EntityRenderer<ManaitaPlus
     }
 
 
-    private static void quad(Matrix4f p_253966_, VertexConsumer p_115274_, float p_115275_, float p_115276_, int p_115277_, float p_115278_, float p_115279_, float p_115280_, float p_115281_, float p_115282_,float a, float p_115283_, float p_115284_, boolean p_115285_, boolean p_115286_, boolean p_115287_, boolean p_115288_) {
-        p_115274_.vertex(p_253966_, p_115275_ + (p_115285_ ? p_115284_ : -p_115284_), (float)(p_115277_ * 16), p_115276_ + (p_115286_ ? p_115284_ : -p_115284_)).color(p_115280_, p_115281_, p_115282_, a).endVertex();
-        p_115274_.vertex(p_253966_, p_115278_ + (p_115285_ ? p_115283_ : -p_115283_), (float)((p_115277_ + 1) * 16), p_115279_ + (p_115286_ ? p_115283_ : -p_115283_)).color(p_115280_, p_115281_, p_115282_, a).endVertex();
-        p_115274_.vertex(p_253966_, p_115278_ + (p_115287_ ? p_115283_ : -p_115283_), (float)((p_115277_ + 1) * 16), p_115279_ + (p_115288_ ? p_115283_ : -p_115283_)).color(p_115280_, p_115281_, p_115282_, a).endVertex();
-        p_115274_.vertex(p_253966_, p_115275_ + (p_115287_ ? p_115284_ : -p_115284_), (float)(p_115277_ * 16), p_115276_ + (p_115288_ ? p_115284_ : -p_115284_)).color(p_115280_, p_115281_, p_115282_, a).endVertex();
+    private static void quad(Matrix4f mat, VertexConsumer consumer,
+                             float x1, float y1, int step, float x2, float y2,
+                             float r, float g, float b, float a, float w1, float w2,
+                             boolean p1, boolean p2, boolean p3, boolean p4) {
+
+        consumer.vertex(mat, x1 + (p1 ? w2 : -w2), step * 16, y1 + (p2 ? w2 : -w2))
+                .color(r, g, b, a)
+                .endVertex();
+
+        consumer.vertex(mat, x2 + (p1 ? w1 : -w1), (step + 1) * 16, y2 + (p2 ? w1 : -w1))
+                .color(r, g, b, a)
+                .endVertex();
+
+        consumer.vertex(mat, x2 + (p3 ? w1 : -w1), (step + 1) * 16, y2 + (p4 ? w1 : -w1))
+                .color(r, g, b, a)
+                .endVertex();
+
+        consumer.vertex(mat, x1 + (p3 ? w2 : -w2), step * 16, y1 + (p4 ? w2 : -w2))
+                .color(r, g, b, a)
+                .endVertex();
     }
 
     public @NotNull ResourceLocation getTextureLocation(ManaitaPlusLegacyLightningBolt p_115264_) {
         return InventoryMenu.BLOCK_ATLAS;
     }
+
+
+
 }

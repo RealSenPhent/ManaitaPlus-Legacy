@@ -71,7 +71,7 @@ public class ManaitaPlusLegacyBowItem extends Item implements IManaitaPlusLegacy
     @Override
     public void onManaitaKeyPressOnClient(ItemStack itemStack, Player paramEntityPlayer,int i) {
         if (i == 0) {
-            ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + I18n.get("mode.doubling.name") + ": " + (setDoubling(itemStack, ManaitaPlusLegacyToolBase.getType(itemStack)) ? I18n.get("info.on") : I18n.get("info.off")))));
+            ManaitaPlusUtils.Client.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + I18n.get("mode.doubling.name") + ": " + (setDoubling(itemStack, ManaitaPlusLegacyToolBase.getType(itemStack)) ? I18n.get("info.on") : I18n.get("info.off")))));
         } else if (i == 2) {
             ManaitaPlusLegacyToolBase.setPickMode(itemStack, paramEntityPlayer.isShiftKeyDown(), ManaitaPlusLegacyToolBase.getType(itemStack));
             int type = ManaitaPlusLegacyToolBase.getType(itemStack);
@@ -84,7 +84,7 @@ public class ManaitaPlusLegacyBowItem extends Item implements IManaitaPlusLegacy
             } else {
                 sb.append("None");
             }
-            ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + sb)));
+            ManaitaPlusUtils.Client.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + sb)));
         }
     }
 

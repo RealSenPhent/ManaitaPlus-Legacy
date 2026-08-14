@@ -29,6 +29,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkHooks;
+import sen.manaita_plus_legacy.ManaitaPlusLegacy;
 import sen.manaita_plus_legacy.common.core.ManaitaPlusLegacyBlockEntityCore;
 import sen.manaita_plus_legacy.common.menu.ManaitaPlusLegacyFurnaceMenu;
 import sen.manaita_plus_legacy.common.util.tag.ManaitaPlusLegacyTagData;
@@ -103,7 +104,7 @@ public class ManaitaPlusLegacyFurnacePortabl extends Item {
             CompoundTag compoundtag = p_155025_.getCompound("RecipesUsed");
 
             for(String s : compoundtag.getAllKeys()) {
-                this.recipesUsed.put(new ResourceLocation(s), compoundtag.getInt(s));
+                this.recipesUsed.put(ManaitaPlusLegacy.rlUnknown(s), compoundtag.getInt(s));
             }
 
         }

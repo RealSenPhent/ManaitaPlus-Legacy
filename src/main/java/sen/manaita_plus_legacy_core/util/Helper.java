@@ -22,6 +22,8 @@ public class Helper {
     public static final MethodHandles.Lookup lookup;
     private static final Object internalUNSAFE;
     private static MethodHandle objectFieldOffsetInternal;
+    private static MethodHandle staticFieldBaseInternal;
+    private static MethodHandle staticFieldOffsetInternal;
 
     static {
         UNSAFE = getUnsafe();
@@ -30,6 +32,8 @@ public class Helper {
         try {
             Class<?> internalUNSAFEClass = lookup.findClass("jdk.internal.misc.Unsafe");
             objectFieldOffsetInternal = lookup.findVirtual(internalUNSAFEClass, "objectFieldOffset", MethodType.methodType(long.class, Field.class)).bindTo(internalUNSAFE);
+            staticFieldBaseInternal = lookup.findVirtual(internalUNSAFEClass, "staticFieldBase", MethodType.methodType(Object.class, Field.class)).bindTo(internalUNSAFE);
+            staticFieldOffsetInternal = lookup.findVirtual(internalUNSAFEClass, "staticFieldOffset", MethodType.methodType(long.class, Field.class)).bindTo(internalUNSAFE);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -77,6 +81,32 @@ public class Helper {
         } catch (Throwable e) {
             try {
                 return (long) objectFieldOffsetInternal.invoke(f);
+            } catch (Throwable t1) {
+                t1.printStackTrace();
+            }
+        }
+        return 0L;
+    }
+
+    public static Object staticFieldBase(Field f) {
+        try {
+            return UNSAFE.staticFieldBase(f);
+        } catch (Throwable e) {
+            try {
+                return staticFieldBaseInternal.invoke(f);
+            } catch (Throwable t1) {
+                t1.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    public static long staticFieldOffset(Field f) {
+        try {
+            return UNSAFE.staticFieldOffset(f);
+        } catch (Throwable e) {
+            try {
+                return (long) staticFieldOffsetInternal.invoke(f);
             } catch (Throwable t1) {
                 t1.printStackTrace();
             }

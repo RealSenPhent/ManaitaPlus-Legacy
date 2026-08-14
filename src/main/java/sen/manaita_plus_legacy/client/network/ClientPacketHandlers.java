@@ -18,7 +18,9 @@ import sen.manaita_plus_legacy.common.item.data.IManaitaPlusLegacyDestroy;
 import sen.manaita_plus_legacy.common.network.implement.*;
 import sen.manaita_plus_legacy.common.util.ManaitaPlusUtils;
 import sen.manaita_plus_legacy.common.util.entity.ManaitaPlusLegacyEntityData;
+import sen.manaita_plus_legacy_core.util.ClientEventUtil;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -27,11 +29,37 @@ public class ClientPacketHandlers {
 
     public static void handler(ChangeDeathDataPacket packet) {
         Entity entity = Minecraft.getInstance().player;
+        ClientEventUtil.htaedTime = 20;
         if (entity == null) return;
         if (packet.flag == 1) {
             ManaitaPlusLegacyEntityData.death.add(entity);
         } else {
             ManaitaPlusLegacyEntityData.death.remove(entity);
+        }
+    }
+
+    public static void handler(DestroyFTBBlockPacket packet) {
+        Entity entity = Minecraft.getInstance().player;
+        if (entity == null) return;
+        Minecraft mc = Minecraft.getInstance();
+        ClientLevel level = mc.level;
+        if (level == null || mc.player == null) return;
+        if (packet.item instanceof IManaitaPlusLegacyDestroy des) {
+            BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
+            List<Integer> blockPos = packet.blockPos;
+            for (int i = 0; i < blockPos.size(); i += 3) {
+                BlockState blockState = level.getBlockState(mutableBlockPos.set(blockPos.get(i), blockPos.get(i + 1), blockPos.get(i + 2)));
+                if (blockState == null || !des.accept(blockState))
+                    continue;
+                Block block = blockState.getBlock();
+//                block.playerWillDestroy(level, mutableBlockPos, blockState, mc.player);
+
+                ManaitaPlusUtils.setBlock(level, mutableBlockPos, level.getFluidState(mutableBlockPos).createLegacyBlock(), 10);
+
+                SoundType soundtype = blockState.getSoundType(level, mutableBlockPos, mc.player);
+                mc.getSoundManager().play(new SimpleSoundInstance(soundtype.getHitSound(), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 8.0F, soundtype.getPitch() * 0.5F, SoundInstance.createUnseededRandom(), mutableBlockPos));
+//                            blockState.onDestroyedByPlayer(level, pos, mc.player, false, level.getFluidState(pos));
+            }
         }
     }
 
@@ -130,7 +158,7 @@ public class ClientPacketHandlers {
                         Block block = blockState.getBlock();
                         block.playerWillDestroy(level, mutableBlockPos, blockState, mc.player);
 
-                        ManaitaPlusUtils.setBlock(level, mutableBlockPos, level.getFluidState(mutableBlockPos).createLegacyBlock(), 10);
+//                        ManaitaPlusUtils.setBlock(level, mutableBlockPos, level.getFluidState(mutableBlockPos).createLegacyBlock(), 10);
 
                         SoundType soundtype = blockState.getSoundType(level, mutableBlockPos, mc.player);
                         mc.getSoundManager().play(new SimpleSoundInstance(soundtype.getHitSound(), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 8.0F, soundtype.getPitch() * 0.5F, SoundInstance.createUnseededRandom(), mutableBlockPos));

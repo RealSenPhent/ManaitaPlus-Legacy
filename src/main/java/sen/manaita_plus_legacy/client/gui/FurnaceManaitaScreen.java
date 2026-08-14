@@ -14,13 +14,14 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import sen.manaita_plus_legacy.ManaitaPlusLegacy;
 import sen.manaita_plus_legacy.common.config.ManaitaPlusLegacyConfig;
 import sen.manaita_plus_legacy.common.menu.ManaitaPlusLegacyFurnaceMenu;
 
 @OnlyIn(Dist.CLIENT)
 public class FurnaceManaitaScreen extends AbstractContainerScreen<ManaitaPlusLegacyFurnaceMenu> implements RecipeUpdateListener {
-    private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/container/furnace.png");
-    private static final ResourceLocation RECIPE_BUTTON_LOCATION = new ResourceLocation("textures/gui/recipe_button.png");
+    private static final ResourceLocation TEXTURE = ManaitaPlusLegacy.rl("minecraft","textures/gui/container/furnace.png");
+    private static final ResourceLocation RECIPE_BUTTON_LOCATION = ManaitaPlusLegacy.rl("minecraft","textures/gui/recipe_button.png");
     public final AbstractFurnaceRecipeBookComponent recipeBookComponent;
     private boolean widthTooNarrow;
     private final ResourceLocation texture;
@@ -36,7 +37,7 @@ public class FurnaceManaitaScreen extends AbstractContainerScreen<ManaitaPlusLeg
     protected void renderLabels(GuiGraphics p_281635_, int p_282681_, int p_283686_) {
         p_281635_.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, 4210752, false);
         p_281635_.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 4210752, false);
-        p_281635_.drawString(this.font, doubling_text,118, 22, 4210752);
+        p_281635_.drawString(this.font, doubling_text,118 - font.width(doubling_text) / 2, 22, 4210752,false);
     }
 
     public void init() {

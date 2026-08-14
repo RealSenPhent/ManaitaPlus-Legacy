@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "abc",
+    "dee",
+    "eee"
+  ],
+  "key": {
+    "a": {
+      "item": "manaita_plus_legacy:manaita_shears"
+    },
+    "b": {
+      "item": "manaita_plus_legacy:manaita_axe"
+    },
+    "c": {
+      "item": "manaita_plus_legacy:manaita_sword"
+    },
+    "d": {
+      "item": "manaita_plus_legacy:manaita_hoe"
+    },
+    "e": {
+      "tag": "manaita_plus_legacy:manaita_block_eq"
+    }
+  },
+  "result": {
+    "item": "projecte:manaita_plus_legacy_katar",
+    "count": 1
+  }
+}

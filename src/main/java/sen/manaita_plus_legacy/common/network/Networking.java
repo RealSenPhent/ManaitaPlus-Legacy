@@ -3,6 +3,7 @@ package sen.manaita_plus_legacy.common.network;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkDirection;
@@ -10,15 +11,13 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 import sen.manaita_plus_legacy.ManaitaPlusLegacy;
-import sen.manaita_plus_legacy.client.network.implement.FarAttackEntityPacket;
-import sen.manaita_plus_legacy.client.network.implement.KeyPressPacket;
-import sen.manaita_plus_legacy.client.network.implement.PreventDropPacket;
+import sen.manaita_plus_legacy.client.network.implement.*;
 import sen.manaita_plus_legacy.common.network.implement.*;
 
 
 public class Networking {
     public static SimpleChannel INSTANCE;
-    public static final String VERSION = "1.16";
+    public static final String VERSION = "1.201";
     public static int ID = 0;
 
     public static int nextID() {
@@ -27,7 +26,7 @@ public class Networking {
 
     public static void registerMessage() {
         INSTANCE = NetworkRegistry.newSimpleChannel(
-                new ResourceLocation(ManaitaPlusLegacy.MODID, "manaita_plus_legacy_networking"),
+                ManaitaPlusLegacy.rl("manaita_plus_legacy_networking"),
                 () -> VERSION,
                 (version) -> version.equals(VERSION),
                 (version) -> version.equals(VERSION)
@@ -59,6 +58,16 @@ public class Networking {
                 .decoder(ChangeDeathDataPacket::new)
                 .consumerNetworkThread(ChangeDeathDataPacket::handler)
                 .add();
+        INSTANCE.messageBuilder(ArmorTPPacket.class, nextID())
+                .encoder(ArmorTPPacket::toBytes)
+                .decoder(ArmorTPPacket::new)
+                .consumerNetworkThread(ArmorTPPacket::handler)
+                .add();
+//        INSTANCE.messageBuilder(ArmorAttackEntityPacket.class, nextID())
+//                .encoder(ArmorAttackEntityPacket::toBytes)
+//                .decoder(ArmorAttackEntityPacket::new)
+//                .consumerNetworkThread(ArmorAttackEntityPacket::handler)
+//                .add();
 
         // server receive
         INSTANCE.messageBuilder(KeyPressPacket.class, nextID())
@@ -75,6 +84,16 @@ public class Networking {
                 .encoder(FarAttackEntityPacket::toBytes)
                 .decoder(FarAttackEntityPacket::new)
                 .consumerNetworkThread(FarAttackEntityPacket::handler)
+                .add();
+        INSTANCE.messageBuilder(FarDestroyPacket.class, nextID())
+                .encoder(FarDestroyPacket::toBytes)
+                .decoder(FarDestroyPacket::new)
+                .consumerNetworkThread(FarDestroyPacket::handler)
+                .add();
+        INSTANCE.messageBuilder(DestroyFTBBlockPacket.class, nextID())
+                .encoder(DestroyFTBBlockPacket::toBytes)
+                .decoder(DestroyFTBBlockPacket::new)
+                .consumerNetworkThread(DestroyFTBBlockPacket::handler)
                 .add();
     }
 
@@ -115,9 +134,9 @@ public class Networking {
         INSTANCE.send(PacketDistributor.ALL.noArg(), packet);
     }
 
-    public static void sendToTrackBySeen(Level level, Player player, Object packet) {
+    public static void sendToTrackBySeen(Level level, Entity entity, Object packet) {
         if (level instanceof ServerLevel serverLevel) {
-            serverLevel.getChunkSource().broadcastAndSend(player,INSTANCE.toVanillaPacket(packet, NetworkDirection.PLAY_TO_CLIENT));
+            serverLevel.getChunkSource().broadcastAndSend(entity,INSTANCE.toVanillaPacket(packet, NetworkDirection.PLAY_TO_CLIENT));
         }
     }
 }

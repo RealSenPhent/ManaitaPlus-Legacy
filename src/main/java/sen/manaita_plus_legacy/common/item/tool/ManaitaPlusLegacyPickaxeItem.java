@@ -49,7 +49,7 @@ public class ManaitaPlusLegacyPickaxeItem extends ManaitaPlusLegacyToolBase {
                     s = I18n.get("enchantments.silktouch");
                 }
                 EnchantmentHelper.setEnchantments(enchantmentMap, itemInHand);
-                ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_enchantment.formatting(itemInHand.getDisplayName().getString() + I18n.get("info.enchantment") + ": " + s)));
+                ManaitaPlusUtils.Client.chat(Component.literal(ManaitaPlusText.manaita_enchantment.formatting(itemInHand.getDisplayName().getString() + I18n.get("info.enchantment") + ": " + s)));
             }
         }
         return InteractionResultHolder.pass(itemInHand);

@@ -199,7 +199,9 @@ dependencies {
     implementation fg.deobf("curse.maven:ftb-ultimine-forge-386134:7880472")
     implementation fg.deobf("curse.maven:ftb-library-forge-404465:7296748")
     implementation fg.deobf("curse.maven:architectury-api-419699:5137938")
-//    implementation fg.deobf("curse.maven:curios-309927:6418456")
+    implementation fg.deobf("curse.maven:xenon-564239:5374393")
+    implementation fg.deobf("curse.maven:oculus-581495:6020952")
+    implementation fg.deobf("curse.maven:projecte-226410:4901949")
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 

@@ -125,7 +125,7 @@ public class ManaitaPlusLegacyShearsItem extends ShearsItem implements IManaitaP
                     s = I18n.get("enchantments.silktouch");
                 }
                 EnchantmentHelper.setEnchantments(enchantmentMap, itemInHand);
-                ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_enchantment.formatting(itemInHand.getDisplayName().getString() + I18n.get("info.enchantment") + ": " + s)));
+                ManaitaPlusUtils.Client.chat(Component.literal(ManaitaPlusText.manaita_enchantment.formatting(itemInHand.getDisplayName().getString() + I18n.get("info.enchantment") + ": " + s)));
             }
         }
         return InteractionResultHolder.pass(itemInHand);
@@ -150,7 +150,7 @@ public class ManaitaPlusLegacyShearsItem extends ShearsItem implements IManaitaP
     @Override
     public void onManaitaKeyPressOnClient(ItemStack itemStack, Player paramEntityPlayer,int i) {
         if (i == 0) {
-            ManaitaPlusUtils.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + I18n.get("mode.doubling.name") + ": " + (setDoubling(itemStack, ManaitaPlusLegacyToolBase.getType(itemStack)) ? I18n.get("info.on") : I18n.get("info.off")))));
+            ManaitaPlusUtils.Client.chat(Component.literal(ManaitaPlusText.manaita_mode.formatting(itemStack.getDisplayName().getString() + " " + I18n.get("mode.doubling.name") + ": " + (setDoubling(itemStack, ManaitaPlusLegacyToolBase.getType(itemStack)) ? I18n.get("info.on") : I18n.get("info.off")))));
         }
     }
 
